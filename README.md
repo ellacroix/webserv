@@ -1,4 +1,4 @@
-# webserv-or-irc
+# webserv
 
 ## Sujet
 
