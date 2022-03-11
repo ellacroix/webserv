@@ -1,6 +1,22 @@
 # webserv
 
+## Logique
+1. Parsing du fichier de config
+2. Lancement du serveur
+3. Reception des demandes de connection
+4. Etablissement de la connectiom 
+5. Reception des requetes HTTP
+6. Execution des CGI si necessaire
+7. Envoi des reponses 
+8. Fermeture de la connection
+
 ## Sujet
+• Your server must never block and the client can be bounced properly if necessary.
+• A request to your server should never hang forever.
+• You must be able to serve a fully static website.
+• You need at least GET, POST, and DELETE methods.
+• Your server must be able to listen to multiple ports (see Configuration file).
+• The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (???)
 
 ## Fonctions autorisées
 **[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
@@ -11,9 +27,9 @@ struct pollfd {
                short revents;    /* returned events */};
 ```
 
-**int select(int nfds, fd_set *restrict readfds, fd_set *restrict writefds, fd_set *restrict exceptfds, struct timeval *restrict timeout)**
+**int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)**
 ``` 
-exemple ici 
+exemple /experiment/select_experiment.c 
 ```
 
 ## Questions
