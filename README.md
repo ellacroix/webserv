@@ -27,7 +27,7 @@ struct pollfd {
                short revents;    /* returned events */};
 ```
 
-**int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)**
+**[int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)](http://manpagesfr.free.fr/man/man2/select.2.html)**
 ``` 
 exemple /experiment/select_experiment.c 
 ```
