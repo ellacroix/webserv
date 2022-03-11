@@ -1,10 +1,23 @@
 # webserv-or-irc
 
+## Sujet
+
+## Fonctions autorisées
+**[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
+```
+struct pollfd {
+               int   fd;         /* file descriptor */
+               short events;     /* requested events */
+               short revents;    /* returned events */};
+```
+
+## Questions
+
 ## Resources
 
 ### Server setup
 
-[How to build a simple HTTP server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
+[How to build a simple HTTP server in C](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
 
 [Simple server with C++](https://ncona.com/2019/04/building-a-simple-server-with-cpp/)
 
