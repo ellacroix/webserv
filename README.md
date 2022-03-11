@@ -6,9 +6,11 @@
 3. Reception des demandes de connection
 4. Etablissement de la connectiom 
 5. Reception des requetes HTTP
-6. Execution des CGI si necessaire
-7. Envoi des reponses 
-8. Fermeture de la connection
+6. Parsing des requetes HTTP
+7. Execution des CGI si necessaire
+8. Parsing de l'output du CGI
+9. Envoi des reponses 
+10. Fermeture de la connection
 
 ## Sujet
 • Your server must never block and the client can be bounced properly if necessary.
@@ -31,6 +33,10 @@ struct pollfd {
 ``` 
 exemple /experiment/select_experiment.c 
 ```
+
+**[epoll](https://man7.org/linux/man-pages/man7/epoll.7.html)**
+
+
 
 ## Questions
 

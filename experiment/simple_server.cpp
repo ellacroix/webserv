@@ -3,10 +3,12 @@
 #include <cstdlib> // For exit() and EXIT_FAILURE
 #include <iostream> // For cout
 #include <unistd.h> // For read
+#include <stdio.h>
 
 int main() {
   // Create a socket (IPv4, TCP)
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  printf("sockfd = %d\n", sockfd);
   if (sockfd == -1) {
     std::cout << "Failed to create socket. errno: " << errno << std::endl;
     exit(EXIT_FAILURE);
@@ -32,6 +34,7 @@ int main() {
   // Grab a connection from the queue
   auto addrlen = sizeof(sockaddr);
   int connection = accept(sockfd, (struct sockaddr*)&sockaddr, (socklen_t*)&addrlen);
+  printf("HERE\n");
   if (connection < 0) {
     std::cout << "Failed to grab connection. errno: " << errno << std::endl;
     exit(EXIT_FAILURE);
