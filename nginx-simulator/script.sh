@@ -5,3 +5,5 @@ telnet localhost 8000
 
 docker stop docker-nginx
 docker rm docker-nginx
+
+#Web, check localhost:8000
