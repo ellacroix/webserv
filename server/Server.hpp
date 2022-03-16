@@ -31,6 +31,9 @@ public:
 	char				buffer[BUFFER_SIZE + 1];
 	int					ret, on = 1;
 
+	//std::map<int, Client> Clients;
+	//std::vector<Client-> Clients
+
 	Server();
 	~Server();
 
