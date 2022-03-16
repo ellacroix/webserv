@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <iostream>
 
-#define PORT 12345
+#define PORT 1234
 #define BUFFER_SIZE 50
 
 //Basic server for only one connection
@@ -61,6 +61,7 @@ int main() {
 		//Select wait here until a socket is ready for I/O operations
 		select(max_sd + 1, &work_reading_set, &work_writing_set, NULL, NULL);
 
+		//Check if the listening socket has some connections to accept()
 		if (FD_ISSET(listen_socket, &work_reading_set))
 		{
 			client_socket = accept(listen_socket, (struct sockaddr *)&client_address, (socklen_t*)&addr_len);
@@ -68,15 +69,18 @@ int main() {
 			max_sd = client_socket;
 		}
 
+		//Check if we added the client_socket to writing_set and if it is ready to be written to
 		if (FD_ISSET(client_socket, &work_writing_set))
 		{
-			write(client_socket, buffer, strlen(buffer));
+			send(client_socket, buffer, strlen(buffer), 0);
 			FD_CLR(client_socket, &master_writing_set);
+			max_sd = listen_socket;
 		}
 
+		//Check if the client_socket has something to be read in it
 		if (FD_ISSET(client_socket, &work_reading_set))
 		{
-			ret = read(client_socket, buffer, BUFFER_SIZE);
+			ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
 			buffer[ret] = 0;
 			FD_SET(client_socket, &master_writing_set);
 		}

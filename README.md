@@ -40,16 +40,20 @@ struct pollfd {
 exemple /experiment/select_experiment.c 
 ```
 
+**htons, htonl, ntohs, ntohl**
+Ensure the conversion of short and long numbers between Host and Network, regardless of their endian-ness
+
 **[epoll](https://man7.org/linux/man-pages/man7/epoll.7.html)**
 
 
 
 ## Questions
 - Dans le cas de multiples serveurs, est ce qu'on fait tourner les serveurs sur un seul thread dans une boucle, ou on lance un thread par serveur ?
-- Mettre le config file comme une struc globale ?
+- Mettre le config file comme une struct globale ?
 - Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?
-- Concept de chunk ?
-- IPV4/IPV6 ?
+- Concept de chunk et utilité dans le projet ?
+- IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
+- Si on a plusieurs servers sur le meme port 0.0.0.0:8888, avec des noms differents, le premier est le serveur par defaut et prend toutes les requetes non geres par les autres serveurs sur ce port ?
 
 ## Resources
 
@@ -153,10 +157,15 @@ exemple /experiment/select_experiment.c
 
 [Reception du header Content-Language](https://discord.com/channels/774300457157918772/785407573000060978/796296015522299935)
 
+# Notes
+- Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP
+
 # Testing
 
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
 
 # A faire
-- Un signal (SIGINT, fonction), pour quitter proprement le server
+- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
+- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
+- Proteger une erreur de select(), errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
