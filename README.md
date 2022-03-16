@@ -12,13 +12,19 @@
 9. Envoi des reponses 
 10. Fermeture de la connection
 
+## Architecture
+- Une classe Server, qui contient ses parametres, un std::vector<Client*>, 
+- Une classe Client, qui contient ses parametres, un pointeur vers son Server, une instance Request, une instance Response
+- Une classe Request, pour stocker la requete HTTP a recevoir
+- Une classe Response, pour stocker la reponse HTTP a renvoyer
+
 ## Sujet
-• Your server must never block and the client can be bounced properly if necessary.
-• A request to your server should never hang forever.
-• You must be able to serve a fully static website.
-• You need at least GET, POST, and DELETE methods.
-• Your server must be able to listen to multiple ports (see Configuration file).
-• The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (???)
+- Your server must never block and the client can be bounced properly if necessary.
+- A request to your server should never hang forever.
+- You must be able to serve a fully static website.
+- You need at least GET, POST, and DELETE methods.
+- Your server must be able to listen to multiple ports (see Configuration file).
+- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (???)
 
 ## Fonctions autorisées
 **[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
@@ -39,6 +45,11 @@ exemple /experiment/select_experiment.c
 
 
 ## Questions
+- Dans le cas de multiples serveurs, est ce qu'on fait tourner les serveurs sur un seul thread dans une boucle, ou on lance un thread par serveur ?
+- Mettre le config file comme une struc globale ?
+- Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?
+- Concept de chunk ?
+- IPV4/IPV6 ?
 
 ## Resources
 
@@ -146,3 +157,6 @@ exemple /experiment/select_experiment.c
 
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
+
+# A faire
+- Un signal (SIGINT, fonction), pour quitter proprement le server
