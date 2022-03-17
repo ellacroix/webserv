@@ -18,13 +18,17 @@
 - Une classe Request, pour stocker la requete HTTP a recevoir
 - Une classe Response, pour stocker la reponse HTTP a renvoyer
 
+## Logique multi-serveurs
+Soit un select() sur les fd_set de tous les serveurs, puis une boucle pour que chaque serveur traite les evenements.
+Soit un pthread par serveur, qui gere chacun leurs fd_set et select(), avec un mutex pour accept() et un mutex pour l'ecriture de fichiers.
+
 ## Sujet
 - Your server must never block and the client can be bounced properly if necessary.
 - A request to your server should never hang forever.
 - You must be able to serve a fully static website.
 - You need at least GET, POST, and DELETE methods.
 - Your server must be able to listen to multiple ports (see Configuration file).
-- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (???)
+- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (Cas de plusieurs serveurs sur le meme port avec des noms differents).
 
 ## Fonctions autorisées
 **[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
@@ -53,7 +57,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?
 - Concept de chunk et utilité dans le projet ?
 - IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
-- Si on a plusieurs servers sur le meme port 0.0.0.0:8888, avec des noms differents, le premier est le serveur par defaut et prend toutes les requetes non geres par les autres serveurs sur ce port ?
+
 
 ## Resources
 

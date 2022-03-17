@@ -3,4 +3,7 @@
 int main()
 {
 	Server Test;
+
+	Test.start();
+	Test.loop();
 }

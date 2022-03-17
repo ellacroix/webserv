@@ -11,7 +11,7 @@
 #include <iostream>
 
 #define PORT 1234
-#define BUFFER_SIZE 50
+#define BUFFER_SIZE 5000
 
 //Basic server for only one connection
 
@@ -31,7 +31,7 @@ int main() {
 	//Prevent “Address already in use" error by the OS
 	setsockopt(listen_socket, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on));
 
-	//Basic binc
+	//Basic bind
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_port = htons( PORT );
@@ -40,7 +40,7 @@ int main() {
 	//Set O_NONBLOCK flag on the listening socket, so it transmits to sockets created with accept()
 	fcntl(listen_socket, F_SETFL, O_NONBLOCK);
 
-	listen(listen_socket, 1);
+	listen(listen_socket, 20);
 	
 	//Creating master_reading_set and adding listen_socket
 	FD_ZERO(&master_writing_set);
@@ -59,10 +59,14 @@ int main() {
 		work_writing_set = master_writing_set;
 
 		//Select wait here until a socket is ready for I/O operations
+
 		select(max_sd + 1, &work_reading_set, &work_writing_set, NULL, NULL);
 
+
+		// while (i < serv_n)
+		//{
 		//Check if the listening socket has some connections to accept()
-		if (FD_ISSET(listen_socket, &work_reading_set))
+		if (FD_ISSET(/*servV[i].*/listen_socket, &work_reading_set))
 		{
 			client_socket = accept(listen_socket, (struct sockaddr *)&client_address, (socklen_t*)&addr_len);
 			FD_SET(client_socket, &master_reading_set);
@@ -74,7 +78,6 @@ int main() {
 		{
 			send(client_socket, buffer, strlen(buffer), 0);
 			FD_CLR(client_socket, &master_writing_set);
-			max_sd = listen_socket;
 		}
 
 		//Check if the client_socket has something to be read in it
@@ -82,8 +85,11 @@ int main() {
 		{
 			ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
 			buffer[ret] = 0;
+			printf("%s\n", buffer);
 			FD_SET(client_socket, &master_writing_set);
 		}
+		//i++;
+		//}
 	}
 
 }

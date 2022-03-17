@@ -3,6 +3,7 @@
 #define PORT 1234
 #define BUFFER_SIZE 50
 
+#include <vector>
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -25,13 +26,12 @@ public:
 	int					listen_socket;
 	struct sockaddr_in	server_address;
 	struct timeval		timeout;
-	int 				addr_len = sizeof(server_adress);
+	int 				addr_len;
 	fd_set				master_reading_set, work_reading_set, master_writing_set, work_writing_set;
 	int					max_sd;
 	char				buffer[BUFFER_SIZE + 1];
 	int					ret, on = 1;
 
-	//std::map<int, Client> Clients;
 	std::vector<Client*> Clients;
 
 	Server();
@@ -39,5 +39,7 @@ public:
 
 	int	start();
 	int loop();
-	int acceptClient();
-}
+	int acceptClients();
+	int receiveRequests();
+	int sendResponses();
+};

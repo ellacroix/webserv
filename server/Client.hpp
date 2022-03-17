@@ -18,5 +18,9 @@ protected:
 
 public:
 	int stream_socket;
+	struct sockaddr_in client_address;
 
-}
+	Client() {};
+	~Client() {};
+
+};
