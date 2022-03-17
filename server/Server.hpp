@@ -4,6 +4,7 @@
 #define BUFFER_SIZE 50
 
 #include <vector>
+#include <map>
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -31,8 +32,10 @@ public:
 	int					max_sd;
 	char				buffer[BUFFER_SIZE + 1];
 	int					ret, on = 1;
+	bool				end_server = false;
 
-	std::vector<Client*> Clients;
+	//std::vector<Client*> Clients;
+	std::map<int, Client*> Clients;
 
 	Server();
 	~Server();
@@ -42,4 +45,7 @@ public:
 	int acceptClients();
 	int receiveRequests();
 	int sendResponses();
+
+	void disconnectClient(int socket);
+
 };

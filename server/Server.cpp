@@ -5,22 +5,47 @@ int Server::start()
 {
 
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_socket < 0){
+		perror("socket() failed");
+		exit(-1);
+	}
 
 	//Prevent “Address already in use" error by the OS
-	setsockopt(listen_socket, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on));
+	int rc = setsockopt(listen_socket, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on));
+	if (rc < 0){
+		perror("setsockopt() failed");
+		close(listen_socket);
+		exit(-1);
+	}
 
-	//Basic bind
+	//Basic bind to a port
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_port = htons( PORT );
 	addr_len = sizeof(server_address);
-	bind(listen_socket, (struct sockaddr *)&server_address, addr_len);
+	rc = bind(listen_socket, (struct sockaddr *)&server_address, addr_len);
+	if (rc < 0){
+		perror("bind() failed");
+		close(listen_socket);
+		exit(-1);
+	}
 
 	//Set O_NONBLOCK flag on the listening socket, so it transmits to sockets created with accept()
-	fcntl(listen_socket, F_SETFL, O_NONBLOCK);
+	rc = fcntl(listen_socket, F_SETFL, O_NONBLOCK);
+	if (rc < 0){
+		perror("fcntl() failed");
+		close(listen_socket);
+		exit(-1);
+	}
 
-	listen(listen_socket, 1);
-	
+	//Set the socket as listen listening for any connections
+	listen(listen_socket, 20);
+	if (rc < 0){
+		perror("listen() failed");
+		close(listen_socket);
+		exit(-1);
+	}
+
 	//Creating master_reading_set and adding listen_socket
 	FD_ZERO(&master_writing_set);
 	FD_ZERO(&master_reading_set);
@@ -32,24 +57,37 @@ int Server::start()
 
 int Server::loop()
 {
-	Client							*ptr_c;
-	std::vector<Client*>::iterator	it_c;
+	int ret;
 
-	while(1)
+	while(end_server != true)
 	{
 		//Reinitializing work fd_sets before select() modified it
 		work_reading_set = master_reading_set;
 		work_writing_set = master_writing_set;
 
 		//Select wait here until a socket is ready for I/O operations
-		std::cout << "\nWaiting for select()\n";
-		select(max_sd + 1, &work_reading_set, &work_writing_set, NULL, &timeout);
+		printf("\nWaiting on select()\n");
+		ret = select(max_sd + 1, &work_reading_set, &work_writing_set, NULL, &timeout);
+		if (ret < 0){
+			perror("  select() failed");
+			break;
+		}
+		if (ret == 0){
+			printf("select() timed out.  End program.\n");
+			break;
+		}
 
 		acceptClients();
 
 		sendResponses();
 
 		receiveRequests();
+	}
+
+	for (int i = 0; i <= max_sd; ++i)
+	{
+		if (FD_ISSET(i, &master_reading_set))
+			disconnectClient(i);
 	}
 	return 0;
 }
@@ -58,13 +96,26 @@ int	Server::acceptClients()
 {
 	if (FD_ISSET(listen_socket, &work_reading_set))
 	{
-		std::cout << "Accepting new connection\n";		
-		Client *new_client = new Client;
+		int socket = 0;
+		while (socket != -1)
+		{
+			socket = accept(listen_socket, NULL, NULL);
+			if (socket < 0){
+				if (errno != EWOULDBLOCK){
+					perror("accept() failed");
+					end_server = true;
+				}
+				break;
+			}
 
-		new_client->stream_socket = accept(listen_socket, (struct sockaddr *)&new_client->client_address, (socklen_t*)&addr_len);
-		Clients.push_back(new_client);
-		FD_SET(new_client->stream_socket, &master_reading_set);
-		max_sd = new_client->stream_socket;
+			printf("Accepting new connection\n");
+			Client *new_client = new Client;
+
+			new_client->stream_socket = socket;
+			Clients[new_client->stream_socket] = new_client;
+			FD_SET(new_client->stream_socket, &master_reading_set);
+			max_sd = new_client->stream_socket;
+		}
 	}
 
 	return 0;
@@ -72,17 +123,27 @@ int	Server::acceptClients()
 
 int Server::receiveRequests()
 {
-	Client							*ptr_c;
-	std::vector<Client*>::iterator	it_c;
+	Client								*ptr_c;
+	std::map<int, Client*>::iterator	it_c;
+	std::map<int, Client*>::iterator 	next_it;
 
-	for (it_c = Clients.begin(); it_c != Clients.end(); it_c++)
+
+	for (it_c = Clients.begin(), next_it = it_c; it_c != Clients.end(); it_c = next_it)
 	{
-		ptr_c = *it_c;
+		ptr_c = it_c->second;
+		next_it++;
 		if (FD_ISSET(ptr_c->stream_socket, &work_reading_set))
 		{
-			std::cout << "Receiving data\n";		
+			printf("Receiving data\n");		
 			ret = recv(ptr_c->stream_socket, buffer, BUFFER_SIZE, 0);
-			buffer[ret] = 0;
+			if (ret == 0)
+			{
+				std::cout << "Connection closed\n";
+				disconnectClient(ptr_c->stream_socket);
+				continue;
+			}
+			std::string string_buffer(buffer, ret);
+			Clients[ptr_c->stream_socket]->buffer = string_buffer;
 			FD_SET(ptr_c->stream_socket, &master_writing_set);
 		}
 	}
@@ -92,21 +153,29 @@ int Server::receiveRequests()
 
 int Server::sendResponses()
 {
-	Client							*ptr_c;
-	std::vector<Client*>::iterator	it_c;
-	
+	int									socket;
+	std::map<int, Client*>::iterator	it_c;
+
 	for (it_c = Clients.begin(); it_c != Clients.end(); it_c++)
 	{
-		ptr_c = *it_c;
-		if (FD_ISSET(ptr_c->stream_socket, &work_writing_set))
+		socket = it_c->first;
+		if (FD_ISSET(socket, &work_writing_set))
 		{
-			std::cout << "Sending data\n";		
-			send(ptr_c->stream_socket, buffer, strlen(buffer), 0);
-			FD_CLR(ptr_c->stream_socket, &master_writing_set);
+			printf("Sending data\n");		
+			send(socket, Clients[socket]->buffer.c_str(), Clients[socket]->buffer.size(), 0);
+			FD_CLR(socket, &master_writing_set);
 		}
 	}
 
 	return 0;
+}
+
+void Server::disconnectClient(int socket)
+{
+	FD_CLR(socket, &master_reading_set);
+	FD_CLR(socket, &master_writing_set);
+	delete Clients[socket];
+	Clients.erase(socket);
 }
 
 Server::Server()

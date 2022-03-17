@@ -163,6 +163,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 # Notes
 - Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP
+- Voir Type Mime pour gerer static site (Content Type)
 
 # Testing
 

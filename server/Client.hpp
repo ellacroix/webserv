@@ -17,10 +17,12 @@ private:
 protected:
 
 public:
-	int stream_socket;
-	struct sockaddr_in client_address;
+	int					stream_socket;
+	struct sockaddr_in	client_address;
+	bool				connected = true;
+	std::string			buffer;
 
 	Client() {};
-	~Client() {};
+	~Client();
 
 };
