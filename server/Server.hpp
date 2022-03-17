@@ -32,10 +32,12 @@ public:
 	int					ret, on = 1;
 
 	//std::map<int, Client> Clients;
-	//std::vector<Client-> Clients
+	std::vector<Client*> Clients;
 
 	Server();
 	~Server();
 
 	int	start();
+	int loop();
+	int acceptClient();
 }

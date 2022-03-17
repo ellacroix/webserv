@@ -10,11 +10,13 @@
 #include <fcntl.h>
 #include <iostream>
 
-class Server{
-	private:
+class Client{
 
-	protected:
+private:
 
-	public:
+protected:
+
+public:
+	int stream_socket;
 
 }
