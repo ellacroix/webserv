@@ -127,6 +127,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - [select() vs threads](https://www.lowtek.com/sockets/select.html)
 - [TCP 3-way handshake schema ; Blocking vs non-blocking socket](https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php)
 - [more socket theory to waste time](https://www.bogotobogo.com/cplusplus/sockets_server_client_3.php)
+- [tuto Jacob Sorber](https://www.youtube.com/watch?v=bdIiTxtMaKA&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17)
 
 ### http protocol
 - How the web works http://www.garshol.priv.no/download/text/http-tut.html
