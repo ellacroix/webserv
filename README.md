@@ -165,6 +165,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 # Notes
 - Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP
 - Voir Type Mime pour gerer static site (Content Type)
+- Pour l'optimisation multi-thread, faire une thread pool avec un std::dequeue [video](https://www.youtube.com/watch?v=FMNnusHqjpw&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&index=6&ab_channel=JacobSorber)
 
 # Testing
 

@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Request.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -21,6 +24,10 @@ public:
 	struct sockaddr_in	client_address;
 	bool				connected = true;
 	std::string			buffer;
+
+	Request				*request = NULL;
+
+	void				createRequest(char *raw);
 
 	Client() {};
 	~Client();

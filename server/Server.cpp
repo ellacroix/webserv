@@ -59,7 +59,7 @@ int Server::loop()
 {
 	int ret;
 
-	while(end_server != true)
+	while(end_server == false)
 	{
 		//Reinitializing work fd_sets before select() modified it
 		work_reading_set = master_reading_set;
@@ -69,7 +69,7 @@ int Server::loop()
 		printf("\nWaiting on select()\n");
 		ret = select(max_sd + 1, &work_reading_set, &work_writing_set, NULL, &timeout);
 		if (ret < 0){
-			perror("  select() failed");
+			perror("select() failed");
 			break;
 		}
 		if (ret == 0){
@@ -78,10 +78,9 @@ int Server::loop()
 		}
 
 		acceptClients();
-
 		sendResponses();
-
 		receiveRequests();
+		treatRequests();
 	}
 
 	for (int i = 0; i <= max_sd; ++i)
@@ -134,7 +133,8 @@ int Server::receiveRequests()
 		next_it++;
 		if (FD_ISSET(ptr_c->stream_socket, &work_reading_set))
 		{
-			printf("Receiving data\n");		
+			printf("Receiving data\n");
+			bzero(buffer, BUFFER_SIZE);
 			ret = recv(ptr_c->stream_socket, buffer, BUFFER_SIZE, 0);
 			if (ret == 0)
 			{
@@ -142,9 +142,9 @@ int Server::receiveRequests()
 				disconnectClient(ptr_c->stream_socket);
 				continue;
 			}
-			std::string string_buffer(buffer, ret);
-			Clients[ptr_c->stream_socket]->buffer = string_buffer;
-			FD_SET(ptr_c->stream_socket, &master_writing_set);
+			Clients[ptr_c->stream_socket]->createRequest(buffer);
+			printf("%s\n",Clients[ptr_c->stream_socket]->request->raw_request.c_str());
+			FD_SET(ptr_c->stream_socket, &master_writing_set);		//Only do this when Response is ready to be sent
 		}
 	}
 
@@ -162,9 +162,23 @@ int Server::sendResponses()
 		if (FD_ISSET(socket, &work_writing_set))
 		{
 			printf("Sending data\n");		
-			send(socket, Clients[socket]->buffer.c_str(), Clients[socket]->buffer.size(), 0);
+			//send(socket, Clients[socket]->request->raw_request.c_str(), Clients[socket]->request->raw_request.size(), 0);
 			FD_CLR(socket, &master_writing_set);
 		}
+	}
+
+	return 0;
+}
+
+int Server::treatRequests()
+{
+	Request								*current_request;
+	std::map<int, Client*>::iterator	it_c;
+
+	for (it_c = Clients.begin(); it_c != Clients.end(); it_c++)
+	{
+		current_request = it_c->second->request;
+		current_request->parser();
 	}
 
 	return 0;

@@ -1,7 +1,7 @@
 #pragma once
 
 #define PORT 1234
-#define BUFFER_SIZE 50
+#define BUFFER_SIZE 5000
 
 #include <vector>
 #include <map>
@@ -45,6 +45,8 @@ public:
 	int acceptClients();
 	int receiveRequests();
 	int sendResponses();
+
+	int treatRequests();
 
 	void disconnectClient(int socket);
 
