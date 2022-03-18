@@ -21,12 +21,10 @@ protected:
 
 public:
 	int					stream_socket;
-	struct sockaddr_in	client_address;
 	bool				connected = true;
-	std::string			buffer;
 
 	Request				*request = NULL;
-
+	//Response			*response = NULL;
 	void				createRequest(char *raw);
 
 	Client() {};

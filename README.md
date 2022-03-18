@@ -166,6 +166,8 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP
 - Voir Type Mime pour gerer static site (Content Type)
 - Pour l'optimisation multi-thread, faire une thread pool avec un std::dequeue [video](https://www.youtube.com/watch?v=FMNnusHqjpw&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&index=6&ab_channel=JacobSorber)
+- Au vu des discussions Discord, le pipelining n'a pas a etre géré, notamment car il est abandonné en HTTP2.0 et par la plupart des navigateurs.
+- RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
 
 # Testing
 

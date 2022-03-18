@@ -20,6 +20,12 @@ protected:
 
 public:
 	std::string raw_request;
+	int error;
+	bool Chunked;
+	int ContentLenght;
+	std::string METHOD;
+	std::string headers;
+
 
 	Request() {};
 	~Request() {};
@@ -29,3 +35,14 @@ public:
 	int			parser();
 
 };
+
+/* class Response{
+	isReponseChunked();
+
+	int	GET();
+	int POST();
+	int	DELETE();
+	int CGI();
+
+};
+ */

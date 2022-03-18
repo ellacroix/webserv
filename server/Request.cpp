@@ -7,7 +7,7 @@ Request::Request(char *raw)
 
 int	Request::parser()
 {
-	
+	printf("In the parser\n");
 	
 	return 0;
 }
