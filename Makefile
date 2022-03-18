@@ -35,9 +35,9 @@ fclean: clean
 re: fclean all
 
 leak: $(NAME) 
-	valgrind --suppressions=valgrind_readline_leaks_ignore.txt --leak-check=full --show-leak-kinds=all --track-origins=yes --child-silent-after-fork=yes --log-file=valgrind-out.txt ./minishell
+	valgrind --suppressions=valgrind_readline_leaks_ignore.txt --leak-check=full --show-leak-kinds=all --track-origins=yes --child-silent-after-fork=yes --log-file=valgrind-out.txt ./webserv
 
 leaks: $(NAME)
-	valgrind --suppressions=valgrind_readline_leaks_ignore.txt --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind-out.txt ./minishell
+	valgrind --suppressions=valgrind_readline_leaks_ignore.txt --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind-out.txt ./webserv
 
 .PHONY: all clean fclean re

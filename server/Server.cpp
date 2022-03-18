@@ -144,7 +144,7 @@ int Server::receiveRequests()
 			}
 			Clients[ptr_c->stream_socket]->createRequest(buffer);
 			printf("%s\n",Clients[ptr_c->stream_socket]->request->raw_request.c_str());
-			FD_SET(ptr_c->stream_socket, &master_writing_set);		//Only do this when Response is ready to be sent
+			//FD_SET(ptr_c->stream_socket, &master_writing_set);		//Only do this when Response is ready to be sent
 		}
 	}
 
@@ -162,7 +162,7 @@ int Server::sendResponses()
 		if (FD_ISSET(socket, &work_writing_set))
 		{
 			printf("Sending data\n");		
-			//send(socket, Clients[socket]->request->raw_request.c_str(), Clients[socket]->request->raw_request.size(), 0);
+			send(socket, Clients[socket]->request->raw_request.c_str(), Clients[socket]->request->raw_request.size(), 0);
 			FD_CLR(socket, &master_writing_set);
 		}
 	}

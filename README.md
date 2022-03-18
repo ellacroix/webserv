@@ -54,7 +54,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 ## Questions
 - Dans le cas de multiples serveurs, est ce qu'on fait tourner les serveurs sur un seul thread dans une boucle, ou on lance un thread par serveur ?
 - Mettre le config file comme une struct globale ?
-- Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?
+- Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?`
 - Concept de chunk et utilité dans le projet ?
 - IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
 
@@ -72,6 +72,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 ### HTTP 1.1 (standard to follow) :
 
 [HTTP/1.1 (RFC 2616)](https://www.rfc-editor.org/rfc/rfc2616.html)
+[Minimal version](http://www.cs.cmu.edu/~srini/15-441/F11/responses)
 
 [HTTP/1.1 : Message Syntax and Routing (RFC 7230)](https://www.rfc-editor.org/rfc/rfc7230.html)
 
@@ -168,6 +169,13 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Pour l'optimisation multi-thread, faire une thread pool avec un std::dequeue [video](https://www.youtube.com/watch?v=FMNnusHqjpw&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&index=6&ab_channel=JacobSorber)
 - Au vu des discussions Discord, le pipelining n'a pas a etre géré, notamment car il est abandonné en HTTP2.0 et par la plupart des navigateurs.
 - RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
+- Caching: plutot une notion pour les intermediaires, pas a gerer
+- Charset = token, le token specifie quel charset a employer, voir cas de Missing Charset
+- Transfer-coding: chunked, identity, gzip, compress, deflate 
+- Chunked transfer Coding: OPTIONAL trailer
+
+# Header
+
 
 # Testing
 
@@ -177,4 +185,4 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 # A faire
 - Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
 - Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
-- Proteger une erreur de select(), errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
+- Proteger une erreur de select() en cas d' interruption par un signal, errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
