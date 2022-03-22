@@ -213,12 +213,12 @@ message-body = entity-body | <entity-body encoded as per Transfer-Encoding>
 
 # Request
 ```
-Request               = Request-Line              ; Section 5.1
-                        *(( general-header        ; Section 4.5
-                         | request-header         ; Section 5.3
-                         | entity-header ) CRLF)  ; Section 7.1
+Request               = Request-Line            
+                        *(( general-header      
+                         | request-header       
+                         | entity-header ) CRLF)
                         CRLF
-                        [ message-body ]          ; Section 4.3
+                        [ message-body ]        
 ```
 ## Start-line
 ```
@@ -237,7 +237,12 @@ Request-URI    = "*" | absoluteURI | abs_path | authority
 - Si on gere plusieurs host (server names ?) sur un meme port, on doit bien differencier les dossiers auxquels ils ont acces
 - Le host peut etre defini dans l'absoluteURI ou le header host, un invalid host entraine une reponse 400
 ## Request Header Fields
-
+```
+request-header =    Accept | Accept-Charset | Accept-Encoding | Accept-Language 
+                    | Authorization | Expect | From | Host | If-Match | If-Modified-Since 
+                    | If-None-Match | If-Range | If-Unmodified-Since | Max-Forwards 
+                    | Proxy-Authorization | Range | Referer | TE | User-Agent
+```
 
 ## Body
 - The presence of a message-body in a request is signaled by the inclusion of a Content-Length or Transfer-Encoding header field in the request's message-headers.
@@ -245,21 +250,63 @@ Request-URI    = "*" | absoluteURI | abs_path | authority
 - A server SHOULD read and forward a message-body on any request; if the request method does not include defined semantics for an entity-body, then the message-body SHOULD be ignored when handling the request.
 
 # Response
+```
+Response      = Status-Line             
+                *(( general-header      
+                | response-header      
+                | entity-header ) CRLF)
+                CRLF
+                [ message-body ]        
+```
 - If a request contains a message-body and a Content-Length is not given, the server SHOULD respond with 400 (bad request) if it cannot determine the length of the message, or with 411 (length required) if it wishes to insist on receiving a valid Content-Length.
-## Start-line
+## Status-line
+```
+Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+```
 ### Status codes to implement
-1XX:
-2XX:
-3XX:
-4XX:
+1xx: Informational - Request received, continuing process
+- 100 (Continue)
+- 
+2xx: Success - The action was successfully received, understood, and accepted
+- 200 (OK)
+- 
+3xx: Redirection - Further action must be taken in order to complete the request
+- 300 (Multiple Choices)
+- 
+4xx: Client Error - The request contains bad syntax or cannot be fulfilled
 - 400 (Bad Request)
 - 405 (Method Not Allowed)
-5XX:
+- 
+5xx: Server Error - The server failed to fulfill an apparently valid request
+- 500 (Internal Server Error)
 - 501 (Not Implemented)
-## Headers
+- 
+
+## Response Header Fields
+```
+response-header =   Accept-Ranges | Age | ETag | Location | Proxy-Authenticate 
+                    | Retry-After | Server | Vary | WWW-Authenticate  
+```
 
 ## Body
 - All 1xx (informational), 204 (no content), and 304 (not modified) responses MUST NOT include a message-body. All other responses do include a message-body, although it MAY be of zero length.
+
+# Entity
+
+## Entity Header Fields
+```
+entity-header  = Allow | Content-Encoding | Content-Language | Content-Length | Content-Location 
+                | Content-MD5 | Content-Range | Content-Type | Expires | Last-Modified 
+```
+
+## Entity Body
+```
+entity-body := Content-Encoding( Content-Type( data ) )
+```
+- Content-Type specifies the media type of the underlying data. Any HTTP/1.1 message containing an entity-body SHOULD include a Content-Type header field defining the media type of that body.
+- Content-Encoding may be used to indicate any additional content codings applied to the data, usually for the purpose of data compression, that are a property of the requested resource. There is no default encoding.
+- If and only if the media type is not given by a Content-Type field, the recipient MAY attempt to guess the media type via inspection of its content and/or the name extension(s) of the URI used to identify the resource. If the media type remains unknown, the recipient SHOULD treat it as type "application/octet-stream".
+- The entity-length of a message is the length of the message-body before any transfer-codings have been applied.
 
 # METHODS
 ## GET
