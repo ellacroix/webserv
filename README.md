@@ -168,14 +168,103 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Voir Type Mime pour gerer static site (Content Type)
 - Pour l'optimisation multi-thread, faire une thread pool avec un std::dequeue [video](https://www.youtube.com/watch?v=FMNnusHqjpw&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&index=6&ab_channel=JacobSorber)
 - Au vu des discussions Discord, le pipelining n'a pas a etre géré, notamment car il est abandonné en HTTP2.0 et par la plupart des navigateurs.
-- RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
 - Caching: plutot une notion pour les intermediaires, pas a gerer
 - Charset = token, le token specifie quel charset a employer, voir cas de Missing Charset
 - Transfer-coding: chunked, identity, gzip, compress, deflate 
 - Chunked transfer Coding: OPTIONAL trailer
+- If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
 
-# Header
+# Message
+```
+generic-message = start-line
+                    *(message-header CRLF)
+                    CRLF
+                    [ message-body ]
+start-line      = Request-Line | Status-Line
+```
+- RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
 
+## Headers
+```
+    message-header = field-name ":" [ field-value ]
+    field-name     = token
+    field-value    = *( field-content | LWS )
+    field-content  = <the OCTETs making up the field-value
+                    and consisting of either *TEXT or combinations
+                    of token, separators, and quoted-string>
+```
+- The order in which header fields with differing field names are received is not significant. However, it is "good practice" to send general-header fields first, followed by request-header or response-header fields, and ending with the entity-header fields
+- Multiple message-header fields with the same field-name MAY be present in a message if and only if the entire field-value for that header field is defined as a comma-separated list [i.e., #(values)]. It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair, without changing the semantics of the message, by appending each subsequent field-value to the first, each separated by a comma.
+- General Header Fields: There are a few header fields which have general applicability for both request and response messages, but which do not apply to the entity being transferred. These header fields apply only to the message being transmitted.
+```
+general-header = Cache-Control | Connection | Date | Pragma | Trailer | Transfer-En| Upgrade | Via | Warning          
+```
+
+## Body
+```
+message-body = entity-body | <entity-body encoded as per Transfer-Encoding>
+```
+- Transfer-Encoding MUST be used to indicate any transfer-codings applied by an application to ensure safe and proper transfer of the message.
+
+## Message Length
+- The transfer-length of a message is the length of the message-body as it appears in the message; that is, after any transfer-codings have been applied.
+- See more details [HERE](https://www.rfc-editor.org/rfc/rfc2616.html#:~:text=When%20a%20message%2Dbody%20is%20included%20with%20a%20message%2C%20the%0A%20%20%20transfer%2Dlength%20of%20that%20body%20is%20determined%20by%20one%20of%20the%20following%0A%20%20%20(in%20order%20of%20precedence)%3A)
+- Messages MUST NOT include both a Content-Length header field and a non-identity transfer-coding. If the message does include a non-identity transfer-coding, the Content-Length MUST be ignored.
+
+# Request
+```
+Request               = Request-Line              ; Section 5.1
+                        *(( general-header        ; Section 4.5
+                         | request-header         ; Section 5.3
+                         | entity-header ) CRLF)  ; Section 7.1
+                        CRLF
+                        [ message-body ]          ; Section 4.3
+```
+## Start-line
+```
+Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
+```
+### Request-URI
+```
+Request-URI    = "*" | absoluteURI | abs_path | authority
+```
+- "*" optionnel pour nous ? Vu que cela ne s'applique pas pour GET/POST/DELETE ?
+- absoluteURI semble s'appliquer aux proxys, mais a accepter tout de meme
+- authority is only used by the CONNECT method
+- Request-URI can be encoded as "% HEX HEX" and has to be decoded
+
+### The Resource Identified by a Request
+- Si on gere plusieurs host (server names ?) sur un meme port, on doit bien differencier les dossiers auxquels ils ont acces
+- Le host peut etre defini dans l'absoluteURI ou le header host, un invalid host entraine une reponse 400
+## Request Header Fields
+
+
+## Body
+- The presence of a message-body in a request is signaled by the inclusion of a Content-Length or Transfer-Encoding header field in the request's message-headers.
+- A message-body MUST NOT be included in a request if the specification of the request method (section 5.1.1) does not allow sending an entity-body in requests.
+- A server SHOULD read and forward a message-body on any request; if the request method does not include defined semantics for an entity-body, then the message-body SHOULD be ignored when handling the request.
+
+# Response
+- If a request contains a message-body and a Content-Length is not given, the server SHOULD respond with 400 (bad request) if it cannot determine the length of the message, or with 411 (length required) if it wishes to insist on receiving a valid Content-Length.
+## Start-line
+### Status codes to implement
+1XX:
+2XX:
+3XX:
+4XX:
+- 400 (Bad Request)
+- 405 (Method Not Allowed)
+5XX:
+- 501 (Not Implemented)
+## Headers
+
+## Body
+- All 1xx (informational), 204 (no content), and 304 (not modified) responses MUST NOT include a message-body. All other responses do include a message-body, although it MAY be of zero length.
+
+# METHODS
+## GET
+## POST
+## DELETE
 
 # Testing
 
