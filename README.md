@@ -54,7 +54,6 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 ## Questions
 - Dans le cas de multiples serveurs, est ce qu'on fait tourner les serveurs sur un seul thread dans une boucle, ou on lance un thread par serveur ?
 - Mettre le config file comme une struct globale ?
-- Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?`
 - Concept de chunk et utilité dans le projet ?
 - IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
 - Doit on gerer l'access authentication ?
@@ -116,6 +115,11 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 [CGI 1.1 Documentation](http://www.wijata.com/cgi/cgispec.html#4.0)
 
+[nice overview](https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf)
+
+[some details](https://www.developpez.net/forums/d151285/php/langage/php-js-quoi-sert-php-cgi-exe-repertoire-php/)
+
+
 ### web socket
 - [nice article](https://www.bogotobogo.com/cplusplus/sockets_server_client.php)
 - [Beej's Guide to Network Programming](http://beej.us/guide/bgnet/html/)
@@ -132,23 +136,13 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 ### http protocol
 - How the web works http://www.garshol.priv.no/download/text/http-tut.html
-- RFCs big picture, in french http://abcdrfc.online.fr/rfc-vf/pdf/rfc2616.pdf
-- RFCs 7230-7235 overview, in french https://www.bortzmeyer.org/http-11-reecrit.html
-- overview http://www.iprelax.fr/http/http_art.php
-- another overview https://www.commentcamarche.net/contents/520-le-protocole-http
 - Request and Response format https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
-- another overview https://www.coozook.com/static/book-samples/B212934F6A-sample.pdf
 
 ### http headers in details
 - MIME list https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-- What HTTP response headers are required https://stackoverflow.com/questions/4726515/what-http-response-headers-are-required
 - response status code https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
 - auth theory https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#Basic_authentication_scheme
 - auth practice https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
-
-### CGI programming
-- nice overview https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf
-- some details https://www.developpez.net/forums/d151285/php/langage/php-js-quoi-sert-php-cgi-exe-repertoire-php/
 
 ### chunked encoding
 - wiki https://fr.wikipedia.org/wiki/Chunked_transfer_encoding
@@ -160,7 +154,6 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 
 ## Discord
-
 [Reception du header Content-Language](https://discord.com/channels/774300457157918772/785407573000060978/796296015522299935)
 
 # Notes
@@ -278,8 +271,8 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 - [206 Partial Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.7)
 
 3xx: Redirection - Further action must be taken in order to complete the request
-- [300 Multiple Choices](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1)
-- [?? 301 Moved Permanently ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2)
+- [?? 300 Multiple Choices ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1)
+- [301 Moved Permanently](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2)
 - [?? 302 Found ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.3)
 - [?? 303 See Other ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.4)
 - [304 Not Modified](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.5)
@@ -311,7 +304,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 - [500 Internal Server Error](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.1)
 - [501 Not Implemented](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.2)
 - ~~502 Bad Gateway~~
-- [503 Service Unavailable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.4): Note: The existence of the 503 status code does not imply that a server must use it when becoming overloaded. Some servers may wish to simply refuse the connection.
+- [503 Service Unavailable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.4): The existence of the 503 status code does not imply that a server must use it when becoming overloaded. Some servers may wish to simply refuse the connection.
 - ~~504 Gateway Timeout~~
 - [505 HTTP Version Not Supported](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.6)
 
@@ -344,15 +337,26 @@ entity-body := Content-Encoding( Content-Type( data ) )
 # METHODS
 ## GET
 The GET method means retrieve whatever information (in the form of an entity) is identified by the Request-URI.
+
 If the Request-URI refers to a data-producing process, it is the produced data which shall be returned as the entity in the response and not the source text of the process, unless that text happens to be the output of the process.
 
 ## POST
 The POST method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI in the Request-Line.
+
 The action performed by the POST method might not result in a resource that can be identified by a URI. In this case, either 200 (OK) or 204 (No Content) is the appropriate response status, depending on whether or not the response includes an entity that describes the result.
 A quoi ressemble le body d'une POST Response ?
 
 ## DELETE
 The DELETE method requests that the origin server delete the resource identified by the Request-URI.
+
+# URI (Uniform Resource Identifier)
+```
+          userinfo       host      port
+          ┌──┴───┐ ┌──────┴──────┐ ┌┴┐
+  https://john.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top
+  └─┬─┘   └───────────┬──────────────┘└───────┬───────┘ └───────────┬─────────────┘ └┬┘
+  scheme          authority                  path                 query           fragment
+```
 
 # Testing
 - python library to make http requests https://requests.readthedocs.io/en/master/
