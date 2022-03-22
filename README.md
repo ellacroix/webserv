@@ -366,3 +366,6 @@ The DELETE method requests that the origin server delete the resource identified
 - Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
 - Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
 - Proteger une erreur de select() en cas d' interruption par un signal, errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
+
+
+http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]
