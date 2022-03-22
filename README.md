@@ -57,7 +57,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Peut on avoir plusieurs requetes HTTP en attente d'un meme Client ?`
 - Concept de chunk et utilité dans le projet ?
 - IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
-
+- Doit on gerer l'access authentication ?
 
 ## Resources
 
@@ -243,6 +243,7 @@ request-header =    Accept | Accept-Charset | Accept-Encoding | Accept-Language
                     | If-None-Match | If-Range | If-Unmodified-Since | Max-Forwards 
                     | Proxy-Authorization | Range | Referer | TE | User-Agent
 ```
+- Expect request: "100-continue", Indique que le client attend une reponse 100 avant d'envoyer le body. [VOIR CAS POSSIBLES](https://www.rfc-editor.org/rfc/rfc2616.html#section-8.2.3)
 
 ## Body
 - The presence of a message-body in a request is signaled by the inclusion of a Content-Length or Transfer-Encoding header field in the request's message-headers.
@@ -265,22 +266,50 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 ```
 ### Status codes to implement
 1xx: Informational - Request received, continuing process
-- 100 (Continue)
-- 
-2xx: Success - The action was successfully received, understood, and accepted
-- 200 (OK)
-- 
+- ~~101 Switching Protocols~~
+2xx: [Success - The action was successfully received, understood, and accepted](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2)
+- [200 OK](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.1)
+- [201 Created](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.2)
+- ~~202 Accepted~~
+- ~~203 Non-Authoritative Information~~
+- [204 No Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.5)
+- ~~205 Reset Content~~
+- [206 Partial Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.7)
 3xx: Redirection - Further action must be taken in order to complete the request
-- 300 (Multiple Choices)
-- 
+- [300 Multiple Choices](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1)
+- [?? 301 Moved Permanently ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2)
+- [?? 302 Found ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.3)
+- [?? 303 See Other ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.4)
+- [304 Not Modified](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.5)
+- ~~305 Use Proxy~~
+- ~~306 (Unused)~~
+- ~~307 Temporary Redirect~~
 4xx: Client Error - The request contains bad syntax or cannot be fulfilled
-- 400 (Bad Request)
-- 405 (Method Not Allowed)
-- 
+- [400 Bad Request](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.1)
+- [?? 401 Unauthorized ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.2)
+- ~~402 Payment Required~~
+- [403 Forbidden](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.4)
+- [404 Not Found](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.5)
+- [405 Method Not Allowed](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.6)
+- [406 Not Acceptable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.7)
+- ~~407 Proxy Authentication Required~~
+- [408 Request Timeout](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.9)
+- [?? 409 Conflict ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.10)
+- ~~410 Gone~~
+- [?? 411 Length Required ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.12)
+- [?? 412 Precondition Failed ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.13)
+- [413 Request Entity Too Large](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.14)
+- [414 Request-URI Too Long](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.15)
+- [415 Unsupported Media Type](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.16)
+- [416 Requested Range Not Satisfiable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.17)
+- [417 Expectation Failed](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.18)
 5xx: Server Error - The server failed to fulfill an apparently valid request
-- 500 (Internal Server Error)
-- 501 (Not Implemented)
-- 
+- [500 Internal Server Error](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.1)
+- [501 Not Implemented](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.2)
+- ~~502 Bad Gateway~~
+- [503 Service Unavailable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.4): Note: The existence of the 503 status code does not imply that a server must use it when becoming overloaded. Some servers may wish to simply refuse the connection.
+- ~~504 Gateway Timeout~~
+- [505 HTTP Version Not Supported](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.6)
 
 ## Response Header Fields
 ```
@@ -310,11 +339,18 @@ entity-body := Content-Encoding( Content-Type( data ) )
 
 # METHODS
 ## GET
+The GET method means retrieve whatever information (in the form of an entity) is identified by the Request-URI.
+If the Request-URI refers to a data-producing process, it is the produced data which shall be returned as the entity in the response and not the source text of the process, unless that text happens to be the output of the process.
+
 ## POST
+The POST method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI in the Request-Line.
+The action performed by the POST method might not result in a resource that can be identified by a URI. In this case, either 200 (OK) or 204 (No Content) is the appropriate response status, depending on whether or not the response includes an entity that describes the result.
+A quoi ressemble le body d'une POST Response ?
+
 ## DELETE
+The DELETE method requests that the origin server delete the resource identified by the Request-URI.
 
 # Testing
-
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
 
