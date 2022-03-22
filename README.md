@@ -267,6 +267,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 ### Status codes to implement
 1xx: Informational - Request received, continuing process
 - ~~101 Switching Protocols~~
+
 2xx: [Success - The action was successfully received, understood, and accepted](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2)
 - [200 OK](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.1)
 - [201 Created](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.2)
@@ -275,6 +276,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 - [204 No Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.5)
 - ~~205 Reset Content~~
 - [206 Partial Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.7)
+
 3xx: Redirection - Further action must be taken in order to complete the request
 - [300 Multiple Choices](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1)
 - [?? 301 Moved Permanently ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2)
@@ -284,6 +286,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 - ~~305 Use Proxy~~
 - ~~306 (Unused)~~
 - ~~307 Temporary Redirect~~
+
 4xx: Client Error - The request contains bad syntax or cannot be fulfilled
 - [400 Bad Request](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.1)
 - [?? 401 Unauthorized ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.2)
@@ -303,6 +306,7 @@ Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
 - [415 Unsupported Media Type](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.16)
 - [416 Requested Range Not Satisfiable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.17)
 - [417 Expectation Failed](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.18)
+
 5xx: Server Error - The server failed to fulfill an apparently valid request
 - [500 Internal Server Error](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.1)
 - [501 Not Implemented](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.2)
