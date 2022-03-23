@@ -1,6 +1,5 @@
 #pragma once
 
-#define PORT 1234
 #define BUFFER_SIZE 5000
 
 #include <vector>
@@ -16,41 +15,32 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
+#include <list>
 
 #include "Client.hpp"
+#include "Virtual_Server.hpp"
 
-class Server{
+class Port{
 
 private:
 
 public:
+	int					port_number;
 	int					listen_socket;
 	struct sockaddr_in	server_address;
-	struct timeval		timeout;
 	int 				addr_len;
-	fd_set				master_reading_set, work_reading_set, master_writing_set, work_writing_set;
 	int					max_sd;
-	char				buffer[BUFFER_SIZE + 1];
 	int					ret, on = 1;
-	bool				end_server = false;
 
-	std::string			server_name;
-	int					server_port;
 
-	//std::vector<Client*> Clients;
 	std::map<int, Client*> Clients;
+	std::list<Virtual_Server*> Virtual_Servers;
 
-	Server();
-	Server(std::string name, int port);
-	~Server();
+	Port();
+	Port(int port);
+	~Port();
 
 	int	start();
-	int loop();
-	int acceptClients();
-	int receiveRequests();
-	int sendResponses();
-
-	int treatRequests();
 
 	void disconnectClient(int socket);
 

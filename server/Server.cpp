@@ -21,7 +21,8 @@ int Server::start()
 	//Basic bind to a port
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons( PORT );
+	//address.sin_addr.s_addr = inet_addr("127.0.0.1".c_str());
+    server_address.sin_port = htons(this->server_port);
 	addr_len = sizeof(server_address);
 	rc = bind(listen_socket, (struct sockaddr *)&server_address, addr_len);
 	if (rc < 0){
@@ -196,6 +197,14 @@ Server::Server()
 {
 	timeout.tv_sec  = 60;
 	timeout.tv_usec = 0;
+}
+
+Server::Server(std::string name, int port)
+{
+	timeout.tv_sec  = 60;
+	timeout.tv_usec = 0;
+	this->server_name = name;
+	this->server_port = port;
 }
 
 Server::~Server()
