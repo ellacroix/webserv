@@ -1,6 +1,8 @@
+#include "webserv.hpp"
 #include "Port.hpp"
 #include "Virtual_Server.hpp"
 #include "Client.hpp"
+#include "ConfigParser.hpp"
 
 #include <list>
 #include <deque>
@@ -19,8 +21,14 @@ void	*thread_loop(void* arg)
 }
 */
 
-int main()
+int main(int argc, char *argv[])
 {
+	ConfigParser	config;
+	if (argc != 2)
+		exit (1);
+	std::list<Port *> portsList = config.parse(argv[1]);
+
+	/*
 	Port *Port1 = new Port(8000);
 	Port *Port2 = new Port(8001);
 
@@ -35,6 +43,7 @@ int main()
 	Port1->Virtual_Servers.push_back(VS1);
 	Port1->Virtual_Servers.push_back(VS2);
 	Port2->Virtual_Servers.push_back(VS3);
+
 
 	fd_set	master_reading_set, work_reading_set, master_writing_set, work_writing_set;
 	FD_ZERO(&master_reading_set);
@@ -110,4 +119,5 @@ int main()
 			}
 		}
 	}
+*/
 }

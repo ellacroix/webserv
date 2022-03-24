@@ -3,7 +3,9 @@ NAME		=	webserv
 SRCS		=	main.cpp \
 				Client.cpp \
 				Port.cpp \
-				Virtual_Server.cpp
+				Virtual_Server.cpp \
+				ConfigParser.cpp \
+				parsing.cpp
 
 OBJS		=	${SRCS:.cpp=.o}
 
@@ -16,7 +18,7 @@ all			:	${NAME}
 ${NAME}		:	${OBJS}
 			${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
 
-%.o			:	%.cpp Client.hpp Port.hpp Virtual_Server.hpp 
+%.o			:	%.cpp Client.hpp Port.hpp Virtual_Server.hpp ConfigParser.hpp
 			${CXX} ${CXXFLAGS} -c $< -o ${<:.cpp=.o}
 
 clean		:

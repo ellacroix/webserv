@@ -1,24 +1,11 @@
-#pragma once
+#ifndef PORT_HPP
+# define PORT_HPP
 
-#define BUFFER_SIZE 5000
+# define BUFFER_SIZE 5000
+# include "webserv.hpp"
 
-#include <vector>
-#include <map>
-#include <stdio.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <fcntl.h>
-#include <iostream>
-#include <list>
-
-#include "Client.hpp"
-#include "Virtual_Server.hpp"
+# include "Client.hpp"
+# include "Virtual_Server.hpp"
 
 class Port{
 
@@ -46,3 +33,5 @@ public:
 	void disconnectClient(int socket);
 
 };
+
+#endif
