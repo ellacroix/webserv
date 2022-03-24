@@ -9,13 +9,15 @@
 
 #define THREADS 8
 
+/*
 void	*thread_loop(void* arg)
 {
-	std::deque<Client*> *queue = (std::deque<Client*>*)arg;
-	Client *currentClient;
+//	std::deque<Client*> *queue = (std::deque<Client*>*)arg;
+//	Client *currentClient;
 	
-	currentClient = (Client*)queue->pop_front();
+//	currentClient = (Client*)queue->pop_front();
 }
+*/
 
 int main()
 {
@@ -105,6 +107,7 @@ int main()
 				{
 					queue.push_back(current_client);
 				}
+			}
 		}
 	}
 }

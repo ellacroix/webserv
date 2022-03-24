@@ -52,7 +52,9 @@ int Port::start()
 
 Port::Port() {}
 
-Port::Port(int port)
+Port::Port(int port) :
+	on(1),
+	kill_port(false)
 {
 	port_number = port;
 }

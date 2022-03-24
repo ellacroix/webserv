@@ -30,8 +30,8 @@ public:
 	struct sockaddr_in	server_address;
 	int 				addr_len;
 	int					max_sd;
-	int					ret, on = 1;
-	bool				kill_port = false;
+	int					ret, on;
+	bool				kill_port;
 
 
 	std::map<int, Client*> Clients;
