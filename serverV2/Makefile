@@ -5,7 +5,8 @@ SRCS		=	main.cpp \
 				Port.cpp \
 				Virtual_Server.cpp \
 				ConfigParser.cpp \
-				parsing.cpp
+				parsing.cpp \
+				argumentsParsing.cpp
 
 OBJS		=	${SRCS:.cpp=.o}
 

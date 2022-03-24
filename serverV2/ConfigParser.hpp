@@ -46,6 +46,7 @@ enum	arguments
 };
 
 class	ConfigParser {
+
 	private:
 		int											_context;
 		std::vector<std:: vector<std::string > >	_lines;
@@ -66,11 +67,27 @@ class	ConfigParser {
 		std::vector<std::vector<std::string> >	getLines(void) const;	
 		std::string								getCurLine(void) const;
 
+		//	parsing.cpp	
 		std::list<Port *>			parse(char *arg);
 		void						displayLine(std::vector<std::string> v) const;
 		void						displayLines(void) const;
 		void						splitLineIntoTokens(void);
 		int							validateDirective(void);
+		int							validateArguments(void);
+
+		//	argumentsParsing.cpp	
+		int			validateServerArgs(void);
+		int			validateListenArgs(void);
+		int			validateServerNameArgs(void);
+		int			validateClientMaxBodySizeArgs(void);
+		int			validateLocationArgs(void);
+		int			validateRootArgs(void);
+		int			validateErrorPageArgs(void);
+		int			validateAutoindexArgs(void);
+		int			validateIndexArgs(void);
+		int			validateReturnArgs(void);
+		int			validateOpeningBracketArgs(void);
+		int			validateClosingBracketArgs(void);
 
 };
 

@@ -95,6 +95,7 @@ std::list<Port *>	ConfigParser::parse(char *arg)
 		exit(1);
 	}
 
+	this->_dir = DIR_ERROR;
 	while (std::getline(ifs, this->_curLine))
 	{
 		this->splitLineIntoTokens();
