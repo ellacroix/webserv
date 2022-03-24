@@ -9,7 +9,7 @@ OBJS		=	${SRCS:.cpp=.o}
 
 CXX			=	c++
 
-CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98
+CXXFLAGS	= -pthread -Wall -Werror -Wextra -std=c++98
 
 all			:	${NAME}
 

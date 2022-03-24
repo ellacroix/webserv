@@ -12,6 +12,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
+#include <pthread.h>
 
 class Client{
 
@@ -22,9 +23,13 @@ protected:
 public:
 	int					stream_socket;
 	bool				connected;
+	std::string			request_buffer;
+	pthread_mutex_t		client_mutex;
 
-	//Request				*request = NULL;
-	//Response			*response = NULL;
+	bool				response;
+
+	//Request			*request;
+	//Response			*response;
 
 	Client() {};
 	Client(int fd);

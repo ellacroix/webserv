@@ -358,15 +358,6 @@ The DELETE method requests that the origin server delete the resource identified
   scheme          authority                  path                 query           fragment
 ```
 
-# Testing
-- python library to make http requests https://requests.readthedocs.io/en/master/
-- quickly and easily send requests https://www.postman.com/
-
-# A faire
-- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
-- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
-- Proteger une erreur de select() en cas d' interruption par un signal, errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
-
 
 http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]# [CONFIGURING NGINX AS A WEB SERVER](https://docs.nginx.com/nginx/admin-guide/web-server/web-server/)
 
@@ -656,3 +647,17 @@ In the configuration file, you should be able to:
 		- The CGI should be run in the correct directory for relative path file access.
 		- Your server should work with one CGI (php-CGI, Python, and so forth).
 
+# Multi-threading
+- ~~Comment un thread peut modifier un fd_set et demander a select() de se rester [StackOverflow](https://stackoverflow.com/questions/17818454/select-doesnt-recognise-changes-through-fd-set-while-blocking)~~
+- ~~Illustration du self-pipe trick[ICI](https://lwn.net/Articles/177897/)~~
+- La consigne interdit le pipe-trick, donc on va travailler avec epoll()
+
+
+# Testing
+- python library to make http requests https://requests.readthedocs.io/en/master/
+- quickly and easily send requests https://www.postman.com/
+
+# A faire
+- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
+- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
+- Proteger une erreur de select() en cas d' interruption par un signal, errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
