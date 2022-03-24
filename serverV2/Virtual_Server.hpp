@@ -21,6 +21,7 @@ private:
 public:
 
 	std::string		server_name;
+	
 
 	Virtual_Server() {};
 	Virtual_Server(std::string name);

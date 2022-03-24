@@ -31,6 +31,7 @@ public:
 	int 				addr_len;
 	int					max_sd;
 	int					ret, on = 1;
+	bool				kill_port = false;
 
 
 	std::map<int, Client*> Clients;
@@ -40,7 +41,7 @@ public:
 	Port(int port);
 	~Port();
 
-	int	start();
+	int	start();							// listen()
 
 	void disconnectClient(int socket);
 

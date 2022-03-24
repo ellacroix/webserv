@@ -3,17 +3,26 @@
 #include "Client.hpp"
 
 #include <list>
+#include <deque>
 #include <pthread.h>
 #include <sys/select.h>
 
 #define THREADS 8
+
+void	*thread_loop(void* arg)
+{
+	std::deque<Client*> *queue = (std::deque<Client*>*)arg;
+	Client *currentClient;
+	
+	currentClient = (Client*)queue->pop_front();
+}
 
 int main()
 {
 	Port *Port1 = new Port(8000);
 	Port *Port2 = new Port(8001);
 
-	std::list<Port *> Ports;
+	std::list<Port*> Ports; //= parse();
 	Ports.push_back(Port1);
 	Ports.push_back(Port2);
 
@@ -30,6 +39,7 @@ int main()
 	FD_ZERO(&master_writing_set);
 
 	//CREATE THREAD_POOL
+	std::deque<Client*> queue;
 
 	Port1->start();
 	FD_SET(Port1->listen_socket, &master_reading_set);
@@ -57,29 +67,44 @@ int main()
 			break;
 		}
 
-		for (std::iterator<list> it_p = Ports.begin(); it_p != Ports.end(); it_p++)
+		for (std::list<Port*>::iterator it_p = Ports.begin(); it_p != Ports.end(); it_p++)
 		{
-			if (FD_ISSET(it_p->listen_socket, &work_reading_set))
+			Port *current_port = *it_p;
+
+			if (FD_ISSET(current_port->listen_socket, &work_reading_set))
 			{
 				int connection = 0;
 				while (connection != -1)
 				{
 					printf("Accepting new connection\n");
-					connection = accept(listen_socket, NULL, NULL);
+					connection = accept(current_port->listen_socket, NULL, NULL);
 					if (connection < 0)
 					{
 						if (errno != EWOULDBLOCK)
 						{
 							perror("accept() failed");
-							end_server = true;
+							current_port->kill_port = true;
 						}
 						break;
 					}
 					Client *newClient = new Client(connection);
-					it_p->Clients[connection] = newClient;
+					current_port->Clients[connection] = newClient;
+					FD_SET(connection, &master_reading_set);
+					max_sd = connection;
 				}
 			}
 
+			//Port::Clients current_clients = current_port->Clients;
+			std::map<int, Client*> current_clients = current_port->Clients;
+			for (std::map<int, Client*>::iterator it_c = current_clients.begin(); it_c != current_clients.end(); it_c++)
+			{
+				int connection = it_c->first;
+				Client *current_client = it_c->second;
+
+				if (FD_ISSET(connection, &work_reading_set))
+				{
+					queue.push_back(current_client);
+				}
 		}
 	}
 }
