@@ -2,7 +2,8 @@
 
 ConfigParser::ConfigParser(void) :
 	_context(MAIN_CONTEXT),
-	_dir(-1)
+	_dir(-1),
+	_lineN(0)
 {
 	return ;
 }
@@ -68,7 +69,12 @@ void						ConfigParser::displayLines(void) const
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
-	"location", "root", "error_page", "autoindex", "index",
-	"return", "{", "}"
+	"root", "error_page", "autoindex", "index",
+	"return", "location", "{", "}"
 };
 
+const char *	ConfigParser::_contexts[N_CONTEXTS] =
+{
+	"MAIN_CONTEXT", "SERVER_CONTEXT", "LOCATION_CONTEXT",
+	"SWITCHING_TO_SERVER", "SWITCHING_TO_LOCATION"
+};

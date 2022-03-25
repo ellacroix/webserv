@@ -4,13 +4,16 @@
 # include "webserv.hpp"
 # include "Port.hpp"
 
-# define N_DIR	12
+# define N_DIR 12
+# define N_CONTEXTS 5
 
 enum	contexts
 {
-	MAIN_CONTEXT = -1,
+	MAIN_CONTEXT = 0,
 	SERVER_CONTEXT,
-	LOCATION_CONTEXT
+	LOCATION_CONTEXT//,
+//	SWITCHING_TO_SERVER,
+//	SWITCHING_TO_LOCATION
 };
 
 enum	directives
@@ -20,14 +23,14 @@ enum	directives
 	LISTEN,
 	SERVER_NAME,
 	CLIENT_MAX_BODY_SIZE,
-	LOCATION,
 	ROOT,
 	ERROR_PAGE,
 	AUTOINDEX,
 	INDEX,
 	RETURN,
+	LOCATION,
 	OPENING_BRACKET,
-	CLOSING_BRACKET
+	CLOSING_BRACKET,
 };
 
 enum	arguments
@@ -52,8 +55,11 @@ class	ConfigParser {
 		std::vector<std:: vector<std::string > >	_lines;
 		std::vector<std::string>					_line;
 		std::string									_curLine;
-		static const char *							_directives[N_DIR];
 		int											_dir;
+		int											_lineN;
+
+		static const char *							_directives[N_DIR];
+		static const char *							_contexts[N_CONTEXTS];
 
 		ConfigParser	&operator=(ConfigParser const & rhs);
 
@@ -63,17 +69,20 @@ class	ConfigParser {
 		ConfigParser(void);
 		~ConfigParser(void);
 
+		//	ConfigParser.cpp
 		int										getContext(void) const;
 		std::vector<std::vector<std::string> >	getLines(void) const;	
 		std::string								getCurLine(void) const;
+		void						displayLine(std::vector<std::string> v) const;
+		void						displayLines(void) const;
 
 		//	parsing.cpp	
 		std::list<Port *>			parse(char *arg);
-		void						displayLine(std::vector<std::string> v) const;
-		void						displayLines(void) const;
 		void						splitLineIntoTokens(void);
 		int							validateDirective(void);
 		int							validateArguments(void);
+		bool						validateContext(void);
+		bool						hasContent(void) const ;
 
 		//	argumentsParsing.cpp	
 		int			validateServerArgs(void);

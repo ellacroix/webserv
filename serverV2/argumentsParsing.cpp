@@ -1,11 +1,17 @@
 #include "webserv.hpp"
 #include "ConfigParser.hpp"
 
-int ConfigParser::validateServerArgs(void)
+int		ConfigParser::validateServerArgs(void)
 {
-	if (this->_line.size() == 1
-		|| (this->_line.size() == 2
-			&& this->_line[1] == ConfigParser::_directives[OPENING_BRACKET]))
+	/*
+	if (this->_line.size() == 1)
+	{
+		this->_context = SWITCHING_TO_SERVER;
+		return (true);
+	}
+	else*/
+	if (this->_line.size() == 2
+		&& this->_line[1] == ConfigParser::_directives[OPENING_BRACKET])
 		return (true);
 	return (ARG_ERROR);
 }
@@ -56,4 +62,3 @@ int ConfigParser::validateClosingBracketArgs(void)
 }
 
 */
-
