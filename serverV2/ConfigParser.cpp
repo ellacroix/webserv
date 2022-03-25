@@ -42,28 +42,40 @@ std::string								ConfigParser::getCurLine(void) const
 
 void						ConfigParser::displayLine(std::vector<std::string> v) const
 {
+	int	tab;
 	std::vector<std::string>::const_iterator	it = v.begin();
 	std::vector<std::string>::const_iterator	ite = v.end();
 
+	tab = this->_context;
+	while (tab--)
+		std::cout << "\t";
 	while (it != ite)
 	{
 		std::cout << "\"" << *it << "\"\t";
 		it++;
 	}
+	std::cout << std::endl;
 }
 
-void						ConfigParser::displayLines(void) const
+void	ConfigParser::displayLines(void) const
 {
 	std::vector<std::vector<std::string> >::const_iterator	it = this->_lines.begin();
 	std::vector<std::vector<std::string> >::const_iterator	ite = this->_lines.end();
 
 	while (it != ite)
 	{
-		//std::cout << "\"" << *it << "\"" << std::endl;
 		this->displayLine(*it);
-		std::cout << std::endl;
 		it++;
 	}
+}
+
+void	ConfigParser::displayContextSwitch(int newContext) const
+{
+	std::cout << "switching context : "
+		<< ConfigParser::_contexts[this->_context]
+		<< " to " 
+		<< ConfigParser::_contexts[newContext]
+		<< std::endl;
 }
 
 const char *	ConfigParser::_directives[N_DIR] =

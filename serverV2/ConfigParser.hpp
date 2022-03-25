@@ -75,6 +75,7 @@ class	ConfigParser {
 		std::string								getCurLine(void) const;
 		void						displayLine(std::vector<std::string> v) const;
 		void						displayLines(void) const;
+		void						displayContextSwitch(int newContext) const;
 
 		//	parsing.cpp	
 		std::list<Port *>			parse(char *arg);

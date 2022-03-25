@@ -21,6 +21,7 @@ std::list<Port *>	ConfigParser::parse(char *arg)
 		if (this->hasContent() == true)
 		{
 			this->splitLineIntoTokens();
+			this->displayLine(this->_line);
 			this->_dir = this->validateDirective();
 			if (this->_dir == DIR_ERROR)
 			{
@@ -43,7 +44,7 @@ std::list<Port *>	ConfigParser::parse(char *arg)
 		}
 	}
 
-	this->displayLines();
+//	this->displayLines();
 
 	ifs.close();
 	return (portsList);
@@ -132,11 +133,6 @@ bool        ConfigParser::validateContext(void)
     if (this->_dir == SERVER
             && this->_context == MAIN_CONTEXT)
     {
-		/*std::cout << "switching context : "
-			<< ConfigParser::_contexts[this->_context]
-			<< " to " 
-			<< ConfigParser::_contexts[SERVER_CONTEXT]
-			<< std::endl;*/
         this->_context = SERVER_CONTEXT;
         return (true);
     }
@@ -146,15 +142,12 @@ bool        ConfigParser::validateContext(void)
         this->_context = LOCATION_CONTEXT;
         return (true);
     }
-
     else if (this->_dir >= LISTEN && this->_dir <= RETURN
             && this->_context == SERVER_CONTEXT)
         return (true);
-
     else if (this->_dir >= ROOT && this->_dir <= RETURN
             && this->_context == LOCATION_CONTEXT)
         return (true);
-
     else if (this->_dir == CLOSING_BRACKET
             && (this->_context == SERVER_CONTEXT
                 || this->_context == LOCATION_CONTEXT))
@@ -162,7 +155,6 @@ bool        ConfigParser::validateContext(void)
         this->_context = this->_context - 1;
         return (true);
     }
-
     else
         return (false);
 }
