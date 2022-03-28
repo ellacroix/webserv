@@ -55,6 +55,8 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 ## Questions
 - Concept de chunk et utilité dans le projet ?
 - Doit on gerer l'access authentication ?
+- Si le client ferme la connection apres l'envoi de sa requete, doit on lui repondre ? (https://stackoverflow.com/questions/4824451/detect-end-of-http-request-body)
+- 
 
 ## Resources
 
