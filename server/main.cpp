@@ -44,7 +44,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	client->request_buffer.append(buffer);
 
 	//Simulating the processing of a big request
-	sleep(5);
+	//sleep(5);
 
 	//Checking if client->request_buffer is a complete request
 	if (client->CheckCompleteRequest() == true)
@@ -76,9 +76,7 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 	printf("ThreadsPool: send routine\n");
 	
 	//Sending the reponse to the client
-	int ret = 1;
-	while (ret > 0)
-		ret = send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
+	send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
 	
 	//Response was sent, so we monitor client->stream_socket for receiving a new request
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
