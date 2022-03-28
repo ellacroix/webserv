@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PORT_HPP
+#define PORT_HPP
+
 
 #define BUFFER_SIZE 5000
 
@@ -19,6 +21,8 @@
 
 #include "Client.hpp"
 #include "Virtual_Server.hpp"
+
+class Client ;
 
 class Port{
 
@@ -46,3 +50,5 @@ public:
 	void disconnectClient(int socket);
 
 };
+
+#endif

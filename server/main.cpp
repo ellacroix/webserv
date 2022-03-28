@@ -24,26 +24,51 @@ typedef struct	s_thread_info
 
 }				t_thread_info;
 
-
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
-	char buffer[BUFFER_SIZE];
+	char	buffer[BUFFER_SIZE];
+	int		ret;
 	printf("ThreadsPool: recv routine\n");
 	
 	//Receiving all we can from the client
-	recv(client->stream_socket, buffer, BUFFER_SIZE, 0);
-	client->request_buffer.assign(buffer);
+	bzero(buffer, BUFFER_SIZE);
+	ret = recv(client->stream_socket, buffer, BUFFER_SIZE, 0);
+	if (ret == 0)
+	{
+		printf("Disconnecting %d\n", client->stream_socket);
+		client->connected = false;
+		client->parent_port->Clients.erase(client->stream_socket);
+		delete client;
+		return ;
+	}
+	client->request_buffer.append(buffer);
 
-	//Simulating the processing of a big request and writing the response
+	//Simulating the processing of a big request
 	sleep(5);
-	
-	//Reponse is ready to be sent, so we monitor client->stream_socket for writing only
-	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-	thread_info->event.data.fd = client->stream_socket;
-	thread_info->event.events = EPOLLOUT | EPOLLET;
-	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response = true;
-	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+
+	//Checking if client->request_buffer is a complete request
+	if (client->CheckCompleteRequest() == true)
+	{
+		client->CreateRequest();
+		client->request->parser();
+		
+		//Response is ready to be sent, so we monitor client->stream_socket for writing only
+		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+		thread_info->event.data.fd = client->stream_socket;
+		thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
+		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+		client->response_ready = true;
+		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+	}
+	else
+	{
+		//The request is incomplete, we monitor the connection again to read the rest
+		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+		thread_info->event.data.fd = client->stream_socket;
+		thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+	}
 }
 
 void	thread_send_routine(Client *client, t_thread_info *thread_info)
@@ -56,9 +81,10 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 	//Response was sent, so we monitor client->stream_socket for receiving a new request
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;
-	thread_info->event.events = EPOLLIN | EPOLLET;
+	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
 	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response = false;
+	client->response_ready = false;
+	client->request_buffer.clear();
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
 
@@ -88,7 +114,7 @@ void	*thread_loop(void* arg)
 
 		//Determine which routine to do on the client
 		pthread_mutex_lock(&currentClient->client_mutex);
-		if (currentClient->response == true)
+		if (currentClient->response_ready == true)
 			thread_send_routine(currentClient, thread_info);
 		else
 			thread_recv_routine(currentClient, thread_info);
@@ -189,12 +215,12 @@ int main()
 						
 						//Creating a new Client instance to represent the connection and add it to this port's map.
 						printf("MainProcess: Accepted new connection on port:%d\n", current_port->port_number);
-						Client *newClient = new Client(connection);
+						Client *newClient = new Client(connection, current_port);
 						current_port->Clients[connection] = newClient;
 						
 						// Monitor this new connection for reading.
 						event.data.fd = connection;
-						event.events = EPOLLIN | EPOLLET;
+						event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
 						pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 						epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection, &event);
 						pthread_mutex_unlock(&thread_info->epoll_fd_mutex);

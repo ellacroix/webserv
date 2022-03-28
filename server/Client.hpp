@@ -1,6 +1,8 @@
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
-//#include "Request.hpp"
+#include "Port.hpp"
+#include "Request.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -12,7 +14,10 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
+#include <string>
 #include <pthread.h>
+
+class Port ;
 
 class Client{
 
@@ -21,18 +26,24 @@ private:
 protected:
 
 public:
+	Port				*parent_port;
 	int					stream_socket;
 	bool				connected;
 	std::string			request_buffer;
 	pthread_mutex_t		client_mutex;
 
-	bool				response;
+	bool				response_ready;
 
-	//Request			*request;
+	Request				*request;
 	//Response			*response;
 
 	Client() {};
-	Client(int fd);
-	~Client() {};
+	Client(int fd, Port *port);
+	~Client();
+
+	bool	CheckCompleteRequest();
+	int		CreateRequest();
 
 };
+
+#endif

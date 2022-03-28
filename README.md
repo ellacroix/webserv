@@ -164,14 +164,16 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Transfer-coding: chunked, identity, gzip, compress, deflate 
 - Chunked transfer Coding: OPTIONAL trailer
 - If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
+- 
 
 # Message
 ```
-generic-message = start-line
+generic-message =   start-line
                     *(message-header CRLF)
                     CRLF
                     [ message-body ]
-start-line      = Request-Line | Status-Line
+
+start-line      =   Request-Line | Status-Line
 ```
 - RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
 

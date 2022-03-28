@@ -20,6 +20,7 @@ protected:
 
 public:
 	std::string raw_request;
+
 	int error;
 	bool Chunked;
 	int ContentLenght;
@@ -30,7 +31,7 @@ public:
 	Request() {};
 	~Request() {};
 
-	Request(char *raw);
+	Request(std::string raw);
 
 	int			parser();
 
