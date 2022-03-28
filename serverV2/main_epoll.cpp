@@ -4,11 +4,12 @@
 
 #include <list>
 #include <deque>
+#include <iostream>
 #include <pthread.h>
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 20
-#define THREADS 1
+#define THREADS 8
 
 typedef struct	s_thread_info
 {
@@ -26,26 +27,39 @@ typedef struct	s_thread_info
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
-	char *buffer[BUFFER_SIZE];
-	printf("recv routine\n");
+	char buffer[BUFFER_SIZE];
+	printf("ThreadsPool: recv routine\n");
 	
 	//Receiving all we can from the client
 	recv(client->stream_socket, buffer, BUFFER_SIZE, 0);
-	client->request_buffer = "123";
+	client->request_buffer.assign(buffer);
 
+	//Simulating the processing of a big request and writing the response
 	sleep(5);
+	
+	//Reponse is ready to be sent, so we monitor client->stream_socket for writing only
+	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;
 	thread_info->event.events = EPOLLOUT | EPOLLET;
-	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_ADD, client->stream_socket, &thread_info->event);
+	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
 	client->response = true;
+	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
 
 void	thread_send_routine(Client *client, t_thread_info *thread_info)
 {
-	printf("send routine\n");
-
+	printf("ThreadsPool: send routine\n");
+	
+	//Sending the reponse to the client
 	send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
+	
+	//Response was sent, so we monitor client->stream_socket for receiving a new request
+	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+	thread_info->event.data.fd = client->stream_socket;
+	thread_info->event.events = EPOLLIN | EPOLLET;
+	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
 	client->response = false;
+	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
 
 void	*thread_loop(void* arg)
@@ -57,30 +71,27 @@ void	*thread_loop(void* arg)
 	
 	while(true)
 	{
+		//Check if there is work to do in the queue or wait on cond_wait for work to be added
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		if (thread_info->queue->empty() == true)
 		{
-			printf("Waiting on conditional wait\n");
+			printf("ThreadsPool: No work in the queue, waiting...\n");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
 			currentClient = thread_info->queue->front();
 		}
 		else
 			currentClient = thread_info->queue->front();
-		printf("Grabbed a task\n");
+		printf("ThreadsPool: Grabbed a task\n");
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 
+		//Determine which routine to do on the client
 		pthread_mutex_lock(&currentClient->client_mutex);
-		if (currentClient->response == false)
-			thread_recv_routine(currentClient, thread_info);
-		else
+		if (currentClient->response == true)
 			thread_send_routine(currentClient, thread_info);
+		else
+			thread_recv_routine(currentClient, thread_info);
 		pthread_mutex_unlock(&currentClient->client_mutex);
-	}
-
-	while(true)
-	{
-		sleep(10);
 	}
 }
 
@@ -107,8 +118,7 @@ int main()
 	int epoll_fd = epoll_create(1);
 
 
-
-	//CREATE THREAD_POOL
+	//CREATE AND LAUNCH THREAD_POOL
 	t_thread_info *thread_info = new t_thread_info();
 	
 	thread_info->queue = new std::deque<Client*>();
@@ -137,10 +147,9 @@ int main()
 
 	while (1)
 	{
-
-		printf("\nWaiting on epoll_wait()\n");
+		printf("\nMainProcess: Waiting on epoll_wait()\n");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 60000);
-		printf("epoll_wait() activated by %d file descriptors\n", new_events);
+		printf("MainProcess: epoll_wait() activated by %d file descriptors\n", new_events);
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
@@ -159,8 +168,10 @@ int main()
 				Port *current_port = *it_p;
 				std::map<int, Client*>::iterator it_c = current_port->Clients.find(event_fd);
 
+				//Check if the listen_socket of the current port has activated, meaning we have connections to accept()
 				if (current_port->listen_socket == event_fd)
 				{
+					//Loop to accept all connections on the backlog
 					int connection = 0;
 					while (connection != -1)
 					{
@@ -174,14 +185,22 @@ int main()
 							}
 							break;
 						}
-						printf("Accepted new connection on port:%d\n", current_port->port_number);
+						
+						//Creating a new Client instance to represent the connection and add it to this port's map.
+						printf("MainProcess: Accepted new connection on port:%d\n", current_port->port_number);
 						Client *newClient = new Client(connection);
 						current_port->Clients[connection] = newClient;
+						
+						// Monitor this new connection for reading.
 						event.data.fd = connection;
 						event.events = EPOLLIN | EPOLLET;
+						pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 						epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection, &event);
+						pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 					}
 				}
+				
+				//Check if find() found the event_fd in this port's map, meaning there is work to do in it.
 				else if (it_c != current_port->Clients.end())
 				{
 					int connection = it_c->first;
@@ -190,30 +209,10 @@ int main()
 					pthread_mutex_lock(&thread_info->queue_mutex);
 					thread_info->queue->push_back(current_client);
 					pthread_cond_signal(&thread_info->condition_var);
-					printf("Main added client %d to the queue\n", connection);
+					printf("MainProcess: added client %d to the queue\n", connection);
 					pthread_mutex_unlock(&thread_info->queue_mutex);
 				}
 			}
 		}
 	}
 }
-
-/* 
-			for (std::map<int, Client*>::iterator it_c = current_port->Clients.begin(); it_c != current_port->Clients.end(); it_c++)
-			{
-				int connection = it_c->first;
-				Client *current_client = it_c->second;
-
-				if (FD_ISSET(connection, &work_reading_set))
-				{
-					pthread_mutex_lock(&thread_info->queue_mutex);
-					thread_info->queue->push_back(current_client);
-					pthread_cond_signal(&thread_info->condition_var);
-					printf("Main added client %d to the queue\n", connection);
-					pthread_mutex_unlock(&thread_info->queue_mutex);
-				}
-			}
-		}
-	}
-}
- */
