@@ -3,7 +3,9 @@
 ConfigParser::ConfigParser(void) :
 	_context(MAIN_CONTEXT),
 	_dir(-1),
-	_lineN(0)
+	_lineN(0),
+	_tmpVSIsStored(false),
+	_tmpLocIsStored(false)
 {
 	return ;
 }

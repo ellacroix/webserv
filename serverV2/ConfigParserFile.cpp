@@ -1,7 +1,8 @@
 #include "webserv.hpp"
 #include "ConfigParser.hpp"
 
-std::list<Port *>	ConfigParser::parse(char *arg)
+//std::list<Port *>	ConfigParser::parse(char *arg)
+void				ConfigParser::parse(char *arg)
 {
 	std::ifstream		ifs;
 	std::list<Port *>	portsList;
@@ -40,14 +41,22 @@ std::list<Port *>	ConfigParser::parse(char *arg)
 				exit(1);
 			}
 			//	VALIDATE ARGUMENTS
-			this->validateArguments();
+			if (this->validateArguments() == ARG_ERROR)
+			{
+				std::cerr << "webserv\t- ERROR line " << this->_lineN << " - \"" 
+					<< this->_line[0]
+					<< "\" has invalid arguments." << std::endl;
+				exit(1);
+			}
 		}
 	}
 
-//	this->displayLines();
+	//	this->displayLines();
+
+	this->_tmpVS.display();
 
 	ifs.close();
-	return (portsList);
+	//	return (portsList);
 }
 
 void				ConfigParser::splitLineIntoTokens(void)
@@ -89,10 +98,10 @@ int					ConfigParser::validateArguments(void)
 		case SERVER :
 			ret = this->validateServerArgs();
 			break ;
+		case LISTEN :
+			ret = this->validateListenArgs();
+			break ;
 			/*
-			   case LISTEN :
-			   ret = this->validateListenArgs();
-			   break ;
 			   case SERVER_NAME :
 			   ret = this->validateServerNameArgs();
 			   break ;
@@ -130,33 +139,34 @@ int					ConfigParser::validateArguments(void)
 
 bool        ConfigParser::validateContext(void)
 {
-    if (this->_dir == SERVER
-            && this->_context == MAIN_CONTEXT)
-    {
-        this->_context = SERVER_CONTEXT;
-        return (true);
-    }
-    else if (this->_dir == LOCATION
-            && this->_context == SERVER_CONTEXT)
-    {
-        this->_context = LOCATION_CONTEXT;
-        return (true);
-    }
-    else if (this->_dir >= LISTEN && this->_dir <= RETURN
-            && this->_context == SERVER_CONTEXT)
-        return (true);
-    else if (this->_dir >= ROOT && this->_dir <= RETURN
-            && this->_context == LOCATION_CONTEXT)
-        return (true);
-    else if (this->_dir == CLOSING_BRACKET
-            && (this->_context == SERVER_CONTEXT
-                || this->_context == LOCATION_CONTEXT))
-    {
-        this->_context = this->_context - 1;
-        return (true);
-    }
-    else
-        return (false);
+	if (this->_dir == SERVER
+			&& this->_context == MAIN_CONTEXT)
+	{
+		this->_context = SERVER_CONTEXT;
+		return (true);
+	}
+	else if (this->_dir == LOCATION
+			&& this->_context == SERVER_CONTEXT)
+	{
+		this->_context = LOCATION_CONTEXT;
+		return (true);
+	}
+	//	else if (this->_dir >= LISTEN && this->_dir <= RETURN
+	else if (this->_dir >= LISTEN && this->_dir <= CLIENT_MAX_BODY_SIZE
+			&& this->_context == SERVER_CONTEXT)
+		return (true);
+	else if (this->_dir >= ROOT && this->_dir <= RETURN
+			&& this->_context == LOCATION_CONTEXT)
+		return (true);
+	else if (this->_dir == CLOSING_BRACKET
+			&& (this->_context == SERVER_CONTEXT
+				|| this->_context == LOCATION_CONTEXT))
+	{
+		this->_context = this->_context - 1;
+		return (true);
+	}
+	else
+		return (false);
 }
 
 bool	ConfigParser::hasContent(void) const

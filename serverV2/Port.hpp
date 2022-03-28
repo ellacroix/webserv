@@ -1,18 +1,20 @@
 #ifndef PORT_HPP
 # define PORT_HPP
 
-# define BUFFER_SIZE 5000
 # include "webserv.hpp"
-
 # include "Client.hpp"
-# include "Virtual_Server.hpp"
+# include "VirtualServer.hpp"
 
-class Port{
+# define BUFFER_SIZE 5000
+
+class	Port {
 
 private:
 
 public:
 	int					port_number;
+
+	//	CONNECTION PARAMS
 	int					listen_socket;
 	struct sockaddr_in	server_address;
 	int 				addr_len;
@@ -21,8 +23,8 @@ public:
 	bool				kill_port;
 
 
-	std::map<int, Client*> Clients;
-	std::list<Virtual_Server*> Virtual_Servers;
+	std::map<int, Client*>			Clients;
+	std::list<VirtualServer*>		VirtualServers;
 
 	Port();
 	Port(int port);

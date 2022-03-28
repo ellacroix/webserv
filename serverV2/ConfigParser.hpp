@@ -2,6 +2,8 @@
 # define CONFIG_PARSER_HPP
 
 # include "webserv.hpp"
+# include "Location.hpp"
+# include "VirtualServer.hpp"
 # include "Port.hpp"
 
 # define N_DIR 12
@@ -48,9 +50,12 @@ enum	arguments
 	FILE_EXTENSION
 };
 
+class	Port ;
+
 class	ConfigParser {
 
 	private:
+		//	PARSING INFOS
 		int											_context;
 		std::vector<std:: vector<std::string > >	_lines;
 		std::vector<std::string>					_line;
@@ -58,11 +63,27 @@ class	ConfigParser {
 		int											_dir;
 		int											_lineN;
 
+		//	STATIC STRING CONSTANTS
 		static const char *							_directives[N_DIR];
 		static const char *							_contexts[N_CONTEXTS];
 
-		ConfigParser	&operator=(ConfigParser const & rhs);
+		//	TO STORE TEMP VALUES AS LONG AS PORT IS NOT DEFINED
+		VirtualServer								_tmpVS;
+		VirtualServer *								_tmpVSPtr;
+		bool										_tmpVSIsStored;
+		Location									_tmpLoc;
+		Location *									_tmpLocPtr;
+		bool										_tmpLocIsStored;
 
+		//	PTRS TO KEEP TRACK OF CURRENT INSTANCES BEING TREATED
+//		Port										*_curPort;
+//		Virtual_Server								*_curVS;
+//		Location									*_curLocation;
+
+		//	TO RETURN AT END OF PARSING
+		std::list<Port *>							_portsList;
+
+		ConfigParser	&operator=(ConfigParser const & rhs);
 		ConfigParser(ConfigParser const &src);
 
 	public:
@@ -77,15 +98,16 @@ class	ConfigParser {
 		void						displayLines(void) const;
 		void						displayContextSwitch(int newContext) const;
 
-		//	parsing.cpp	
-		std::list<Port *>			parse(char *arg);
+		//	ConfigParserFile.cpp	
+		//std::list<Port *>			parse(char *arg);
+		void						parse(char *arg);
 		void						splitLineIntoTokens(void);
 		int							validateDirective(void);
 		int							validateArguments(void);
 		bool						validateContext(void);
 		bool						hasContent(void) const ;
 
-		//	argumentsParsing.cpp	
+		//	ConfigParserDirArgs.cpp	
 		int			validateServerArgs(void);
 		int			validateListenArgs(void);
 		int			validateServerNameArgs(void);
@@ -98,7 +120,6 @@ class	ConfigParser {
 		int			validateReturnArgs(void);
 		int			validateOpeningBracketArgs(void);
 		int			validateClosingBracketArgs(void);
-
 };
 
 #endif

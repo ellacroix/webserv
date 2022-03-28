@@ -22,4 +22,17 @@
 #include <iostream>
 #include <cstring>
 
+//	CUSTOM HEADERS
+/*
+#include "Location.hpp"
+#include "VirtualServer.hpp"
+#include "Client.hpp"
+#include "Port.hpp"
+#include "ConfigParser.hpp"
+*/
+
+//	utils.cpp
+bool			isNumber(std::string s);
+bool			isValidPort(std::string s);
+
 #endif

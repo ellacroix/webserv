@@ -1,9 +1,7 @@
-#pragma once
+#ifndef CLIENT_HPP
+# define CLIENT_HPP
 
-//#include "Request.hpp"
-#include "webserv.hpp"
-
-class Client{
+class Client {
 
 private:
 
@@ -21,3 +19,5 @@ public:
 	~Client() {};
 
 };
+
+#endif

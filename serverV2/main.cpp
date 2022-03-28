@@ -1,6 +1,6 @@
 #include "webserv.hpp"
 #include "Port.hpp"
-#include "Virtual_Server.hpp"
+#include "VirtualServer.hpp"
 #include "Client.hpp"
 #include "ConfigParser.hpp"
 
@@ -26,7 +26,8 @@ int main(int argc, char *argv[])
 	ConfigParser	config;
 	if (argc != 2)
 		exit (1);
-	std::list<Port *> portsList = config.parse(argv[1]);
+//	std::list<Port *> portsList = config.parse(argv[1]);
+	config.parse(argv[1]);
 
 	/*
 	Port *Port1 = new Port(8000);
@@ -36,13 +37,13 @@ int main(int argc, char *argv[])
 	Ports.push_back(Port1);
 	Ports.push_back(Port2);
 
-	Virtual_Server *VS1 = new Virtual_Server("Alfred");
-	Virtual_Server *VS2 = new Virtual_Server("Zac");
-	Virtual_Server *VS3 = new Virtual_Server("Joe");
+	VirtualServer *VS1 = new VirtualServer("Alfred");
+	VirtualServer *VS2 = new VirtualServer("Zac");
+	VirtualServer *VS3 = new VirtualServer("Joe");
 
-	Port1->Virtual_Servers.push_back(VS1);
-	Port1->Virtual_Servers.push_back(VS2);
-	Port2->Virtual_Servers.push_back(VS3);
+	Port1->VirtualServers.push_back(VS1);
+	Port1->VirtualServers.push_back(VS2);
+	Port2->VirtualServers.push_back(VS3);
 
 
 	fd_set	master_reading_set, work_reading_set, master_writing_set, work_writing_set;
