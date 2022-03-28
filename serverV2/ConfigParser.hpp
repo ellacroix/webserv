@@ -94,30 +94,30 @@ class	ConfigParser {
 		int										getContext(void) const;
 		std::vector<std::vector<std::string> >	getLines(void) const;	
 		std::string								getCurLine(void) const;
-		void						displayLine(std::vector<std::string> v) const;
-		void						displayLines(void) const;
-		void						displayContextSwitch(int newContext) const;
+		void		displayLine(std::vector<std::string> v) const;
+		void		displayLines(void) const;
+		void		displayContextSwitch(int newContext) const;
 
 		//	ConfigParserFile.cpp	
-		//std::list<Port *>			parse(char *arg);
-		void						parse(char *arg);
-		void						splitLineIntoTokens(void);
-		int							validateDirective(void);
-		int							validateArguments(void);
-		bool						validateContext(void);
-		bool						hasContent(void) const ;
+		void		parse(char *arg);
+		void		splitLineIntoTokens(void);
+		int			validateDirective(void);
+		int			validateArguments(void);
+		bool		validateContext(void);
+		bool		hasContent(void) const ;
 
 		//	ConfigParserDirArgs.cpp	
 		int			validateServerArgs(void);
+		int			validateLocationArgs(void);
 		int			validateListenArgs(void);
 		int			validateServerNameArgs(void);
 		int			validateClientMaxBodySizeArgs(void);
-		int			validateLocationArgs(void);
 		int			validateRootArgs(void);
 		int			validateErrorPageArgs(void);
 		int			validateAutoindexArgs(void);
 		int			validateIndexArgs(void);
 		int			validateReturnArgs(void);
+		int			validateLimitExceptArgs(void);
 		int			validateOpeningBracketArgs(void);
 		int			validateClosingBracketArgs(void);
 };

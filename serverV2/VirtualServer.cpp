@@ -21,6 +21,11 @@ void	VirtualServer::setListenPort(int n)
 	this->_listenPort = n;
 }
 
+void	VirtualServer::setServerName(std::string s)
+{
+	this->_serverName = s;
+}
+
 void	VirtualServer::reset(void)
 {
 	this->_listenPort = -1;
@@ -42,7 +47,8 @@ void	VirtualServer::display(void) const
 	std::cout << "_clientMaxBodySize\t=\t" << this->_clientMaxBodySize << std::endl;
 	std::cout << std::boolalpha;
 	std::cout << "_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
-	std::cout << "_listenPortIsSet\t=\t" << this->_serverNameIsSet << std::endl;
-	std::cout << "_clientMaxBodySizeIsSet\t=\t" << this->_serverNameIsSet << std::endl;
-	std::cout << "_locationIsSet\t\t=\t" << this->_serverNameIsSet << std::endl;
+	std::cout << "_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
+	std::cout << "_clientMaxBodySizeIsSet\t=\t" <<
+		this->_clientMaxBodySizeIsSet << std::endl;
+	std::cout << "_locationIsSet\t\t=\t" << this->_locationIsSet << std::endl;
 }

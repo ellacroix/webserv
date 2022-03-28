@@ -33,6 +33,8 @@
 
 //	utils.cpp
 bool			isNumber(std::string s);
+bool			isValidPrefix(std::string *s);
 bool			isValidPort(std::string s);
+bool			isValidDomainName(std::string s);
 
 #endif

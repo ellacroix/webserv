@@ -18,6 +18,11 @@ class	Location
 		std::string							_returnURI;
 		std::string							_returnBody;
 
+	public:
+
+		Location(void);
+		~Location(void);
+
 		bool								_rootIsSet;
 		bool								_errorPageIsSet;
 		bool								_autoIndexIsSet;
@@ -25,12 +30,10 @@ class	Location
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
 
-	public:
-
-		Location(void);
-		~Location(void);
+		void		setPrefix(std::string s);
 
 		void		reset(void);
+		void		display(void) const;
 
 };
 

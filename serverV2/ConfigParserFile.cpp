@@ -52,8 +52,10 @@ void				ConfigParser::parse(char *arg)
 	}
 
 	//	this->displayLines();
-
+	std::cout << "========== SERVER ==========" << std::endl;
 	this->_tmpVS.display();
+	std::cout << "========= LOCATION =========" << std::endl;
+	this->_tmpLoc.display();
 
 	ifs.close();
 	//	return (portsList);
@@ -98,18 +100,18 @@ int					ConfigParser::validateArguments(void)
 		case SERVER :
 			ret = this->validateServerArgs();
 			break ;
+		case LOCATION :
+			ret = this->validateLocationArgs();
+			break ;
 		case LISTEN :
 			ret = this->validateListenArgs();
 			break ;
+		case SERVER_NAME :
+			ret = this->validateServerNameArgs();
+			break ;
 			/*
-			   case SERVER_NAME :
-			   ret = this->validateServerNameArgs();
-			   break ;
 			   case CLIENT_MAX_BODY_SIZE :
 			   ret = this->validateClientMaxBodySizeArgs();
-			   break ;
-			   case LOCATION :
-			   ret = this->validateLocationArgs();
 			   break ;
 			   case ROOT :
 			   ret = this->validateRootArgs();
@@ -120,7 +122,7 @@ int					ConfigParser::validateArguments(void)
 			   case AUTOINDEX :
 			   ret = this->validateAutoindexArgs();
 			   break ;
-			   case AUTOINDEX :
+			   case INDEX :
 			   ret = this->validateIndexArgs();
 			   break ;
 			   case RETURN :
