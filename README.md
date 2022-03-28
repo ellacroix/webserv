@@ -12,15 +12,16 @@
 9. Envoi des reponses 
 10. Fermeture de la connection
 
-## Architecture
-- Une classe Server, qui contient ses parametres, un std::vector<Client*>, 
+## Architecture (Voir le dossier app.diagrams.net)
+- Une classe Port, qui contient une std::map<int, Client*>
+- Une classe Virtual_Server
 - Une classe Client, qui contient ses parametres, un pointeur vers son Server, une instance Request, une instance Response
 - Une classe Request, pour stocker la requete HTTP a recevoir
 - Une classe Response, pour stocker la reponse HTTP a renvoyer
 
-## Logique multi-serveurs
-Soit un select() sur les fd_set de tous les serveurs, puis une boucle pour que chaque serveur traite les evenements.
-Soit un pthread par serveur, qui gere chacun leurs fd_set et select(), avec un mutex pour accept() et un mutex pour l'ecriture de fichiers.
+## Logique multi-thread
+On a une pool de thread qui s'occuperont de toutes les taches de recv() a send().
+Le main process gere juste les connections entrantes et l'ajout de taches pour la thread pool.
 
 ## Sujet
 - Your server must never block and the client can be bounced properly if necessary.
