@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Request.hpp"
+//#include "Request.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -12,6 +12,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
+#include <pthread.h>
 
 class Client{
 
@@ -21,13 +22,17 @@ protected:
 
 public:
 	int					stream_socket;
-	bool				connected = true;
+	bool				connected;
+	std::string			request_buffer;
+	pthread_mutex_t		client_mutex;
 
-	Request				*request = NULL;
-	//Response			*response = NULL;
-	void				createRequest(char *raw);
+	bool				response;
+
+	//Request			*request;
+	//Response			*response;
 
 	Client() {};
-	~Client();
+	Client(int fd);
+	~Client() {};
 
 };

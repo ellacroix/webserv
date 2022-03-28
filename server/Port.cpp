@@ -1,5 +1,6 @@
 #include "Port.hpp"
 #include <vector>
+#include <arpa/inet.h>
 
 int Port::start()
 {
@@ -21,7 +22,7 @@ int Port::start()
 	//Basic bind to a port
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-	//address.sin_addr.s_addr = inet_addr("127.0.0.1".c_str());
+	//server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
     server_address.sin_port = htons(this->port_number);
 	addr_len = sizeof(server_address);
 	rc = bind(listen_socket, (struct sockaddr *)&server_address, addr_len);

@@ -1,18 +1,10 @@
 #include "Client.hpp"
 
-Client::~Client() {
-	printf("Deleting client\n");
-	if (request)
-		delete request;
-	printf("Closing socket\n");
-	close(stream_socket);
-}
-
-void	Client::createRequest(char *raw)
+Client::Client(int fd) :
+	connected(true)
 {
-	Request *req = new Request(raw);
+	stream_socket = fd;
+	pthread_mutex_init(&client_mutex, NULL);
 
-	if (this->request)
-		delete this->request;
-	this->request = req;
+	response = false;
 }

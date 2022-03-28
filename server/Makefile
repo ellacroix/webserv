@@ -1,8 +1,9 @@
 NAME		=	webserv
 
-SRCS		=	main.cpp \
-				Client.cpp \
+SRCS		=	Client.cpp \
+				main.cpp \
 				Port.cpp \
+				Request.cpp \
 				Virtual_Server.cpp
 
 OBJS		=	${SRCS:.cpp=.o}
