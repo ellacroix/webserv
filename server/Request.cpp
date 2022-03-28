@@ -8,6 +8,7 @@ Request::Request(std::string raw)
 int	Request::parser()
 {
 	printf("In the parser, working on:\n%s\n", raw_request.c_str());
+
 	
 	return 0;
 }

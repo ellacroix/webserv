@@ -12,6 +12,12 @@
 #include <fcntl.h>
 #include <iostream>
 
+#include "Client.hpp"
+#include "Virtual_Server.hpp"
+
+class Client ;
+class Virtual_Server ;
+
 class Request{
 
 private:
@@ -23,14 +29,16 @@ public:
 
 	int error;
 	bool Chunked;
-	int ContentLenght;
+	int ContentLength;
 	std::string METHOD;
 	std::string headers;
+
+	Client			*client;
+	Virtual_Server	*virtual_server;
 
 
 	Request() {};
 	~Request() {};
-
 	Request(std::string raw);
 
 	int			parser();

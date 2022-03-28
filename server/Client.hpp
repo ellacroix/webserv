@@ -18,6 +18,7 @@
 #include <pthread.h>
 
 class Port ;
+class Request ;
 
 class Client{
 

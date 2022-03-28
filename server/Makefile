@@ -10,14 +10,14 @@ OBJS		=	${SRCS:.cpp=.o}
 
 CXX			=	c++
 
-CXXFLAGS	= -pthread -std=c++98
+CXXFLAGS	= -pthread -Wall -Wextra -Werror -std=c++98
 
 all			:	${NAME}
 
 ${NAME}		:	${OBJS}
 			${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
 
-%.o			:	%.cpp Client.hpp Port.hpp Virtual_Server.hpp 
+%.o			:	%.cpp Client.hpp Port.hpp Virtual_Server.hpp Request.hpp
 			${CXX} ${CXXFLAGS} -c $< -o ${<:.cpp=.o}
 
 clean		:

@@ -35,7 +35,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	ret = recv(client->stream_socket, buffer, BUFFER_SIZE, 0);
 	if (ret == 0)
 	{
-		printf("Disconnecting %d\n", client->stream_socket);
+		//Client disconnected itself
 		client->connected = false;
 		client->parent_port->Clients.erase(client->stream_socket);
 		delete client;
@@ -72,11 +72,13 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 }
 
 void	thread_send_routine(Client *client, t_thread_info *thread_info)
-{
+{	
 	printf("ThreadsPool: send routine\n");
 	
 	//Sending the reponse to the client
-	send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
+	int ret = 1;
+	while (ret > 0)
+		ret = send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
 	
 	//Response was sent, so we monitor client->stream_socket for receiving a new request
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
@@ -93,7 +95,7 @@ void	*thread_loop(void* arg)
 	t_thread_info *thread_info = (t_thread_info*)arg;
 	Client *currentClient;
 	
-	printf("Thread launched\n");
+	printf("ThreadsPool: Thread launched\n");
 	
 	while(true)
 	{
@@ -242,4 +244,5 @@ int main()
 			}
 		}
 	}
+	return 0;
 }
