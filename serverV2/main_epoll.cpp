@@ -9,7 +9,7 @@
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 20
-#define THREADS 8
+#define THREADS 1
 
 typedef struct	s_thread_info
 {
@@ -77,6 +77,7 @@ void	*thread_loop(void* arg)
 		{
 			printf("ThreadsPool: No work in the queue, waiting...\n");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
+			usleep(50);
 			currentClient = thread_info->queue->front();
 		}
 		else
