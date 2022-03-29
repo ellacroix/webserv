@@ -174,15 +174,17 @@ int	ConfigParser::validateLimitExceptArgs(void)
 	return (ARG_ERROR);
 }
 
-/*
 int ConfigParser::validateOpeningBracketArgs(void)
 {
-//	{
+	if (this->_line.size() == 1)
+		return (true);
+	return (ARG_ERROR);
 }
 
 int ConfigParser::validateClosingBracketArgs(void)
 {
-//	}
+	if (this->_line.size() == 1)
+		return (true);
+	return (ARG_ERROR);
 }
 
-*/
