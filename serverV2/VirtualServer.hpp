@@ -4,6 +4,9 @@
 # include "webserv.hpp"
 # include "Location.hpp"
 
+# define K 1000
+# define M 1000000
+
 class	VirtualServer {
 
 	private:
@@ -12,7 +15,6 @@ class	VirtualServer {
 		//	std::vector<std::string>			_serverName; // IF MANY NAMES
 		std::string							_serverName;
 		ssize_t								_clientMaxBodySize;
-
 
 		//	UNDERLYING DATA STRUCTURE => LOCATIONS
 		std::map<std::string, Location*>	_locationMap;
@@ -32,6 +34,7 @@ class	VirtualServer {
 
 		void		setListenPort(int n);
 		void		setServerName(std::string s);
+		void		setClientMaxBodySize(std::string s);
 
 		void		reset(void);
 		void		display(void) const ;

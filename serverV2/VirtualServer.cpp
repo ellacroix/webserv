@@ -26,6 +26,17 @@ void	VirtualServer::setServerName(std::string s)
 	this->_serverName = s;
 }
 
+void	VirtualServer::setClientMaxBodySize(std::string s)
+{
+	char	*endPtr;
+
+	this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
+	if (*endPtr == 'k')
+		this->_clientMaxBodySize *= K;
+	if (*endPtr == 'm')
+		this->_clientMaxBodySize *= M;
+}
+
 void	VirtualServer::reset(void)
 {
 	this->_listenPort = -1;

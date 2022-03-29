@@ -36,5 +36,16 @@ bool			isNumber(std::string s);
 bool			isValidPrefix(std::string *s);
 bool			isValidPort(std::string s);
 bool			isValidDomainName(std::string s);
+bool			isValidClientMaxBodySize(std::string s);
+bool			isValidHttpErrorCode(std::string s);
+bool			isValidUri(std::string & s);
+bool			isValidErrorPage(std::vector<std::string> & v);
+bool			isValidAutoindex(std::string s);
+//bool			isValidIndex(std::vector<std::string> v);
+bool			isValidIndex(std::string s);
+bool			isSupportedHttpRedirCode(std::string s);
+bool			isValidReturn(std::vector<std::string> & v);
+bool			isSupportedHttpMethod(std::string s);
+bool			isValidLimitExcept(std::vector<std::string> v);
 
 #endif

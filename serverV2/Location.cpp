@@ -2,7 +2,7 @@
 
 Location::Location(void) :
 	_autoIndex(false),
-	_return(-1),
+	_returnCode(-1),
 	_rootIsSet(false),
 	_errorPageIsSet(false),
 	_autoIndexIsSet(false),
@@ -18,10 +18,60 @@ Location::~Location(void)
 	return ;
 }
 
+//	SETTERS
+
 void	Location::setPrefix(std::string s)
 {
 	this->_prefix = s;
 }
+
+void	Location::setRoot(std::string s)
+{
+	this->_root = s;
+}
+
+void	Location::setAutoindex(bool b)
+{
+	this->_autoIndex = b;
+}
+
+//void	Location::setIndex(std::vector<std::string> v)
+void	Location::setIndex(std::string s)
+{
+//	this->_index = std::vector<std::string>(v);
+	this->_index = s;
+}
+
+void	Location::setReturnCode(int	n)
+{
+	this->_returnCode = n;
+}
+
+void	Location::setReturnUri(std::string s)
+{
+	this->_returnUri = s;
+}
+
+void	Location::setLimitExcept(std::vector<std::string> v)
+{
+	std::vector<std::string>::iterator	it;
+	std::vector<std::string>::iterator	ite;
+
+	it = v.begin() + 1;
+	ite = v.end();
+	while (it != ite)
+	{
+		this->_limitExcept.push_back(*it);
+		it++;
+	}
+}
+
+std::map<int, std::string> & Location::getErrorPage(void)
+{
+	return (this->_errorPage);
+}
+
+//	UTILITIES
 
 void	Location::reset(void)
 {
@@ -31,9 +81,8 @@ void	Location::reset(void)
 	this->_autoIndex = false;
 	this->_index = "";
 	this->_limitExcept = std::vector<std::string>();
-	this->_return = -1;
-	this->_returnURI = "";
-	this->_returnBody = "";
+	this->_returnCode = -1;
+	this->_returnUri = "";
 
 	this->_rootIsSet = false;
 	this->_errorPageIsSet = false;
@@ -61,7 +110,7 @@ void	Location::display(void) const
 		map_ite = this->_errorPage.end();
 		while (map_it != map_ite)
 		{
-			std::cout << "_errorPage[" << (*map_it).first << "]\t=\t\""
+			std::cout << "_errorPage[" << (*map_it).first << "]\t\t=\t\""
 				<< (*map_it).second << "\"" << std::endl;
 			map_it++;
 		}
@@ -78,14 +127,15 @@ void	Location::display(void) const
 		i = 0;
 		while (vct_it != vct_ite)
 		{
-			std::cout << "_limitExcept[" << i << "]\t=\t\""
+			std::cout << "_limitExcept[" << i << "]\t\t=\t\""
 				<< *vct_it << "\"" << std::endl;
 			vct_it++;
+			i++;
 		}
 	}
-	std::cout << "_return\t\t\t=\t" << this->_return << std::endl;
-	std::cout << "_returnURI\t\t=\t\"" << this->_returnURI << "\"" << std::endl;
-	std::cout << "_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
+	std::cout << "_return\t\t\t=\t" << this->_returnCode << std::endl;
+	std::cout << "_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
+//	std::cout << "_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
 
 	std::cout << "_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
 	std::cout << "_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
@@ -93,8 +143,5 @@ void	Location::display(void) const
 	std::cout << "_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
 	std::cout << "_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
 	std::cout << "_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
-
-
-
-
 }
+

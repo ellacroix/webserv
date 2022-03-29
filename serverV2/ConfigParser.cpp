@@ -42,7 +42,7 @@ std::string								ConfigParser::getCurLine(void) const
 	return (this->_curLine);
 }
 
-void						ConfigParser::displayLine(std::vector<std::string> v) const
+void		ConfigParser::displayLine(std::vector<std::string> v) const
 {
 	int	tab;
 	std::vector<std::string>::const_iterator	it = v.begin();
@@ -84,7 +84,7 @@ const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
 	"root", "error_page", "autoindex", "index",
-	"return", "location", "{", "}"
+	"return", "limit_except", "location", "{", "}"
 };
 
 const char *	ConfigParser::_contexts[N_CONTEXTS] =

@@ -57,6 +57,7 @@ void				ConfigParser::parse(char *arg)
 	std::cout << "========= LOCATION =========" << std::endl;
 	this->_tmpLoc.display();
 
+	// this->configIsValid();
 	ifs.close();
 	//	return (portsList);
 }
@@ -109,25 +110,28 @@ int					ConfigParser::validateArguments(void)
 		case SERVER_NAME :
 			ret = this->validateServerNameArgs();
 			break ;
+		case CLIENT_MAX_BODY_SIZE :
+			ret = this->validateClientMaxBodySizeArgs();
+			break ;
+		case ROOT :
+			ret = this->validateRootArgs();
+			break ;
+		case ERROR_PAGE :
+			ret = this->validateErrorPageArgs();
+			break ;
+		case AUTOINDEX :
+			ret = this->validateAutoindexArgs();
+			break ;
+		case INDEX :
+			ret = this->validateIndexArgs();
+			break ;
+		case RETURN :
+			ret = this->validateReturnArgs();
+			break ;
+		case LIMIT_EXCEPT :
+			ret = this->validateLimitExceptArgs();
+			break ;
 			/*
-			   case CLIENT_MAX_BODY_SIZE :
-			   ret = this->validateClientMaxBodySizeArgs();
-			   break ;
-			   case ROOT :
-			   ret = this->validateRootArgs();
-			   break ;
-			   case ERROR_PAGE :
-			   ret = this->validateErrorPageArgs();
-			   break ;
-			   case AUTOINDEX :
-			   ret = this->validateAutoindexArgs();
-			   break ;
-			   case INDEX :
-			   ret = this->validateIndexArgs();
-			   break ;
-			   case RETURN :
-			   ret = this->validateReturnArgs();
-			   break ;
 			   case OPENING_BRACKET :
 			   ret = this->validateOpeningBracketArgs();
 			   break ;
@@ -157,7 +161,7 @@ bool        ConfigParser::validateContext(void)
 	else if (this->_dir >= LISTEN && this->_dir <= CLIENT_MAX_BODY_SIZE
 			&& this->_context == SERVER_CONTEXT)
 		return (true);
-	else if (this->_dir >= ROOT && this->_dir <= RETURN
+	else if (this->_dir >= ROOT && this->_dir <= LIMIT_EXCEPT
 			&& this->_context == LOCATION_CONTEXT)
 		return (true);
 	else if (this->_dir == CLOSING_BRACKET
@@ -185,4 +189,25 @@ bool	ConfigParser::hasContent(void) const
 		i++;
 	}
 	return (false);
+}
+
+bool    ConfigParser::noDuplicateErrorPage(void)
+{
+	int                                     httpCode;
+	std::map<int, std::string>::iterator    ite;
+	size_t                                  i;
+	size_t                                  size;
+
+	ite = this->_tmpLoc.getErrorPage().end();
+	i = 1;
+	size = this->_line.size();
+	while (i < size - 1)
+	{
+		httpCode = std::atoi(this->_line[i].c_str());
+		if (this->_tmpLoc.getErrorPage().find(httpCode) != ite)
+			return (false);
+		this->_tmpLoc.getErrorPage()[httpCode] = this->_line[size - 1];
+		i++;
+	}
+	return (true);
 }

@@ -21,7 +21,8 @@ all			:	${NAME}
 ${NAME}		:	${OBJS}
 			${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
 
-%.o			:	%.cpp Client.hpp Port.hpp VirtualServer.hpp ConfigParser.hpp webserv.hpp \
+%.o			:	%.cpp Client.hpp Port.hpp VirtualServer.hpp ConfigParser.hpp \
+	webserv.hpp \
 	Location.hpp
 			${CXX} ${CXXFLAGS} -c $< -o ${<:.cpp=.o}
 

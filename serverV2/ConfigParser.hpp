@@ -6,7 +6,7 @@
 # include "VirtualServer.hpp"
 # include "Port.hpp"
 
-# define N_DIR 12
+# define N_DIR 13
 # define N_CONTEXTS 5
 
 enum	contexts
@@ -30,6 +30,7 @@ enum	directives
 	AUTOINDEX,
 	INDEX,
 	RETURN,
+	LIMIT_EXCEPT,
 	LOCATION,
 	OPENING_BRACKET,
 	CLOSING_BRACKET,
@@ -120,6 +121,7 @@ class	ConfigParser {
 		int			validateLimitExceptArgs(void);
 		int			validateOpeningBracketArgs(void);
 		int			validateClosingBracketArgs(void);
+		bool		noDuplicateErrorPage(void);
 };
 
 #endif
