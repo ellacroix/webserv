@@ -8,7 +8,6 @@ Port::Port(void)
 
 int Port::start()
 {
-
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_socket < 0){
 		perror("socket() failed");

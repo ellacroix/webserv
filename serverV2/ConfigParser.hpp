@@ -80,7 +80,7 @@ class	ConfigParser {
 		Location									*_curLoc;
 
 		//	UNDERLYING DATA STRUCTURE => List OF Ports
-		std::list<Port *>							_portsList;
+		std::list<Port*>							_portsList;
 		std::map<int, Port>							_portsMap;
 
 		ConfigParser	&operator=(ConfigParser const & rhs);
@@ -98,6 +98,8 @@ class	ConfigParser {
 		void		displayLines(void) const;
 		void		displayContextSwitch(int newContext) const;
 		void		displayPortsMap(void) const;
+		void		makeListFromMap(void);
+		void		startAllSockets(void);
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

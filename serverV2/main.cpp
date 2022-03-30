@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 		exit (1);
 //	std::list<Port *> portsList = config.parse(argv[1]);
 	config.parse(argv[1]);
+	config.startAllSockets();
 
 	/*
 	Port *Port1 = new Port(8000);

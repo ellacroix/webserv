@@ -196,6 +196,8 @@ int ConfigParser::validateClosingBracketArgs(void)
 	{
 		//	this->_curVS->validate(); // return (false) if validate() failed
 		this->_portsMap[this->_curVS->getListenPort()].addVS(this->_curVS->clone());	
+		this->_portsMap[this->_curVS->getListenPort()].port_number
+			= this->_curVS->getListenPort();
 		return (true);
 	}
 	return (true);

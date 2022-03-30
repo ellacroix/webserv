@@ -54,6 +54,7 @@ void				ConfigParser::parse(char *arg)
 	//this->_curVS->display();
 	this->displayPortsMap();
 //	this->_portsList = std::list<Port>(this->_portsMap.begin().second(), this->_portsMap.end().second());
+	this->makeListFromMap();
 
 	// this->configIsValid();
 	ifs.close();

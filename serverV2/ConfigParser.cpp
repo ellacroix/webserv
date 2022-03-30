@@ -87,13 +87,47 @@ void	ConfigParser::displayPortsMap(void) const
 {
 	std::map<int, Port>::const_iterator	it;
 	std::map<int, Port>::const_iterator	ite;
+	int									i;
+
+	it = this->_portsMap.begin();
+	ite = this->_portsMap.end();
+	i = 0;
+	while (it != ite)
+	{
+		std::cout << "port[" << it->first << "] :" << std::endl;
+		it->second.display();
+		it++;
+		i++;
+	}
+}
+
+void	ConfigParser::makeListFromMap(void)
+{
+	std::map<int, Port>::iterator	it;
+	std::map<int, Port>::iterator	ite;
 
 	it = this->_portsMap.begin();
 	ite = this->_portsMap.end();
 	while (it != ite)
 	{
-		std::cout << "port[" << it->first << "] :" << std::endl;
-		it->second.display();
+		this->_portsList.push_back(&(it->second));
+		it++;
+	}
+}
+
+void	ConfigParser::startAllSockets(void)
+{
+	fd_set	master_reading_set;
+	std::list<Port*>::iterator	it;
+	std::list<Port*>::iterator	ite;
+
+	FD_ZERO(&master_reading_set);
+	it = this->_portsList.begin();
+	ite = this->_portsList.end();
+	while (it != ite)
+	{
+		(*it)->start();
+		FD_SET((*it)->listen_socket, &master_reading_set);
 		it++;
 	}
 }
