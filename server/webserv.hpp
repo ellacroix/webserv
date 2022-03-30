@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <fcntl.h>
+#include <pthread.h>
+#include <sys/epoll.h>
 
 //	CPP
 #include <vector>
@@ -21,6 +23,8 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <sstream>
+#include <deque>
 
 //	CUSTOM HEADERS
 /*

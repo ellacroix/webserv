@@ -100,6 +100,7 @@ class	ConfigParser {
 		void		displayPortsMap(void) const;
 		void		makeListFromMap(void);
 		void		startAllSockets(void);
+		std::list<Port*> &	getPortsList(void);
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

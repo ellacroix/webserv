@@ -7,15 +7,17 @@
 
 # define BUFFER_SIZE 5000
 
+class	Client ;
+
 class	Port {
 
 	private:
+
+	public:
 		// UNDERLYING DATA STRUCTURES	=>	Map OF Clients
 		std::map<int, Client*>			Clients;
 		//								=>	List OF VirtualServers
 		std::list<VirtualServer*>		_VSList;
-
-	public:
 		int					port_number;
 
 		//	CONNECTION PARAMS

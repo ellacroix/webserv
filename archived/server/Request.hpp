@@ -1,6 +1,5 @@
-#ifndef REQUEST_HPP
-# define REQUEST_HPP
-/*
+#pragma once
+
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -12,15 +11,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
-#include <sstream>
-*/
-#include "webserv.hpp"
-
-#include "Client.hpp"
-#include "VirtualServer.hpp"
-
-class Client ;
-class VirtualServer ;
 
 class Request{
 
@@ -29,26 +19,20 @@ private:
 protected:
 
 public:
-	std::string			raw_request;
-	std::istringstream	stream_request;
-
-	int status_code;
+	std::string raw_request;
+	int error;
 	bool Chunked;
-	int ContentLength;
+	int ContentLenght;
 	std::string METHOD;
 	std::string headers;
-
-	Client			*client;
-	VirtualServer	*virtual_server;
 
 
 	Request() {};
 	~Request() {};
-	Request(std::string raw);
+
+	Request(char *raw);
 
 	int			parser();
-	int			parseFirstLine();
-	int			parseHeaders();
 
 };
 
@@ -62,5 +46,3 @@ public:
 
 };
  */
-
-#endif

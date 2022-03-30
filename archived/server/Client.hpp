@@ -1,7 +1,11 @@
+<<<<<<< HEAD:serverV2/Client.hpp
 #ifndef CLIENT_HPP
-#define CLIENT_HPP
+# define CLIENT_HPP
 
-#include "Port.hpp"
+class Client {
+=======
+#pragma once
+
 #include "Request.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
@@ -14,37 +18,29 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
-#include <string>
-#include <pthread.h>
-
-class Port ;
-class Request ;
 
 class Client{
+>>>>>>> main:archived/server/Client.hpp
 
 private:
 
 protected:
 
 public:
-	Port				*parent_port;
 	int					stream_socket;
-	bool				connected;
-	std::string			request_buffer;
-	pthread_mutex_t		client_mutex;
+	bool				connected = true;
 
-	bool				response_ready;
-
-	Request				*request;
-	//Response			*response;
+	Request				*request = NULL;
+	//Response			*response = NULL;
+	void				createRequest(char *raw);
 
 	Client() {};
-	Client(int fd, Port *port);
 	~Client();
 
-	bool	CheckCompleteRequest();
-	int		CreateRequest();
-
+<<<<<<< HEAD:serverV2/Client.hpp
 };
 
 #endif
+=======
+};
+>>>>>>> main:archived/server/Client.hpp

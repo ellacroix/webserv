@@ -12,15 +12,16 @@
 9. Envoi des reponses 
 10. Fermeture de la connection
 
-## Architecture
-- Une classe Server, qui contient ses parametres, un std::vector<Client*>, 
-- Une classe Client, qui contient ses parametres, un pointeur vers son Server, une instance Request, une instance Response
+## Architecture (Voir le dossier app.diagrams.net)
+- Une classe Port, qui contient une std::map<int, Client*>
+- Une classe Virtual_Server
+- Une classe Client, qui contient ses parametres, un pointeur vers son Port, une instance Request, une instance Response
 - Une classe Request, pour stocker la requete HTTP a recevoir
 - Une classe Response, pour stocker la reponse HTTP a renvoyer
 
-## Logique multi-serveurs
-Soit un select() sur les fd_set de tous les serveurs, puis une boucle pour que chaque serveur traite les evenements.
-Soit un pthread par serveur, qui gere chacun leurs fd_set et select(), avec un mutex pour accept() et un mutex pour l'ecriture de fichiers.
+## Logique multi-thread
+On a une pool de thread qui s'occuperont de toutes les taches de recv() a send().
+Le main process gere juste les connections entrantes et l'ajout de taches pour la thread pool.
 
 ## Sujet
 - Your server must never block and the client can be bounced properly if necessary.
@@ -52,11 +53,10 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 
 ## Questions
-- Dans le cas de multiples serveurs, est ce qu'on fait tourner les serveurs sur un seul thread dans une boucle, ou on lance un thread par serveur ?
-- Mettre le config file comme une struct globale ?
 - Concept de chunk et utilité dans le projet ?
-- IPV4/IPV6 ? Aucune mention dans le Discord, on reste sur du IPv4 pour le moment
 - Doit on gerer l'access authentication ?
+- Si le client ferme la connection apres l'envoi de sa requete, doit on lui repondre ? (https://stackoverflow.com/questions/4824451/detect-end-of-http-request-body)
+- 
 
 ## Resources
 
@@ -166,14 +166,16 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Transfer-coding: chunked, identity, gzip, compress, deflate 
 - Chunked transfer Coding: OPTIONAL trailer
 - If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
+- 
 
 # Message
 ```
-generic-message = start-line
+generic-message =   start-line
                     *(message-header CRLF)
                     CRLF
                     [ message-body ]
-start-line      = Request-Line | Status-Line
+
+start-line      =   Request-Line | Status-Line
 ```
 - RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
 
@@ -357,15 +359,6 @@ The DELETE method requests that the origin server delete the resource identified
   └─┬─┘   └───────────┬──────────────┘└───────┬───────┘ └───────────┬─────────────┘ └┬┘
   scheme          authority                  path                 query           fragment
 ```
-
-# Testing
-- python library to make http requests https://requests.readthedocs.io/en/master/
-- quickly and easily send requests https://www.postman.com/
-
-# A faire
-- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
-- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send
-- Proteger une erreur de select() en cas d' interruption par un signal, errno = EINTR comme [ici](http://www.beej.us/guide/bgnet/html/#:~:text=Why%20does%20select()%20keep%20falling%20out%20on%20a%20signal%3F)
 
 
 http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]# [CONFIGURING NGINX AS A WEB SERVER](https://docs.nginx.com/nginx/admin-guide/web-server/web-server/)
@@ -656,3 +649,15 @@ In the configuration file, you should be able to:
 		- The CGI should be run in the correct directory for relative path file access.
 		- Your server should work with one CGI (php-CGI, Python, and so forth).
 
+
+## Parsing de Request
+- 
+
+
+# Testing
+- python library to make http requests https://requests.readthedocs.io/en/master/
+- quickly and easily send requests https://www.postman.com/
+
+# A faire
+- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
+- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send()

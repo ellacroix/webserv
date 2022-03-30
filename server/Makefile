@@ -1,20 +1,21 @@
 NAME		=	webserv
 
-SRCS		=	main.cpp \
-				Client.cpp \
+SRCS		=	Client.cpp \
+				main.cpp \
 				Port.cpp \
 				Location.cpp \
 				VirtualServer.cpp \
 				ConfigParser.cpp \
 				ConfigParserFile.cpp \
 				ConfigParserDirArgs.cpp \
-				utils.cpp
+				utils.cpp \
+				Request.cpp \
 
 OBJS		=	${SRCS:.cpp=.o}
 
 CXX			=	c++
 
-CXXFLAGS	=	-Wall -Werror -Wextra -std=c++98
+CXXFLAGS	= -pthread -Wall -Wextra -Werror -std=c++98
 
 all			:	${NAME}
 

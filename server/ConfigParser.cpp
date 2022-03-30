@@ -132,6 +132,11 @@ void	ConfigParser::startAllSockets(void)
 	}
 }
 
+std::list<Port*> &	ConfigParser::getPortsList(void)
+{
+	return (this->_portsList);
+}
+
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
