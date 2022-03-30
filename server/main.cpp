@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 	ConfigParser	config;
 	config.parse(argv[1]);
 
-
+	/*
 	//EPOLL
 	struct epoll_event event;
 	struct epoll_event events[MAX_EVENTS];
@@ -155,17 +155,6 @@ int main(int argc, char *argv[])
 	}
 	
 
-	//SETUP AND LAUNCH LISTEN SOCKETS ON ALL PORTS
-	/*
-	Port1->start();
-	event.data.fd = Port1->listen_socket;
-	event.events = EPOLLIN | EPOLLET;
-	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, Port1->listen_socket, &event);
-	Port2->start();
-	event.data.fd = Port2->listen_socket;
-	event.events = EPOLLIN | EPOLLET;
-	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, Port2->listen_socket, &event);
-	*/
 	std::list<Port*>::iterator	it;
 	std::list<Port*>::iterator	ite;
 	it = config.getPortsList().begin();
@@ -251,5 +240,6 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+	*/
 	return 0;
 }
