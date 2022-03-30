@@ -11,6 +11,7 @@
 
 #define MAX_EVENTS 20
 #define THREADS 1
+# define BUFFER_SIZE 50000
 
 typedef struct	s_thread_info
 {
@@ -27,23 +28,7 @@ typedef struct	s_thread_info
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
-	char	buffer[BUFFER_SIZE];
-	int		ret;
 	printf("ThreadsPool: recv routine\n");
-	
-	//Receiving all we can from the client
-	bzero(buffer, BUFFER_SIZE);
-	ret = recv(client->stream_socket, buffer, BUFFER_SIZE, 0);
-	if (ret == 0)
-	{
-		//Client disconnected itself
-		client->connected = false;
-		//The main has to disconnect and erase the client.
- 		client->parent_port->Clients.erase(client->stream_socket);
-		delete client;
-		return ;
-	}
-	client->request_buffer.append(buffer);
 
 	//Simulating the processing of a big request
 	//sleep(5);
@@ -218,7 +203,6 @@ int main(int argc, char *argv[])
 			for (std::list<Port*>::iterator it_p = config.getPortsList().begin(); it_p != config.getPortsList().end(); it_p++)
 			{
 				Port *current_port = *it_p;
-				std::map<int, Client*>::iterator it_c = current_port->Clients.find(event_fd);
 
 				//Check if the listen_socket of the current port has activated, meaning we have connections to accept()
 				if (current_port->listen_socket == event_fd)
@@ -250,19 +234,42 @@ int main(int argc, char *argv[])
 						epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection, &event);
 						pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 					}
+					continue;
 				}
 				
 				//Check if find() found the event_fd in this port's map, meaning there is work to do in it.
-				else if (it_c != current_port->Clients.end())
+				std::map<int, Client*>::iterator it_c = current_port->Clients.find(event_fd);
+				if (it_c != current_port->Clients.end())
 				{
 					int connection = it_c->first;
 					Client *current_client = it_c->second;
+ 					char	buffer[BUFFER_SIZE];
+					int		ret;
+					
+					//Receiving all we can from the client
+					bzero(buffer, BUFFER_SIZE);
+					ret = recv(current_client->stream_socket, buffer, BUFFER_SIZE, 0);
 
-					pthread_mutex_lock(&thread_info->queue_mutex);
-					thread_info->queue->push_back(current_client);
-					pthread_cond_signal(&thread_info->condition_var);
-					printf("MainProcess: added client %d to the queue\n", connection);
-					pthread_mutex_unlock(&thread_info->queue_mutex);
+					pthread_mutex_lock(&current_client->client_mutex);
+					if (ret == 0)
+					{
+						//Client disconnected itself
+						current_client->connected = false;
+						current_port->Clients.erase(current_client->stream_socket);
+						pthread_mutex_unlock(&current_client->client_mutex);
+						delete current_client;
+					}
+					
+					else
+					{
+						current_client->request_buffer.append(buffer);
+						pthread_mutex_lock(&thread_info->queue_mutex);
+						thread_info->queue->push_back(current_client);
+						pthread_cond_signal(&thread_info->condition_var);
+						printf("MainProcess: added client %d to the queue\n", connection);
+						pthread_mutex_unlock(&thread_info->queue_mutex);
+						pthread_mutex_unlock(&current_client->client_mutex);
+					}
 				}
 			}
 		}

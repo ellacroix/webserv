@@ -5,8 +5,6 @@
 # include "Client.hpp"
 # include "VirtualServer.hpp"
 
-# define BUFFER_SIZE 5000
-
 class	Client ;
 
 class	Port {

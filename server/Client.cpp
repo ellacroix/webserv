@@ -14,6 +14,7 @@ Client::~Client() {
 	printf("Deleting client\n");
  	if (request)
 		delete request;
+	pthread_mutex_destroy(&client_mutex);
 	printf("Closing socket\n");
 	close(stream_socket);
 }
