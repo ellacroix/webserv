@@ -3,7 +3,7 @@
 Request::Request(std::string raw)
 {
 	this->raw_request = raw;
-	stream_request = std::istringstream(raw_request);
+	stream_request.str(raw_request);
 }
 
 int	Request::parser()

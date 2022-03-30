@@ -166,7 +166,7 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Transfer-coding: chunked, identity, gzip, compress, deflate 
 - Chunked transfer Coding: OPTIONAL trailer
 - If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
-- 
+- See Nagle's algorithm if send/recv takes too much time (https://stackoverflow.com/questions/4428088/reasons-for-a-slow-recv-call)
 
 # Message
 ```
