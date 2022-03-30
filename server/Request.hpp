@@ -11,6 +11,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <iostream>
+#include <sstream>
 
 #include "Client.hpp"
 #include "Virtual_Server.hpp"
@@ -25,9 +26,10 @@ private:
 protected:
 
 public:
-	std::string raw_request;
+	std::string			raw_request;
+	std::istringstream	stream_request;
 
-	int error;
+	int status_code;
 	bool Chunked;
 	int ContentLength;
 	std::string METHOD;
@@ -42,6 +44,8 @@ public:
 	Request(std::string raw);
 
 	int			parser();
+	int			parseFirstLine();
+	int			parseHeaders();
 
 };
 

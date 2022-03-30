@@ -37,8 +37,6 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	{
 		//Client disconnected itself
 		client->connected = false;
-		client->parent_port->Clients.erase(client->stream_socket);
-		delete client;
 		return ;
 	}
 	client->request_buffer.append(buffer);

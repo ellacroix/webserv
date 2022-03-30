@@ -650,6 +650,10 @@ In the configuration file, you should be able to:
 		- Your server should work with one CGI (php-CGI, Python, and so forth).
 
 
+## Parsing de Request
+- 
+
+
 # Testing
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
