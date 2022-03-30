@@ -74,12 +74,12 @@ bool	isValidDomainName(std::string s)
 	return (true);
 }
 
-bool	isValidClientMaxBodySize(std::string s)
+bool	isValidClientMaxBodySize(std::string & s)
 {
 	size_t		i;
 
 	i = 0;
-	while (std::isdigit(s[i]) == true)
+	while (std::isdigit(s[i]))
 		i++;
 	if (i == 0)
 		return (false);
@@ -87,7 +87,7 @@ bool	isValidClientMaxBodySize(std::string s)
 		s[i] += 32;
 	if (s[i] != '\0' && s[i] != 'k' && s[i] != 'm')
 		return (false);
-	if ((s[i] == 'k' || s[i] == 'm') && s[++i] != '\0')
+	if ((s[i] == 'k' || s[i] == 'm') && s[i + 1] != '\0')
 		return (false);
 	return (true);
 }

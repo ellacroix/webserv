@@ -40,7 +40,6 @@ void				ConfigParser::parse(char *arg)
 					<< "." << std::endl;
 				exit(1);
 			}
-			//	VALIDATE ARGUMENTS
 			if (this->validateArguments() == ARG_ERROR)
 			{
 				std::cerr << "webserv\t- ERROR line " << this->_lineN << " - \"" 
@@ -51,7 +50,6 @@ void				ConfigParser::parse(char *arg)
 		}
 	}
 
-	//	this->displayLines();
 	std::cout << "========== SERVER ==========" << std::endl;
 	this->_tmpVS.display();
 	std::cout << "========= LOCATION =========" << std::endl;
@@ -131,14 +129,12 @@ int					ConfigParser::validateArguments(void)
 		case LIMIT_EXCEPT :
 			ret = this->validateLimitExceptArgs();
 			break ;
-			/*
-			   case OPENING_BRACKET :
-			   ret = this->validateOpeningBracketArgs();
-			   break ;
-			   case CLOSING_BRACKET :
-			   ret = this->validateClosingBracketArgs();
-			   break ;
-			   */
+		case OPENING_BRACKET :
+			ret = this->validateOpeningBracketArgs();
+			break ;
+		case CLOSING_BRACKET :
+			ret = this->validateClosingBracketArgs();
+			break ;
 	}
 	return (ret);
 }

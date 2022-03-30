@@ -12,11 +12,11 @@ class	VirtualServer {
 	private:
 		//	VIRTUAL SERVER PARAMS
 		int									_listenPort;
-		//	std::vector<std::string>			_serverName; // IF MANY NAMES
+		//	std::vector<std::string>		_serverName; // IF MANY NAMES
 		std::string							_serverName;
 		ssize_t								_clientMaxBodySize;
 
-		//	UNDERLYING DATA STRUCTURE => LOCATIONS
+		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
 		std::map<std::string, Location*>	_locationMap;
 
 	public:

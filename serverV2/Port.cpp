@@ -1,6 +1,11 @@
 #include "Port.hpp"
 #include <vector>
 
+Port::Port(void) 
+{
+	return ;
+}
+
 int Port::start()
 {
 
@@ -49,8 +54,6 @@ int Port::start()
 
 	return 0;
 }
-
-Port::Port() {}
 
 Port::Port(int port) :
 	on(1),

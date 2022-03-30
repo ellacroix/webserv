@@ -2,6 +2,7 @@
 
 VirtualServer::VirtualServer(void) :
 	_listenPort(-1),
+	_serverName(""),
 	_clientMaxBodySize(0),
 	_serverNameIsSet(false),
 	_listenPortIsSet(false),

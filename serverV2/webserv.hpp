@@ -36,7 +36,7 @@ bool			isNumber(std::string s);
 bool			isValidPrefix(std::string *s);
 bool			isValidPort(std::string s);
 bool			isValidDomainName(std::string s);
-bool			isValidClientMaxBodySize(std::string s);
+bool			isValidClientMaxBodySize(std::string & s);
 bool			isValidHttpErrorCode(std::string s);
 bool			isValidUri(std::string & s);
 bool			isValidErrorPage(std::vector<std::string> & v);

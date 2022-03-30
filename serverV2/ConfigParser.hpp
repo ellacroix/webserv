@@ -81,7 +81,7 @@ class	ConfigParser {
 //		Virtual_Server								*_curVS;
 //		Location									*_curLocation;
 
-		//	TO RETURN AT END OF PARSING
+		//	UNDERLYING DATA STRUCTURE => List OF Ports
 		std::list<Port *>							_portsList;
 
 		ConfigParser	&operator=(ConfigParser const & rhs);

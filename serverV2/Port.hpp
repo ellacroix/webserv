@@ -9,30 +9,32 @@
 
 class	Port {
 
-private:
+	private:
+		// UNDERLYING DATA STRUCTURES	=>	Map OF Clients
+		std::map<int, Client*>			Clients;
+		//								=>	List OF VirtualServers
+		std::list<VirtualServer*>		VirtualServers;
 
-public:
-	int					port_number;
+	public:
+		int					port_number;
 
-	//	CONNECTION PARAMS
-	int					listen_socket;
-	struct sockaddr_in	server_address;
-	int 				addr_len;
-	int					max_sd;
-	int					ret, on;
-	bool				kill_port;
+		//	CONNECTION PARAMS
+		int					listen_socket;
+		struct sockaddr_in	server_address;
+		int 				addr_len;
+		int					max_sd;
+		int					ret, on;
+		bool				kill_port;
 
 
-	std::map<int, Client*>			Clients;
-	std::list<VirtualServer*>		VirtualServers;
 
-	Port();
-	Port(int port);
-	~Port();
+		Port();
+		Port(int port);
+		~Port();
 
-	int	start();							// listen()
+		int	start();							// listen()
 
-	void disconnectClient(int socket);
+		void disconnectClient(int socket);
 
 };
 
