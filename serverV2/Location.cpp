@@ -1,5 +1,7 @@
 #include "Location.hpp"
 
+// CONSTRUCTORS / DESTRUCTOR
+
 Location::Location(void) :
 	_autoIndex(false),
 	_returnCode(-1),
@@ -18,8 +20,26 @@ Location::~Location(void)
 	return ;
 }
 
-//	SETTERS
+Location::Location(Location const & src) :
+	_prefix(src._prefix),
+	_root(src._root),
+	_errorPage(src._errorPage),
+	_autoIndex(src._autoIndex),
+	_index(src._index),
+	_limitExcept(src._limitExcept),
+	_returnCode(src._returnCode),
+	_returnUri(src._returnUri),
+	_rootIsSet(src._rootIsSet),
+	_errorPageIsSet(src._errorPageIsSet),
+	_autoIndexIsSet(src._autoIndexIsSet),
+	_indexIsSet(src._indexIsSet),
+	_returnIsSet(src._returnIsSet),
+	_limitExceptIsSet(src._limitExceptIsSet)
+{
+	return ;
+}
 
+//	SETTERS
 void	Location::setPrefix(std::string s)
 {
 	this->_prefix = s;
@@ -66,13 +86,18 @@ void	Location::setLimitExcept(std::vector<std::string> v)
 	}
 }
 
-std::map<int, std::string> & Location::getErrorPage(void)
+//	GETTERS
+std::map<int, std::string> &	Location::getErrorPage(void)
 {
 	return (this->_errorPage);
 }
 
-//	UTILITIES
+std::string						Location::getPrefix(void) const
+{
+	return (this->_prefix);
+}
 
+//	UTILITIES
 void	Location::reset(void)
 {
 	this->_prefix = "";
@@ -100,26 +125,26 @@ void	Location::display(void) const
 	std::vector<std::string>::const_iterator	vct_ite;
 	int											i;
 
-	std::cout << "_prefix\t\t\t=\t\"" << this->_prefix << "\"" << std::endl;
-	std::cout << "_root\t\t\t=\t\"" << this->_root << "\"" << std::endl;
+	std::cout << "\t\t_prefix\t\t\t=\t\"" << this->_prefix << "\"" << std::endl;
+	std::cout << "\t\t_root\t\t\t=\t\"" << this->_root << "\"" << std::endl;
 	if (this->_errorPage.empty() == true)
-		std::cout << "_errorPage[ ]\t\t=\tempty" << std::endl;
+		std::cout << "\t\t_errorPage[ ]\t\t=\tempty" << std::endl;
 	else
 	{
 		map_it = this->_errorPage.begin();
 		map_ite = this->_errorPage.end();
 		while (map_it != map_ite)
 		{
-			std::cout << "_errorPage[" << (*map_it).first << "]\t\t=\t\""
+			std::cout << "\t\t_errorPage[" << (*map_it).first << "]\t\t=\t\""
 				<< (*map_it).second << "\"" << std::endl;
 			map_it++;
 		}
 	}
 	std::cout << std::boolalpha;
-	std::cout << "_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
-	std::cout << "_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
+	std::cout << "\t\t_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
+	std::cout << "\t\t_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
 	if (this->_limitExcept.empty() == true)
-		std::cout << "_limitExcept[ ]\t\t=\tempty" << std::endl;
+		std::cout << "\t\t_limitExcept[ ]\t\t=\tempty" << std::endl;
 	else
 	{
 		vct_it = this->_limitExcept.begin();
@@ -127,21 +152,28 @@ void	Location::display(void) const
 		i = 0;
 		while (vct_it != vct_ite)
 		{
-			std::cout << "_limitExcept[" << i << "]\t\t=\t\""
+			std::cout << "\t\t_limitExcept[" << i << "]\t\t=\t\""
 				<< *vct_it << "\"" << std::endl;
 			vct_it++;
 			i++;
 		}
 	}
-	std::cout << "_return\t\t\t=\t" << this->_returnCode << std::endl;
-	std::cout << "_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
-//	std::cout << "_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
+	std::cout << "\t\t_return\t\t\t=\t" << this->_returnCode << std::endl;
+	std::cout << "\t\t_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
+//	std::cout << "\t\t_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
 
-	std::cout << "_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
-	std::cout << "_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
-	std::cout << "_autoIndexIsSet\t\t=\t" << this->_autoIndexIsSet << std::endl;
-	std::cout << "_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
-	std::cout << "_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
-	std::cout << "_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
+	std::cout << "\t\t_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
+	std::cout << "\t\t_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
+	std::cout << "\t\t_autoIndexIsSet\t\t=\t" << this->_autoIndexIsSet << std::endl;
+	std::cout << "\t\t_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
+	std::cout << "\t\t_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
+	std::cout << "\t\t_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
 }
 
+Location *	Location::clone(void) const
+{
+	Location *ptr;
+
+	ptr = new Location(*this);
+	return (ptr);
+}

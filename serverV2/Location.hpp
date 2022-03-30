@@ -20,9 +20,12 @@ class	Location
 
 	public:
 
+		// CONSTRUCTORS / DESTRUCTOR
 		Location(void);
 		~Location(void);
+		Location(Location const & src);
 
+		//	SET BOOLEANS
 		bool								_rootIsSet;
 		bool								_errorPageIsSet;
 		bool								_autoIndexIsSet;
@@ -30,6 +33,7 @@ class	Location
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
 
+		//	SETTERS
 		void		setPrefix(std::string s);
 		void		setRoot(std::string s);
 		void		setAutoindex(bool b);
@@ -39,12 +43,14 @@ class	Location
 		void		setReturnUri(std::string s);
 		void		setLimitExcept(std::vector<std::string> v);
 
+		//	GETTERS
 		std::map<int, std::string> & 	getErrorPage(void);
+		std::string						getPrefix(void) const;
 
+		//	UTILITIES
 		void		reset(void);
 		void		display(void) const;
-
-
+		Location *	clone(void) const;
 };
 
 #endif

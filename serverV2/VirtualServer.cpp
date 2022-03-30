@@ -1,5 +1,6 @@
 #include "VirtualServer.hpp"
 
+//	CONSTRUCTORS / DESTRUCTOR
 VirtualServer::VirtualServer(void) :
 	_listenPort(-1),
 	_serverName(""),
@@ -13,6 +14,18 @@ VirtualServer::VirtualServer(void) :
 }
 
 VirtualServer::~VirtualServer(void)
+{
+	return ;
+}
+
+VirtualServer::VirtualServer(VirtualServer const & src) :
+	_listenPort(src._listenPort),
+	_serverName(src._serverName),
+	_clientMaxBodySize(src._clientMaxBodySize),
+	_locationMap(src._locationMap),		// !!! DEEP COPY
+	_serverNameIsSet(src._serverNameIsSet),
+	_listenPortIsSet(src._listenPortIsSet),
+	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
 {
 	return ;
 }
@@ -54,13 +67,49 @@ void	VirtualServer::reset(void)
 
 void	VirtualServer::display(void) const
 {
-	std::cout << "_listenPort\t\t=\t" << this->_listenPort << std::endl;
-	std::cout << "_serverName\t\t=\t\"" << this->_serverName << "\"" << std::endl;
-	std::cout << "_clientMaxBodySize\t=\t" << this->_clientMaxBodySize << std::endl;
+	std::map<std::string, Location*>::const_iterator	it;
+	std::map<std::string, Location*>::const_iterator	ite;
+	int													i;
+
+	std::cout << "\t_listenPort\t\t=\t" << this->_listenPort << std::endl;
+	std::cout << "\t_serverName\t\t=\t\"" << this->_serverName << "\"" << std::endl;
+	std::cout << "\t_clientMaxBodySize\t=\t" << this->_clientMaxBodySize << std::endl;
 	std::cout << std::boolalpha;
-	std::cout << "_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
-	std::cout << "_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
-	std::cout << "_clientMaxBodySizeIsSet\t=\t" <<
+	std::cout << "\t_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
+	std::cout << "\t_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
+	std::cout << "\t_clientMaxBodySizeIsSet\t=\t" <<
 		this->_clientMaxBodySizeIsSet << std::endl;
-	std::cout << "_locationIsSet\t\t=\t" << this->_locationIsSet << std::endl;
+	std::cout << "\t_locationIsSet\t\t=\t" << this->_locationIsSet << std::endl;
+
+	if (this->_locationMap.empty() == true)
+		std::cout << "\t_locationMap\t\t=\tempty" << std::endl;
+	else
+	{
+		it = this->_locationMap.begin();
+		ite = this->_locationMap.end();
+		i = 0;
+		while (it != ite)
+		{
+			std::cout << "\t_locationMap[" << it->first << "] :" << std::endl;
+			it->second->display();
+			i++;
+			it++;
+		}
+	}
 }
+
+void	VirtualServer::addLocation(Location * newLocation)
+{
+	this->_locationMap[newLocation->getPrefix()] = newLocation;
+}
+
+/*
+   VirtualServer *		VirtualServer::clone(void) const
+   {
+   VirtualServer	*ptr;
+
+   ptr = new VirtualServer(*this);
+   return (ptr);
+   }
+   */
+

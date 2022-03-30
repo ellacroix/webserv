@@ -183,8 +183,22 @@ int ConfigParser::validateOpeningBracketArgs(void)
 
 int ConfigParser::validateClosingBracketArgs(void)
 {
-	if (this->_line.size() == 1)
+	if (this->_line.size() != 1)
+		return (ARG_ERROR);
+	if (this->_context == SERVER_CONTEXT)
+	{
+		//	this->_curLoc->validate();						   // return (false) if fail
+		//	this->_curVS->noDuplicateLocation(*this->_curLoc); // return (false) if fail
+		this->_curVS->addLocation(this->_curLoc->clone());
 		return (true);
-	return (ARG_ERROR);
+	}
+	/*
+	else if (this->_context == MAIN_CONTEXT)
+	{
+		//	this->_curVS->validate(); // return (false) if validate() failed
+		//	this->_portsMap[port].addVS(this->_curVS->clone());	
+		//	return (true);
+	}
+	*/
+	return (true);
 }
-

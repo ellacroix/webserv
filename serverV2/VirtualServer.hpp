@@ -32,12 +32,16 @@ class	VirtualServer {
 		bool		_clientMaxBodySizeIsSet;
 		bool		_locationIsSet;
 
+		//	SETTERS
 		void		setListenPort(int n);
 		void		setServerName(std::string s);
 		void		setClientMaxBodySize(std::string s);
 
-		void		reset(void);
-		void		display(void) const ;
+		//	UTILITIES
+		void				reset(void);
+		void				display(void) const ;
+//		VirtualServer *		clone(void) const ;
+		void				addLocation(Location * newLocation);
 };
 
 #endif

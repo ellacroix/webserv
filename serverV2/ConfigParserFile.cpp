@@ -50,10 +50,10 @@ void				ConfigParser::parse(char *arg)
 		}
 	}
 
-	std::cout << "========== SERVER ==========" << std::endl;
+	std::cout << "\t========== SERVER ==========" << std::endl;
 	this->_curVS->display();
-	std::cout << "========= LOCATION =========" << std::endl;
-	this->_curLoc->display();
+//	std::cout << "========= LOCATION =========" << std::endl;
+//	this->_curLoc->display();
 
 	// this->configIsValid();
 	ifs.close();
