@@ -19,7 +19,7 @@ void				ConfigParser::parse(char *arg)
 	while (std::getline(ifs, this->_curLine))
 	{
 		this->_lineN++;
-		if (this->hasContent() == true)
+		if (this->hasContent() == true && this->isComment() == false)
 		{
 			this->splitLineIntoTokens();
 			this->displayLine(this->_line);
@@ -51,14 +51,10 @@ void				ConfigParser::parse(char *arg)
 	}
 
 	std::cout << "\t========== SERVER ==========" << std::endl;
-	//this->_curVS->display();
 	this->displayPortsMap();
-//	this->_portsList = std::list<Port>(this->_portsMap.begin().second(), this->_portsMap.end().second());
 	this->makeListFromMap();
-
 	// this->configIsValid();
 	ifs.close();
-	//	return (portsList);
 }
 
 void				ConfigParser::splitLineIntoTokens(void)
@@ -185,6 +181,18 @@ bool	ConfigParser::hasContent(void) const
 			return (true);
 		i++;
 	}
+	return (false);
+}
+
+bool	ConfigParser::isComment(void) const
+{
+	size_t	i;
+
+	i = 0;
+	while (std::isspace(this->_curLine[i]))
+		i++;
+	if (_curLine[i] == '#')
+		return (true);
 	return (false);
 }
 

@@ -126,22 +126,6 @@ void	*thread_loop(void* arg)
 
 int main(int argc, char *argv[])
 {
-	/*
-	Port *Port1 = new Port(8000);
-	Port *Port2 = new Port(8001);
-
-	std::list<Port*> Ports; //= parse();
-	Ports.push_back(Port1);
-	Ports.push_back(Port2);
-
-	VirtualServer *VS1 = new VirtualServer("Alfred");
-	VirtualServer *VS2 = new VirtualServer("Zac");
-	VirtualServer *VS3 = new VirtualServer("Joe");
-
-	Port1->VirtualServers.push_back(VS1);
-	Port1->VirtualServers.push_back(VS2);
-	Port2->VirtualServers.push_back(VS3);
-	*/
 	if (argc != 2)
 		return (-1);
 	ConfigParser	config;

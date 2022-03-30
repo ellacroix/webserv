@@ -3,10 +3,6 @@
 
 int		ConfigParser::validateServerArgs(void)
 {
-	// ALLOCATES NEW VirtualServer
-	//	TO BE STORED IN
-	//	this->_curVS->
-
 	if (this->_line.size() == 2
 			&& this->_line[1] == ConfigParser::_directives[OPENING_BRACKET])
 	{
@@ -18,10 +14,6 @@ int		ConfigParser::validateServerArgs(void)
 
 int ConfigParser::validateLocationArgs(void)
 {
-	// ALLOCATES NEW Location
-	// TO BE STORED IN
-	//		this->_portsMap[port]->_VSList->_locMap[prefix]
-
 	if (this->_line.size() == 3
 			&& isValidPrefix(&this->_line[1])
 			&& this->_line[2] == ConfigParser::_directives[OPENING_BRACKET])

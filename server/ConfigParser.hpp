@@ -109,6 +109,7 @@ class	ConfigParser {
 		int			validateArguments(void);
 		bool		validateContext(void);
 		bool		hasContent(void) const ;
+		bool		isComment(void) const ;
 
 		//	ConfigParserDirArgs.cpp	
 		int			validateServerArgs(void);
