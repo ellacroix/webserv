@@ -6,6 +6,8 @@ Client::Client(int fd, Port *port) :
 	parent_port = port;
 	stream_socket = fd;
 	pthread_mutex_init(&client_mutex, NULL);
+	gettimeofday(&last_activity, NULL);
+	request = NULL;
 
 	response_ready = false;
 }

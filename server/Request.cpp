@@ -24,8 +24,11 @@ int	Request::parser()
 	if (parsing_step == CHUNK)
 		ret = chunk(); */
 	
-	if (parsing_step == COMPLETE && ret == 1)
+	if (parsing_step == COMPLETE || ret == 1)
+	{
+		parsing_step = COMPLETE;
 		return ret;
+	}
 	
 	if (ret > 1)
 		return ret;

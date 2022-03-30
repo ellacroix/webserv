@@ -14,6 +14,8 @@
 #include <iostream>
 #include <sstream>
 */
+
+
 #include "webserv.hpp"
 
 #include "Client.hpp"
@@ -22,7 +24,7 @@
 class Client ;
 class VirtualServer ;
 
-class Request{
+class Request {
 
 private:
 
@@ -39,16 +41,6 @@ public:
 	std::string URI;
 	std::string headers;
 
-	enum parsing_step {
-		FIRST_LINE,
-		HEADERS,
-		PREBODY,
-		BODY,
-		CHUNK,
-		COMPLETE,
-		ERROR
-	};
-
 	Client			*client;
 	VirtualServer	*virtual_server;
 
@@ -61,17 +53,16 @@ public:
 	int			parseFirstLine();
 	int			parseHeaders();
 
+	enum Step {
+		FIRST_LINE,
+		HEADERS,
+		PREBODY,
+		BODY,
+		CHUNK,
+		COMPLETE,
+		ERROR
+	};
+	Step parsing_step;
 };
-
-/* class Response{
-	isReponseChunked();
-
-	int	GET();
-	int POST();
-	int	DELETE();
-	int CGI();
-
-};
- */
 
 #endif

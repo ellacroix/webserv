@@ -16,6 +16,9 @@
 #include <iostream>
 #include <string>
 #include <pthread.h>
+#include <sys/time.h>
+#include <time.h>
+
 
 class Port ;
 class Request ;
@@ -32,6 +35,7 @@ public:
 	bool				connected;
 	std::string			request_buffer;
 	pthread_mutex_t		client_mutex;
+	struct timeval		last_activity;
 
 	bool				response_ready;
 

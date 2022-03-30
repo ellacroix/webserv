@@ -8,10 +8,13 @@
 #include <iostream>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <sys/time.h>
+#include <time.h>
 
 #define MAX_EVENTS 20
-#define THREADS 8
-# define BUFFER_SIZE 50000
+#define THREADS 2
+#define BUFFER_SIZE 50000
+#define TIMEOUT	10
 
 typedef struct	s_thread_info
 {
@@ -185,17 +188,44 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
-		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 60000);
+		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 5000);
+
 		printf("MainProcess: epoll_wait() activated by %d file descriptors\n", new_events);
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
 		if (new_events == 0){
-			printf("epoll_wait() timed out.  End program.\n");
-			break;
+			printf("epoll_wait() timed out.  Checking for clients timeout.\n");
 		}
 
+		//LOOP TO CHECK CLIENTS TIMEOUT
+		struct timeval current_time;
+		gettimeofday(&current_time, NULL);
+		for (std::list<Port*>::iterator it_p = config.getPortsList().begin(); it_p != config.getPortsList().end(); it_p++)
+		{
+			Port *current_port = *it_p;
+
+			for (std::map<int, Client*>::iterator it_c = current_port->Clients.begin(), next_it_c = it_c; it_c != current_port->Clients.end(); it_c = next_it_c)
+			{
+				Client *current_client = it_c->second;
+				next_it_c++;
+
+				pthread_mutex_lock(&current_client->client_mutex);
+				int result = current_time.tv_sec - current_client->last_activity.tv_sec;
+				if (result > TIMEOUT)
+				{
+					current_client->connected = false;
+					current_port->Clients.erase(current_client->stream_socket);
+					pthread_mutex_unlock(&current_client->client_mutex);
+					delete current_client;
+					continue;
+				}
+				pthread_mutex_unlock(&current_client->client_mutex);
+			}
+		}
+
+		//LOOP TO CHECK ALL ACTIVATED FD
 		for (int i = 0; i < new_events; i++)
 		{
 			int event_fd = events[i].data.fd;
@@ -245,7 +275,8 @@ int main(int argc, char *argv[])
 					Client *current_client = it_c->second;
  					char	buffer[BUFFER_SIZE];
 					int		ret;
-					
+
+					gettimeofday(&current_client->last_activity, NULL);
 					//Receiving all we can from the client
 					bzero(buffer, BUFFER_SIZE);
 					ret = recv(current_client->stream_socket, buffer, BUFFER_SIZE, 0);
