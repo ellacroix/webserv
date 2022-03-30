@@ -5,12 +5,12 @@ int		ConfigParser::validateServerArgs(void)
 {
 	// ALLOCATES NEW VirtualServer
 	//	TO BE STORED IN
-	//	this->_tmpVS;
+	//	this->_curVS->
 
 	if (this->_line.size() == 2
 			&& this->_line[1] == ConfigParser::_directives[OPENING_BRACKET])
 	{
-		this->_tmpVS.reset();
+		this->_curVS->reset();
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -26,9 +26,9 @@ int ConfigParser::validateLocationArgs(void)
 			&& isValidPrefix(&this->_line[1])
 			&& this->_line[2] == ConfigParser::_directives[OPENING_BRACKET])
 	{
-		this->_tmpLoc.reset();
-		this->_tmpLoc.setPrefix(this->_line[1]);
-		this->_tmpVS._locationIsSet = true;
+		this->_curLoc->reset();
+		this->_curLoc->setPrefix(this->_line[1]);
+		this->_curVS->_locationIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -39,10 +39,10 @@ int ConfigParser::validateListenArgs(void)
 	if (this->_line.size() == 2
 			&& isNumber(_line[1])
 			&& isValidPort(_line[1])
-			&& this->_tmpVS._listenPortIsSet == false)
+			&& this->_curVS->_listenPortIsSet == false)
 	{
-		this->_tmpVS.setListenPort(std::atoi(_line[1].c_str()));
-		this->_tmpVS._listenPortIsSet = true;
+		this->_curVS->setListenPort(std::atoi(_line[1].c_str()));
+		this->_curVS->_listenPortIsSet = true;
 		// ALLOCATE NEW Port
 		// TO BE STORED IN
 		//		this->_portsList[port];
@@ -58,10 +58,10 @@ int ConfigParser::validateServerNameArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidDomainName(this->_line[1])
-			&& this->_tmpVS._serverNameIsSet == false)
+			&& this->_curVS->_serverNameIsSet == false)
 	{
-		this->_tmpVS.setServerName(this->_line[1]);
-		this->_tmpVS._serverNameIsSet = true;
+		this->_curVS->setServerName(this->_line[1]);
+		this->_curVS->_serverNameIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -71,10 +71,10 @@ int ConfigParser::validateClientMaxBodySizeArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidClientMaxBodySize(this->_line[1])
-			&& this->_tmpVS._clientMaxBodySizeIsSet == false)
+			&& this->_curVS->_clientMaxBodySizeIsSet == false)
 	{
-		this->_tmpVS.setClientMaxBodySize(this->_line[1]);
-		this->_tmpVS._clientMaxBodySizeIsSet = true;
+		this->_curVS->setClientMaxBodySize(this->_line[1]);
+		this->_curVS->_clientMaxBodySizeIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -84,10 +84,10 @@ int ConfigParser::validateRootArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidPrefix(&this->_line[1]) == true
-			&& this->_tmpLoc._rootIsSet == false)
+			&& this->_curLoc->_rootIsSet == false)
 	{
-		this->_tmpLoc.setRoot(this->_line[1]);
-		this->_tmpLoc._rootIsSet = true;
+		this->_curLoc->setRoot(this->_line[1]);
+		this->_curLoc->_rootIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -99,7 +99,7 @@ int ConfigParser::validateErrorPageArgs(void)
 			&& isValidErrorPage(this->_line) == true
 			&& this->noDuplicateErrorPage() == true)
 	{
-		this->_tmpLoc._errorPageIsSet = true;
+		this->_curLoc->_errorPageIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -109,13 +109,13 @@ int ConfigParser::validateAutoindexArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidAutoindex(this->_line[1])
-			&& this->_tmpLoc._autoIndexIsSet == false)
+			&& this->_curLoc->_autoIndexIsSet == false)
 	{
 		if (this->_line[1] == "on")
-			this->_tmpLoc.setAutoindex(true);
+			this->_curLoc->setAutoindex(true);
 		else
-			this->_tmpLoc.setAutoindex(false);
-		this->_tmpLoc._autoIndexIsSet = true;
+			this->_curLoc->setAutoindex(false);
+		this->_curLoc->_autoIndexIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -129,15 +129,15 @@ int ConfigParser::validateIndexArgs(void)
 	if (this->_line.size() >= 2
 //			&& isValidIndex(this->_line)
 			&& isValidIndex(this->_line[1])
-			&& this->_tmpLoc._indexIsSet == false)
+			&& this->_curLoc->_indexIsSet == false)
 	{
 		/*
 		it = this->_line.begin() + 1;
 		ite = this->_line.end();
-		this->_tmpLoc.setIndex(std::vector<std::string>(it, ite));
+		this->_curLoc->setIndex(std::vector<std::string>(it, ite));
 		*/
-		this->_tmpLoc.setIndex(this->_line[1]);
-		this->_tmpLoc._indexIsSet = true;
+		this->_curLoc->setIndex(this->_line[1]);
+		this->_curLoc->_indexIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -149,11 +149,11 @@ int ConfigParser::validateReturnArgs(void)
 //	PATTERN : return HTTP_CODE URI
 	if (this->_line.size() == 3
 			&& isValidReturn(this->_line)
-			&& this->_tmpLoc._returnIsSet == false)
+			&& this->_curLoc->_returnIsSet == false)
 	{
-		this->_tmpLoc.setReturnCode(std::atoi(this->_line[1].c_str()));
-		this->_tmpLoc.setReturnUri(this->_line[2]);
-		this->_tmpLoc._returnIsSet = true;
+		this->_curLoc->setReturnCode(std::atoi(this->_line[1].c_str()));
+		this->_curLoc->setReturnUri(this->_line[2]);
+		this->_curLoc->_returnIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -165,10 +165,10 @@ int	ConfigParser::validateLimitExceptArgs(void)
 //	limit_except method ...
 	if (this->_line.size() >= 2 && this->_line.size() <= 4
 			&& isValidLimitExcept(this->_line)
-			&& this->_tmpLoc._limitExceptIsSet == false)
+			&& this->_curLoc->_limitExceptIsSet == false)
 	{
-		this->_tmpLoc.setLimitExcept(this->_line);
-		this->_tmpLoc._limitExceptIsSet = true;
+		this->_curLoc->setLimitExcept(this->_line);
+		this->_curLoc->_limitExceptIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);

@@ -70,16 +70,14 @@ class	ConfigParser {
 
 		//	TO STORE TEMP VALUES AS LONG AS PORT IS NOT DEFINED
 		VirtualServer								_tmpVS;
-		VirtualServer *								_tmpVSPtr;
 		bool										_tmpVSIsStored;
 		Location									_tmpLoc;
-		Location *									_tmpLocPtr;
 		bool										_tmpLocIsStored;
 
 		//	PTRS TO KEEP TRACK OF CURRENT INSTANCES BEING TREATED
-//		Port										*_curPort;
-//		Virtual_Server								*_curVS;
-//		Location									*_curLocation;
+		Port										*_curPort;
+		VirtualServer								*_curVS;
+		Location									*_curLoc;
 
 		//	UNDERLYING DATA STRUCTURE => List OF Ports
 		std::list<Port *>							_portsList;

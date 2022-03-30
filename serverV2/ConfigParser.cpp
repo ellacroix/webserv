@@ -5,7 +5,10 @@ ConfigParser::ConfigParser(void) :
 	_dir(-1),
 	_lineN(0),
 	_tmpVSIsStored(false),
-	_tmpLocIsStored(false)
+	_tmpLocIsStored(false),
+	_curPort(NULL),
+	_curVS(&this->_tmpVS),
+	_curLoc(&this->_tmpLoc)
 {
 	return ;
 }

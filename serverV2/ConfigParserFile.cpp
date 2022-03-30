@@ -51,9 +51,9 @@ void				ConfigParser::parse(char *arg)
 	}
 
 	std::cout << "========== SERVER ==========" << std::endl;
-	this->_tmpVS.display();
+	this->_curVS->display();
 	std::cout << "========= LOCATION =========" << std::endl;
-	this->_tmpLoc.display();
+	this->_curLoc->display();
 
 	// this->configIsValid();
 	ifs.close();
@@ -194,15 +194,15 @@ bool    ConfigParser::noDuplicateErrorPage(void)
 	size_t                                  i;
 	size_t                                  size;
 
-	ite = this->_tmpLoc.getErrorPage().end();
+	ite = this->_curLoc->getErrorPage().end();
 	i = 1;
 	size = this->_line.size();
 	while (i < size - 1)
 	{
 		httpCode = std::atoi(this->_line[i].c_str());
-		if (this->_tmpLoc.getErrorPage().find(httpCode) != ite)
+		if (this->_curLoc->getErrorPage().find(httpCode) != ite)
 			return (false);
-		this->_tmpLoc.getErrorPage()[httpCode] = this->_line[size - 1];
+		this->_curLoc->getErrorPage()[httpCode] = this->_line[size - 1];
 		i++;
 	}
 	return (true);
