@@ -30,6 +30,7 @@ VirtualServer::VirtualServer(VirtualServer const & src) :
 	return ;
 }
 
+//	SETTERS
 void	VirtualServer::setListenPort(int n)
 {
 	this->_listenPort = n;
@@ -49,6 +50,12 @@ void	VirtualServer::setClientMaxBodySize(std::string s)
 		this->_clientMaxBodySize *= K;
 	if (*endPtr == 'm')
 		this->_clientMaxBodySize *= M;
+}
+
+//	GETTERS
+int		VirtualServer::getListenPort(void) const
+{
+	return (this->_listenPort);
 }
 
 void	VirtualServer::reset(void)
@@ -103,13 +110,10 @@ void	VirtualServer::addLocation(Location * newLocation)
 	this->_locationMap[newLocation->getPrefix()] = newLocation;
 }
 
-/*
-   VirtualServer *		VirtualServer::clone(void) const
-   {
-   VirtualServer	*ptr;
+VirtualServer *		VirtualServer::clone(void) const
+{
+	VirtualServer	*ptr;
 
-   ptr = new VirtualServer(*this);
-   return (ptr);
-   }
-   */
-
+	ptr = new VirtualServer(*this);
+	return (ptr);
+}

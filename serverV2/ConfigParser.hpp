@@ -81,6 +81,7 @@ class	ConfigParser {
 
 		//	UNDERLYING DATA STRUCTURE => List OF Ports
 		std::list<Port *>							_portsList;
+		std::map<int, Port>							_portsMap;
 
 		ConfigParser	&operator=(ConfigParser const & rhs);
 		ConfigParser(ConfigParser const &src);
@@ -96,6 +97,7 @@ class	ConfigParser {
 		void		displayLine(std::vector<std::string> v) const;
 		void		displayLines(void) const;
 		void		displayContextSwitch(int newContext) const;
+		void		displayPortsMap(void) const;
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

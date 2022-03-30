@@ -13,7 +13,7 @@ class	Port {
 		// UNDERLYING DATA STRUCTURES	=>	Map OF Clients
 		std::map<int, Client*>			Clients;
 		//								=>	List OF VirtualServers
-		std::list<VirtualServer*>		VirtualServers;
+		std::list<VirtualServer*>		_VSList;
 
 	public:
 		int					port_number;
@@ -32,10 +32,13 @@ class	Port {
 		Port(int port);
 		~Port();
 
+		//	CONNECTION FUNCTIONS
 		int	start();							// listen()
-
 		void disconnectClient(int socket);
 
+		//	UTILITIES
+		void	addVS(VirtualServer * newVS);
+		void	display(void) const;
 };
 
 #endif

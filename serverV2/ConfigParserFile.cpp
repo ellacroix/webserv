@@ -51,9 +51,9 @@ void				ConfigParser::parse(char *arg)
 	}
 
 	std::cout << "\t========== SERVER ==========" << std::endl;
-	this->_curVS->display();
-//	std::cout << "========= LOCATION =========" << std::endl;
-//	this->_curLoc->display();
+	//this->_curVS->display();
+	this->displayPortsMap();
+//	this->_portsList = std::list<Port>(this->_portsMap.begin().second(), this->_portsMap.end().second());
 
 	// this->configIsValid();
 	ifs.close();

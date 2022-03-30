@@ -192,13 +192,11 @@ int ConfigParser::validateClosingBracketArgs(void)
 		this->_curVS->addLocation(this->_curLoc->clone());
 		return (true);
 	}
-	/*
 	else if (this->_context == MAIN_CONTEXT)
 	{
 		//	this->_curVS->validate(); // return (false) if validate() failed
-		//	this->_portsMap[port].addVS(this->_curVS->clone());	
-		//	return (true);
+		this->_portsMap[this->_curVS->getListenPort()].addVS(this->_curVS->clone());	
+		return (true);
 	}
-	*/
 	return (true);
 }

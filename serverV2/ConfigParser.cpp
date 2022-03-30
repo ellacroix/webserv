@@ -83,6 +83,21 @@ void	ConfigParser::displayContextSwitch(int newContext) const
 		<< std::endl;
 }
 
+void	ConfigParser::displayPortsMap(void) const
+{
+	std::map<int, Port>::const_iterator	it;
+	std::map<int, Port>::const_iterator	ite;
+
+	it = this->_portsMap.begin();
+	ite = this->_portsMap.end();
+	while (it != ite)
+	{
+		std::cout << "port[" << it->first << "] :" << std::endl;
+		it->second.display();
+		it++;
+	}
+}
+
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",

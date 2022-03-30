@@ -36,11 +36,13 @@ class	VirtualServer {
 		void		setListenPort(int n);
 		void		setServerName(std::string s);
 		void		setClientMaxBodySize(std::string s);
+		//	GETTERS
+		int			getListenPort(void) const;
 
 		//	UTILITIES
 		void				reset(void);
 		void				display(void) const ;
-//		VirtualServer *		clone(void) const ;
+		VirtualServer *		clone(void) const ;
 		void				addLocation(Location * newLocation);
 };
 

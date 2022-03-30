@@ -66,3 +66,23 @@ Port::~Port()
 {
 	close(listen_socket);
 }
+
+//	UTILITIES
+void	Port::addVS(VirtualServer * newVS)
+{
+	this->_VSList.push_back(newVS);
+}
+
+void	Port::display(void) const
+{
+	std::list<VirtualServer*>::const_iterator	it;
+	std::list<VirtualServer*>::const_iterator	ite;
+
+	it = this->_VSList.begin();
+	ite = this->_VSList.end();
+	while (it != ite)
+	{
+		(*it)->display();
+		it++;
+	}
+}
