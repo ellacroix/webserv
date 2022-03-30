@@ -10,7 +10,7 @@
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 20
-#define THREADS 1
+#define THREADS 8
 # define BUFFER_SIZE 50000
 
 typedef struct	s_thread_info

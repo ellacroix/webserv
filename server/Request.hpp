@@ -32,11 +32,22 @@ public:
 	std::string			raw_request;
 	std::istringstream	stream_request;
 
-	int status_code;
+	int				status_code;
 	bool Chunked;
 	int ContentLength;
-	std::string METHOD;
+	std::string method;
+	std::string URI;
 	std::string headers;
+
+	enum parsing_step {
+		FIRST_LINE,
+		HEADERS,
+		PREBODY,
+		BODY,
+		CHUNK,
+		COMPLETE,
+		ERROR
+	};
 
 	Client			*client;
 	VirtualServer	*virtual_server;
