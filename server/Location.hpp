@@ -51,6 +51,7 @@ class	Location
 		void		reset(void);
 		void		display(void) const;
 		Location *	clone(void) const;
+		bool		validate(void) const;
 };
 
 #endif

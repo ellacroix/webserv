@@ -44,6 +44,7 @@ class	VirtualServer {
 		void				display(void) const ;
 		VirtualServer *		clone(void) const ;
 		void				addLocation(Location * newLocation);
+		bool				validate(void) const;
 };
 
 #endif

@@ -38,7 +38,9 @@ enum	directives
 
 enum	arguments
 {
-	ARG_ERROR = -1,
+	SERV_BLCK_ERROR = -3,
+	LOC_BLCK_ERROR,
+	ARG_ERROR,
 	IP,
 	PORT,
 	DOMAIN,
@@ -93,13 +95,14 @@ class	ConfigParser {
 		int										getContext(void) const;
 		std::vector<std::vector<std::string> >	getLines(void) const;	
 		std::string								getCurLine(void) const;
-		void		displayLine(std::vector<std::string> v) const;
-		void		displayLines(void) const;
-		void		displayContextSwitch(int newContext) const;
-		void		displayPortsMap(void) const;
-		void		makeListFromMap(void);
-		void		startAllSockets(void);
+		void				displayLine(std::vector<std::string> v) const;
+		void				displayLines(void) const;
+		void				displayContextSwitch(int newContext) const;
+		void				displayPortsMap(void) const;
+		void				makeListFromMap(void);
+		void				startAllSockets(void);
 		std::list<Port*> &	getPortsList(void);
+		bool				validate(void) const;	
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

@@ -96,6 +96,7 @@ int Port::start(void)
 void	Port::addVS(VirtualServer * newVS)
 {
 	this->_VSList.push_back(newVS);
+	this->port_number = newVS->getListenPort();
 }
 
 void	Port::display(void) const
@@ -110,4 +111,15 @@ void	Port::display(void) const
 		(*it)->display();
 		it++;
 	}
+}
+
+bool	Port::validate(void) const
+{
+	if (this->_VSList.empty() == true)
+	{
+		std::cerr << "webserv - ERROR - a Port has no VirtualServer configured."
+			<< std::endl;
+		return (false);
+	}
+	return (true);
 }

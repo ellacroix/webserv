@@ -172,24 +172,26 @@ int ConfigParser::validateOpeningBracketArgs(void)
 		return (true);
 	return (ARG_ERROR);
 }
-
+	
 int ConfigParser::validateClosingBracketArgs(void)
 {
 	if (this->_line.size() != 1)
 		return (ARG_ERROR);
 	if (this->_context == SERVER_CONTEXT)
 	{
-		//	this->_curLoc->validate();						   // return (false) if fail
-		//	this->_curVS->noDuplicateLocation(*this->_curLoc); // return (false) if fail
+		if (this->_curLoc->validate() == false)
+			return (LOC_BLCK_ERROR);
+		//	this->_curVS->noDuplicateLocation(*this->_curLoc);
 		this->_curVS->addLocation(this->_curLoc->clone());
 		return (true);
 	}
 	else if (this->_context == MAIN_CONTEXT)
 	{
-		//	this->_curVS->validate(); // return (false) if validate() failed
-		this->_portsMap[this->_curVS->getListenPort()].addVS(this->_curVS->clone());	
-		this->_portsMap[this->_curVS->getListenPort()].port_number
-			= this->_curVS->getListenPort();
+		if (this->_curVS->validate() == false)
+			return (SERV_BLCK_ERROR);
+		this->_portsMap[this->_curVS->getListenPort()].addVS(this->_curVS->clone());
+		//this->_portsMap[this->_curVS->getListenPort()].port_number
+		//	= this->_curVS->getListenPort();
 		return (true);
 	}
 	return (true);

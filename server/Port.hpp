@@ -41,6 +41,7 @@ class	Port {
 		//	UTILITIES
 		void	addVS(VirtualServer * newVS);
 		void	display(void) const;
+		bool	validate(void) const;
 };
 
 #endif

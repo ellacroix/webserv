@@ -1,11 +1,10 @@
 #include "webserv.hpp"
 #include "ConfigParser.hpp"
 
-//std::list<Port *>	ConfigParser::parse(char *arg)
 void				ConfigParser::parse(char *arg)
 {
 	std::ifstream		ifs;
-	std::list<Port *>	portsList;
+	int					ret;
 
 	ifs.open(arg);
 	if (ifs.good() == false)
@@ -14,7 +13,6 @@ void				ConfigParser::parse(char *arg)
 			<< arg << "\" file." << std::endl;
 		exit(1);
 	}
-
 	this->_dir = DIR_ERROR;
 	while (std::getline(ifs, this->_curLine))
 	{
@@ -40,21 +38,34 @@ void				ConfigParser::parse(char *arg)
 					<< "." << std::endl;
 				exit(1);
 			}
-			if (this->validateArguments() == ARG_ERROR)
+			ret = validateArguments();
+			if (ret == ARG_ERROR || ret == LOC_BLCK_ERROR
+					|| ret == SERV_BLCK_ERROR)
 			{
-				std::cerr << "webserv\t- ERROR line " << this->_lineN << " - \"" 
-					<< this->_line[0]
-					<< "\" has invalid arguments." << std::endl;
+				std::cerr << "webserv\t- ERROR line " << this->_lineN;
+				if (ret == ARG_ERROR)
+					std::cerr << " - \"" << this->_line[0]
+						<< "\" has invalid arguments." << std::endl;
+				else if (ret == LOC_BLCK_ERROR)
+					std::cerr << " - location block needs at least "
+						<< "1 \"root\" directive or 1 \"return\" directive."
+						<< std::endl;
+				else if (ret == SERV_BLCK_ERROR)
+					std::cerr << " - server block needs at least "
+						<< "1 \"location\" block."
+						/*<< "or one \"return\" directive"*/ << std::endl;
 				exit(1);
 			}
 		}
 	}
-
-	std::cout << "\t========== SERVER ==========" << std::endl;
 	this->displayPortsMap();
 	this->makeListFromMap();
-	this->_portsMap = std::map<int, Port>();
-	// this->configIsValid();
+	if (this->validate() == false)
+	{
+		std::cerr << "webserv\t- ERROR - there is no Port to be listened to."
+			<< std::endl;
+		exit(1);
+	}
 	ifs.close();
 }
 
@@ -85,7 +96,7 @@ int					ConfigParser::validateDirective(void)
 			return (i);
 		i++;
 	}
-	return (-1);
+	return (DIR_ERROR);
 }
 
 int					ConfigParser::validateArguments(void)

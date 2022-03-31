@@ -128,3 +128,8 @@ VirtualServer *		VirtualServer::clone(void) const
 	ptr = new VirtualServer(*this);
 	return (ptr);
 }
+
+bool				VirtualServer::validate(void) const
+{
+	return (this->_locationMap.empty() == false);
+}

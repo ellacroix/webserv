@@ -119,6 +119,7 @@ void	ConfigParser::makeListFromMap(void)
 		this->_portsList.push_back(&(it->second));
 		it++;
 	}
+	this->_portsMap = std::map<int, Port>();
 }
 
 void	ConfigParser::startAllSockets(void)
@@ -141,6 +142,27 @@ void	ConfigParser::startAllSockets(void)
 std::list<Port*> &	ConfigParser::getPortsList(void)
 {
 	return (this->_portsList);
+}
+
+bool				ConfigParser::validate(void) const
+{
+	std::list<Port*>::const_iterator	it;
+	std::list<Port*>::const_iterator	ite;
+
+	if (this->_portsList.empty() == true)
+		return (false);
+	it = this->_portsList.begin();
+	ite = this->_portsList.end();
+	while (it != ite)
+	{
+		if ((*it)->validate() == false)
+		{
+			std::cerr << "FAILING PORT = " << (*it)->port_number << std::endl;
+			return (false);
+		}
+		it++;
+	}
+	return (true);
 }
 
 const char *	ConfigParser::_directives[N_DIR] =

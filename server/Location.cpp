@@ -177,3 +177,8 @@ Location *	Location::clone(void) const
 	ptr = new Location(*this);
 	return (ptr);
 }
+
+bool	Location::validate(void) const
+{
+	return (this->_rootIsSet || this->_returnIsSet);
+}
