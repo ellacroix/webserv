@@ -11,105 +11,45 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include "webserv.hpp"
+
 #define MAX_EVENTS 20
 #define THREADS 2
 #define BUFFER_SIZE 50000
 #define TIMEOUT	10
 
-typedef struct	s_thread_info
+int	DisconnectTimeout408(std::list<Port*> PortsList)
 {
-	std::deque<Client*> *queue;
-	pthread_mutex_t		queue_mutex;
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
 
-	pthread_cond_t		condition_var;
-
-	pthread_mutex_t		epoll_fd_mutex;
-	int					*epoll_fd;
-	struct epoll_event	event;
-
-}				t_thread_info;
-
-void	thread_recv_routine(Client *client, t_thread_info *thread_info)
-{	
-	printf("ThreadsPool: recv routine\n");
-
-	//Simulating the processing of a big request
-	//sleep(5);
-
-	//Checking if client->request_buffer is a complete request
-	if (client->CheckCompleteRequest() == true)
+	printf("MainProcess: Checking for timeouts\n");
+	for (std::list<Port*>::iterator it_p = PortsList.begin(); it_p != PortsList.end(); it_p++)
 	{
-		client->CreateRequest();
-		client->request->parser();
-		
-		//Response is ready to be sent, so we monitor client->stream_socket for writing only
-		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-		thread_info->event.data.fd = client->stream_socket;
-		thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
-		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-		client->response_ready = true;
-		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-	}
-	else
-	{
-		//The request is incomplete, we monitor the connection again to read the rest
-		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-		thread_info->event.data.fd = client->stream_socket;
-		thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-	}
-}
+		Port *current_port = *it_p;
 
-void	thread_send_routine(Client *client, t_thread_info *thread_info)
-{	
-	printf("ThreadsPool: send routine\n");
-	
-	//Sending the reponse to the client
-	send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
-	
-	//Response was sent, so we monitor client->stream_socket for receiving a new request
-	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-	thread_info->event.data.fd = client->stream_socket;
-	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response_ready = false;
-	client->request_buffer.clear();
-	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-}
-
-void	*thread_loop(void* arg)
-{
-	t_thread_info *thread_info = (t_thread_info*)arg;
-	Client *currentClient;
-	
-	printf("ThreadsPool: Thread launched\n");
-	
-	while(true)
-	{
-		//Check if there is work to do in the queue or wait on cond_wait for work to be added
-		pthread_mutex_lock(&thread_info->queue_mutex);
-		if (thread_info->queue->empty() == true)
+		for (std::map<int, Client*>::iterator it_c = current_port->Clients.begin(), next_it_c = it_c; it_c != current_port->Clients.end(); it_c = next_it_c)
 		{
-			printf("ThreadsPool: No work in the queue, waiting...\n");
-			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
-			usleep(50);
-			currentClient = thread_info->queue->front();
-		}
-		else
-			currentClient = thread_info->queue->front();
-		printf("ThreadsPool: Grabbed a task\n");
-		thread_info->queue->pop_front();
-		pthread_mutex_unlock(&thread_info->queue_mutex);
+			Client *current_client = it_c->second;
+			next_it_c++;
 
-		//Determine which routine to do on the client
-		pthread_mutex_lock(&currentClient->client_mutex);
-		if (currentClient->response_ready == true)
-			thread_send_routine(currentClient, thread_info);
-		else
-			thread_recv_routine(currentClient, thread_info);
-		pthread_mutex_unlock(&currentClient->client_mutex);
+			printf("MainProcess: Grabbed lock on client %d\n", current_client->stream_socket);
+			pthread_mutex_lock(&current_client->client_mutex);
+			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
+			if (result > TIMEOUT)
+			{
+				current_client->connected = false;
+				current_port->Clients.erase(current_client->stream_socket);
+				pthread_mutex_unlock(&current_client->client_mutex);
+				printf("MainProcess: Released lock on client %d\n", current_client->stream_socket);
+				delete current_client;
+				continue;
+			}
+			pthread_mutex_unlock(&current_client->client_mutex);
+			printf("MainProcess: Released lock on client %d\n", current_client->stream_socket);
+		}
 	}
+	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -196,34 +136,10 @@ int main(int argc, char *argv[])
 			break;
 		}
 		if (new_events == 0){
-			printf("epoll_wait() timed out.  Checking for clients timeout.\n");
+			printf("MainProcess: epoll_wait() timed out.  Checking for clients timeout.\n");
 		}
 
-		//LOOP TO CHECK CLIENTS TIMEOUT
-		struct timeval current_time;
-		gettimeofday(&current_time, NULL);
-		for (std::list<Port*>::iterator it_p = config.getPortsList().begin(); it_p != config.getPortsList().end(); it_p++)
-		{
-			Port *current_port = *it_p;
-
-			for (std::map<int, Client*>::iterator it_c = current_port->Clients.begin(), next_it_c = it_c; it_c != current_port->Clients.end(); it_c = next_it_c)
-			{
-				Client *current_client = it_c->second;
-				next_it_c++;
-
-				pthread_mutex_lock(&current_client->client_mutex);
-				int result = current_time.tv_sec - current_client->last_activity.tv_sec;
-				if (result > TIMEOUT)
-				{
-					current_client->connected = false;
-					current_port->Clients.erase(current_client->stream_socket);
-					pthread_mutex_unlock(&current_client->client_mutex);
-					delete current_client;
-					continue;
-				}
-				pthread_mutex_unlock(&current_client->client_mutex);
-			}
-		}
+		DisconnectTimeout408(config.getPortsList());
 
 		//LOOP TO CHECK ALL ACTIVATED FD
 		for (int i = 0; i < new_events; i++)
@@ -251,6 +167,13 @@ int main(int argc, char *argv[])
 							}
 							break;
 						}
+						//Setting the connection socket to non blocking
+						int rc = fcntl(connection, F_SETFL, O_NONBLOCK);
+						if (rc < 0){
+							perror("fcntl() failed");
+							close(connection);
+							exit(-1);
+						}
 						
 						//Creating a new Client instance to represent the connection and add it to this port's map.
 						printf("MainProcess: Accepted new connection on port:%d\n", current_port->port_number);
@@ -273,7 +196,7 @@ int main(int argc, char *argv[])
 				{
 					int connection = it_c->first;
 					Client *current_client = it_c->second;
- 					char	buffer[BUFFER_SIZE];
+					char	buffer[BUFFER_SIZE];
 					int		ret;
 
 					gettimeofday(&current_client->last_activity, NULL);

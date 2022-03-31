@@ -19,6 +19,7 @@
 #include <sys/time.h>
 #include <time.h>
 
+#include "webserv.hpp"
 
 class Port ;
 class Request ;

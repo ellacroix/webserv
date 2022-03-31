@@ -37,6 +37,7 @@ int Port::start()
 	}
 
 	//Set O_NONBLOCK flag on the listening socket, so it transmits to sockets created with accept()
+	// IT OESNT HERITS ON LINUX???
 	rc = fcntl(listen_socket, F_SETFL, O_NONBLOCK);
 	if (rc < 0){
 		perror("fcntl() failed");

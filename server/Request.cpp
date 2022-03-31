@@ -24,6 +24,8 @@ int	Request::parser()
 	if (parsing_step == CHUNK)
 		ret = chunk(); */
 	
+	printf("After parsing, ret = %d\n", ret);
+
 	if (parsing_step == COMPLETE || ret == 1)
 	{
 		parsing_step = COMPLETE;
