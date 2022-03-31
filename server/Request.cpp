@@ -1,7 +1,8 @@
 #include "Request.hpp"
 
-Request::Request(std::string raw)
+Request::Request(std::string raw, Client *parent_client)
 {
+	client = parent_client;
 	this->raw_request = raw;
 	stream_request.str(raw_request);
 	parsing_step = FIRST_LINE;
@@ -17,25 +18,25 @@ int	Request::parser()
 		ret = parseFirstLine();
 	if (parsing_step == HEADERS)
 		ret = parseHeaders();
-/* 	if (parsing_step == PREBODY)
+ 	if (parsing_step == PREBODY)
 		ret = prebody();
-	if (parsing_step == BODY)
+/* 	if (parsing_step == BODY)
 		ret = body();
 	if (parsing_step == CHUNK)
 		ret = chunk(); */
 	
-	printf("After parsing, ret = %d\n", ret);
 
-	if (parsing_step == COMPLETE || ret == 1)
+/* 	if (parsing_step == COMPLETE || ret == 1)
 	{
 		parsing_step = COMPLETE;
 		return ret;
 	}
 	
 	if (ret > 1)
-		return ret;
+		return ret; */
 
-	return 0;
+	return ret;
+	//return 0;
 }
 
 int Request::parseFirstLine()
@@ -68,6 +69,17 @@ int Request::parseHeaders()
 	{
 		std::cout << line << std::endl;
 	}
+
+	return 0;
+}
+
+int Request::prebody()
+{
+	//If processing indicates that we don't wait for a body
+	client->read_more = false;
+
+	//If processing indicates that we wait for a body
+	//client->read_more = true;
 
 	return 0;
 }

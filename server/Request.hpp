@@ -47,11 +47,12 @@ public:
 
 	Request() {};
 	~Request() {};
-	Request(std::string raw);
+	Request(std::string raw, Client *parent_client);
 
 	int			parser();
 	int			parseFirstLine();
 	int			parseHeaders();
+	int			prebody();
 
 	enum Step {
 		FIRST_LINE,

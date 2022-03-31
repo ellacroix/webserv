@@ -8,8 +8,10 @@ Client::Client(int fd, Port *port) :
 	pthread_mutex_init(&client_mutex, NULL);
 	gettimeofday(&last_activity, NULL);
 	request = NULL;
+	response = NULL;
 
 	response_ready = false;
+	read_more = false;
 }
 
 Client::~Client() {
@@ -21,21 +23,26 @@ Client::~Client() {
 	close(stream_socket);
 }
 
-bool	Client::CheckCompleteRequest()
-{
-	size_t pos = request_buffer.find("\r\n\r\n");
-	if (pos != std::string::npos)
-		return true;
-	return false;
-}
-
 int	Client::CreateRequest()
 {
-	Request *req = new Request(request_buffer);
+	std::string request_headers = request_buffer.substr(0, request_buffer.find("\r\n\r\n"));
+	
+	Request *req = new Request(request_headers, this);
 
 	if (this->request)
 		delete this->request;
 	this->request = req;
+
+	return 0;
+}
+
+int	Client::CreateResponse()
+{
+	Response *resp = new Response(this);
+
+	if (this->response)
+		delete this->response;
+	this->response = resp;
 
 	return 0;
 }

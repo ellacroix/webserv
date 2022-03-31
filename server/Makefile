@@ -11,6 +11,7 @@ SRCS		=	Client.cpp \
 				ThreadsPool.cpp \
 				utils.cpp \
 				Request.cpp \
+				Response.cpp \
 
 OBJS		=	${SRCS:.cpp=.o}
 

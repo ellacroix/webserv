@@ -3,6 +3,7 @@
 
 #include "Port.hpp"
 #include "Request.hpp"
+#include "Response.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -23,7 +24,7 @@
 
 class Port ;
 class Request ;
-
+class Response ;
 class Client{
 
 private:
@@ -38,17 +39,19 @@ public:
 	pthread_mutex_t		client_mutex;
 	struct timeval		last_activity;
 
+	bool				read_more;
 	bool				response_ready;
 
 	Request				*request;
-	//Response			*response;
+	Response			*response;
 
 	Client() {};
 	Client(int fd, Port *port);
 	~Client();
 
-	bool	CheckCompleteRequest();
 	int		CreateRequest();
+
+	int		CreateResponse();
 
 };
 

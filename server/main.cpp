@@ -33,7 +33,6 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 			Client *current_client = it_c->second;
 			next_it_c++;
 
-			printf("MainProcess: Grabbed lock on client %d\n", current_client->stream_socket);
 			pthread_mutex_lock(&current_client->client_mutex);
 			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
 			if (result > TIMEOUT)
@@ -41,12 +40,10 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 				current_client->connected = false;
 				current_port->Clients.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
-				printf("MainProcess: Released lock on client %d\n", current_client->stream_socket);
 				delete current_client;
 				continue;
 			}
 			pthread_mutex_unlock(&current_client->client_mutex);
-			printf("MainProcess: Released lock on client %d\n", current_client->stream_socket);
 		}
 	}
 	return 0;

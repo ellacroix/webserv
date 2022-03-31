@@ -8,29 +8,40 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	//Simulating the processing of a big request
 	//sleep(5);
 
-	//Checking if client->request_buffer is a complete request
-	if (client->CheckCompleteRequest() == true)
+	//We dont create the Request instance until we have at least a double "CRLF"
+	if (client->request == NULL)
+		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
+			client->CreateRequest();
+
+	//We enter here if we received the headers or wanted to read more
+	if (client->request)
 	{
-		client->CreateRequest();
-		client->request->parser();
-		
-		//Response is ready to be sent, so we monitor client->stream_socket for writing only
-		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-		thread_info->event.data.fd = client->stream_socket;
-		thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
-		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-		client->response_ready = true;
-		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+		client->request->status_code = client->request->parser();
+
+		if (client->read_more == false)
+		{
+			printf("ThreadsPool: Reponse ready \n");
+			//The request is complete and ready to be processed
+			client->CreateResponse();
+			client->response->ConstructResponse();
+
+			//Response is ready to be sent, so we monitor client->stream_socket for writing only
+			pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+			thread_info->event.data.fd = client->stream_socket;
+			thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
+			epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+			client->response_ready = true;
+			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+			return ;
+		}
 	}
-	else
-	{
-		//The request is incomplete, we monitor the connection again to read the rest
-		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-		thread_info->event.data.fd = client->stream_socket;
-		thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
-		epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-	}
+
+	//The request is incomplete, we monitor the connection again to read the rest
+	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+	thread_info->event.data.fd = client->stream_socket;
+	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
 
 void	thread_send_routine(Client *client, t_thread_info *thread_info)
@@ -38,15 +49,20 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 	printf("ThreadsPool: send routine\n");
 	
 	//Sending the reponse to the client
-	send(client->stream_socket, client->request_buffer.c_str(), client->request_buffer.size(), 0);
+	send(client->stream_socket, client->response->raw_response.c_str(), client->response->raw_response.size(), 0);
+
+	delete client->request;
+	client->request = NULL;
+	delete client->response;
+	client->response = NULL;
+	client->response_ready = false;
+	client->request_buffer.clear();
 	
 	//Response was sent, so we monitor client->stream_socket for receiving a new request
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;
 	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
 	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response_ready = false;
-	client->request_buffer.clear();
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
 
