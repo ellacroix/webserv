@@ -15,6 +15,20 @@ VirtualServer::VirtualServer(void) :
 
 VirtualServer::~VirtualServer(void)
 {
+	std::map<std::string, Location*>::iterator	it;
+	std::map<std::string, Location*>::iterator	ite;
+
+	it = this->_locationMap.begin();
+	ite = this->_locationMap.end();
+	while (it != ite)
+	{
+		if (it->second != NULL)
+		{
+			delete it->second;
+			it->second = NULL;
+		}
+		it++;
+	}
 	return ;
 }
 
@@ -76,7 +90,6 @@ void	VirtualServer::display(void) const
 {
 	std::map<std::string, Location*>::const_iterator	it;
 	std::map<std::string, Location*>::const_iterator	ite;
-	int													i;
 
 	std::cout << "\t_listenPort\t\t=\t" << this->_listenPort << std::endl;
 	std::cout << "\t_serverName\t\t=\t\"" << this->_serverName << "\"" << std::endl;
@@ -94,12 +107,10 @@ void	VirtualServer::display(void) const
 	{
 		it = this->_locationMap.begin();
 		ite = this->_locationMap.end();
-		i = 0;
 		while (it != ite)
 		{
 			std::cout << "\t_locationMap[" << it->first << "] :" << std::endl;
 			it->second->display();
-			i++;
 			it++;
 		}
 	}

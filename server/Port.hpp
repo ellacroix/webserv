@@ -8,6 +8,7 @@
 # define BUFFER_SIZE 5000
 
 class	Client ;
+class	VirtualServer ;
 
 class	Port {
 
@@ -27,16 +28,15 @@ class	Port {
 		int					max_sd;
 		int					ret, on;
 		bool				kill_port;
+		bool				opened;
 
-
-
-		Port();
+		Port(void);
 		Port(int port);
-		~Port();
+		~Port(void);
 
 		//	CONNECTION FUNCTIONS
-		int	start();							// listen()
-		void disconnectClient(int socket);
+		int		start(void);					// listen()
+		void	disconnectClient(int socket);
 
 		//	UTILITIES
 		void	addVS(VirtualServer * newVS);

@@ -161,9 +161,7 @@ int main(int argc, char *argv[])
 	ite = config.getPortsList().end();
 	while (it != ite)
 	{
-		//Port1->start();
 		(*it)->start();
-		//event.data.fd = Port1->listen_socket;
 		event.data.fd = (*it)->listen_socket;
 		event.events = EPOLLIN | EPOLLET;
 		epoll_ctl(epoll_fd, EPOLL_CTL_ADD, (*it)->listen_socket, &event);

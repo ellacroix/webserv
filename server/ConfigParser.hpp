@@ -75,7 +75,6 @@ class	ConfigParser {
 		bool										_tmpLocIsStored;
 
 		//	PTRS TO KEEP TRACK OF CURRENT INSTANCES BEING TREATED
-		Port										*_curPort;
 		VirtualServer								*_curVS;
 		Location									*_curLoc;
 

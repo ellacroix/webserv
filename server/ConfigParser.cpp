@@ -6,7 +6,6 @@ ConfigParser::ConfigParser(void) :
 	_lineN(0),
 	_tmpVSIsStored(false),
 	_tmpLocIsStored(false),
-	_curPort(NULL),
 	_curVS(&this->_tmpVS),
 	_curLoc(&this->_tmpLoc)
 {
@@ -15,6 +14,13 @@ ConfigParser::ConfigParser(void) :
 
 ConfigParser::~ConfigParser(void)
 {
+	std::list<Port*>::iterator	it;
+	std::list<Port*>::iterator	ite;
+
+	this->_curLoc->reset();
+	this->_curVS->reset();
+	this->_curLoc = NULL;
+	this->_curVS = NULL;
 	return ;
 }
 

@@ -53,6 +53,7 @@ void				ConfigParser::parse(char *arg)
 	std::cout << "\t========== SERVER ==========" << std::endl;
 	this->displayPortsMap();
 	this->makeListFromMap();
+	this->_portsMap = std::map<int, Port>();
 	// this->configIsValid();
 	ifs.close();
 }

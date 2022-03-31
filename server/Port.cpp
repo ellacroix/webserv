@@ -2,18 +2,53 @@
 #include <vector>
 #include <arpa/inet.h>
 
-Port::Port(void) 
+Port::Port(void) :
+	on(1),
+	kill_port(false),
+	opened(false)
 {
 	return ;
 }
 
-int Port::start()
+Port::Port(int port) :
+	on(1),
+	kill_port(false),
+	opened(false)
+{
+	port_number = port;
+	return ;
+}
+
+Port::~Port(void)
+{
+	std::list<VirtualServer*>::iterator	it;
+	std::list<VirtualServer*>::iterator	ite;
+
+	it = this->_VSList.begin();
+	ite = this->_VSList.end();
+	while (it != ite)
+	{
+		if (*it != NULL)
+		{
+			delete *it;
+			*it = NULL;
+		}
+		it++;
+	}
+	return ;
+
+	if (opened == true)
+		close(this->listen_socket);
+}
+
+int Port::start(void)
 {
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_socket < 0){
 		perror("socket() failed");
 		exit(-1);
 	}
+	this->opened = true;
 
 	//Prevent “Address already in use" error by the OS
 	int rc = setsockopt(listen_socket, SOL_SOCKET,  SO_REUSEADDR, (char *)&on, sizeof(on));
@@ -24,10 +59,10 @@ int Port::start()
 	}
 
 	//Basic bind to a port
-    server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = INADDR_ANY;
+	server_address.sin_family = AF_INET;
+	server_address.sin_addr.s_addr = INADDR_ANY;
 	//server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
-    server_address.sin_port = htons(this->port_number);
+	server_address.sin_port = htons(this->port_number);
 	addr_len = sizeof(server_address);
 	rc = bind(listen_socket, (struct sockaddr *)&server_address, addr_len);
 	if (rc < 0){
@@ -55,17 +90,7 @@ int Port::start()
 	return 0;
 }
 
-Port::Port(int port) :
-	on(1),
-	kill_port(false)
-{
-	port_number = port;
-}
 
-Port::~Port()
-{
-	close(listen_socket);
-}
 
 //	UTILITIES
 void	Port::addVS(VirtualServer * newVS)
