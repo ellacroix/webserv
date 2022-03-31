@@ -8,6 +8,26 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	//Simulating the processing of a big request
 	//sleep(5);
 
+/* 	t_size end = client->request_buffer.find("\r\n\r\n");
+	if (end != std::string::npos)
+	{
+		std::string headers = client->request_buffer.substr(0, end);
+
+		t_size start = headers.find("Transfer-Encoding: ");
+		if (start != std::string::npos)
+		{
+			std::string transfer = headers.substr(start, end);
+			if (transfer.find("Transfer-Encoding: ") != std::string::npos)
+
+			std::string transfer = headers.substr(start + 19, start + 27);
+		}
+		t_size start = headers.find("Content-Length: ");
+		if (start != std::string::npos)
+		{
+
+		}
+	} */
+
 	//We dont create the Request instance until we have at least a double "CRLF"
 	if (client->request == NULL)
 		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
