@@ -52,14 +52,15 @@ void				ConfigParser::parse(char *arg)
 						<< std::endl;
 				else if (ret == SERV_BLCK_ERROR)
 					std::cerr << " - server block needs at least "
-						<< "1 \"location\" block."
+						<< "1 \"location\" block and 1 \"listen\" directive."
 						/*<< "or one \"return\" directive"*/ << std::endl;
 				exit(1);
 			}
 		}
 	}
-	this->displayPortsMap();
-	this->makeListFromMap();
+//	this->displayPortsMap();
+	this->displayPortsList();
+//	this->makeListFromMap();
 	if (this->validate() == false)
 	{
 		std::cerr << "webserv\t- ERROR - there is no Port to be listened to."

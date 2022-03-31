@@ -175,6 +175,7 @@ int ConfigParser::validateOpeningBracketArgs(void)
 	
 int ConfigParser::validateClosingBracketArgs(void)
 {
+	Port	*port;
 	if (this->_line.size() != 1)
 		return (ARG_ERROR);
 	if (this->_context == SERVER_CONTEXT)
@@ -189,9 +190,13 @@ int ConfigParser::validateClosingBracketArgs(void)
 	{
 		if (this->_curVS->validate() == false)
 			return (SERV_BLCK_ERROR);
-		this->_portsMap[this->_curVS->getListenPort()].addVS(this->_curVS->clone());
-		//this->_portsMap[this->_curVS->getListenPort()].port_number
-		//	= this->_curVS->getListenPort();
+		port = this->findPortInList(this->_curVS->getListenPort());
+		if (port == NULL)
+		{
+			port = new Port();
+			this->_portsList.push_back(port);
+		}
+		port->addVS(this->_curVS->clone());
 		return (true);
 	}
 	return (true);

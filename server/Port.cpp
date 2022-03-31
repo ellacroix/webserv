@@ -90,8 +90,6 @@ int Port::start(void)
 	return 0;
 }
 
-
-
 //	UTILITIES
 void	Port::addVS(VirtualServer * newVS)
 {

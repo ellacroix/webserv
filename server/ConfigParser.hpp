@@ -99,10 +99,12 @@ class	ConfigParser {
 		void				displayLines(void) const;
 		void				displayContextSwitch(int newContext) const;
 		void				displayPortsMap(void) const;
+		void				displayPortsList(void) const;
 		void				makeListFromMap(void);
 		void				startAllSockets(void);
 		std::list<Port*> &	getPortsList(void);
 		bool				validate(void) const;	
+		Port *				findPortInList(int port) const;
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

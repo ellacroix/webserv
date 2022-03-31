@@ -131,5 +131,6 @@ VirtualServer *		VirtualServer::clone(void) const
 
 bool				VirtualServer::validate(void) const
 {
-	return (this->_locationMap.empty() == false);
+	return (this->_listenPortIsSet == true
+			&& this->_locationMap.empty() == false);
 }

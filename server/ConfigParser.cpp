@@ -21,6 +21,17 @@ ConfigParser::~ConfigParser(void)
 	this->_curVS->reset();
 	this->_curLoc = NULL;
 	this->_curVS = NULL;
+	it = this->_portsList.begin();
+	ite = this->_portsList.end();
+	while (it != ite)
+	{
+		if (*it != NULL)
+		{
+			delete *it;
+			*it = NULL;
+		}
+		it++;
+	}
 	return ;
 }
 
@@ -87,6 +98,24 @@ void	ConfigParser::displayContextSwitch(int newContext) const
 		<< " to " 
 		<< ConfigParser::_contexts[newContext]
 		<< std::endl;
+}
+
+void	ConfigParser::displayPortsList(void) const
+{
+	std::list<Port*>::const_iterator	it;
+	std::list<Port*>::const_iterator	ite;
+	int									i;
+
+	it = this->_portsList.begin();
+	ite = this->_portsList.end();
+	i = 0;
+	while (it != ite)
+	{
+		std::cout << "port[" << (*it)->port_number << "] :" << std::endl;
+		(*it)->display();
+		it++;
+		i++;
+	}
 }
 
 void	ConfigParser::displayPortsMap(void) const
@@ -163,6 +192,22 @@ bool				ConfigParser::validate(void) const
 		it++;
 	}
 	return (true);
+}
+
+Port *			ConfigParser::findPortInList(int port) const
+{
+	std::list<Port*>::const_iterator	cit;
+	std::list<Port*>::const_iterator	cite;
+
+	cit = this->_portsList.begin();
+	cite = this->_portsList.end();
+	while (cit != cite)
+	{
+		if ((*cit)->port_number == port)
+			return (*cit);
+		cit++;
+	}
+	return (NULL);
 }
 
 const char *	ConfigParser::_directives[N_DIR] =
