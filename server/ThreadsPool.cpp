@@ -11,7 +11,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine\n");
 
-	t_size end = client->request_buffer.find("\r\n\r\n");
+/* 	t_size end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
 	{
 		client->CreateRequest();
@@ -28,7 +28,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		else if((t_size start = headers.find("Content-Length: ")) != std::string::npos)
 		{
 			std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
-			
+
 			
 		}
 
@@ -47,9 +47,9 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 			return ;
 		}
-	}
+	} */
 
-/* 	//We dont create the Request instance until we have at least a double "CRLF"
+	//We dont create the Request instance until we have at least a double "CRLF"
 	if (client->request == NULL)
 		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
 			client->CreateRequest();
@@ -75,7 +75,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 			return ;
 		}
-	} */
+	}
 
 	//The request is incomplete, we monitor the connection again to read the rest
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
