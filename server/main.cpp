@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
 					
 					else
 					{
-						current_client->request_buffer.append(buffer);
+						current_client->request_buffer.append(buffer, ret);
 						pthread_mutex_lock(&thread_info->queue_mutex);
 						thread_info->queue->push_back(current_client);
 						pthread_cond_signal(&thread_info->condition_var);

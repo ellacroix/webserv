@@ -1,6 +1,11 @@
 #include "webserv.hpp"
 #include "Client.hpp"
 
+bool	IsChunkComplete()
+{
+
+}
+
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine\n");
@@ -15,16 +20,14 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		t_size start = headers.find_last_of("Transfer-Encoding: ");
 		if (start != std::string::npos)
 		{
-			std::string transfer_line = headers.substr(start, end);
-			if (transfer.find("Transfer-Encoding: ") != std::string::npos)
-
-			std::string transfer = headers.substr(start + 19, start + 27);
+			std::string TE_line = headers.substr(start, headers.find(start,"\r\n"));
+			if (TE_line.find("chunked"))
+				if (IsChunkComplete() = true);
 		}
-
-		t_size start = headers.find("Content-Length: ");
-		if (start != std::string::npos)
+		else if(t_size start = headers.find("Content-Length: ") != std::string::npos)
 		{
-
+			std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
+			
 		}
 
 		if (client->read_more == false)

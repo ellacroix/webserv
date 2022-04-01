@@ -40,8 +40,8 @@ public:
 	std::string method;
 	std::string URI;
 
-	std::string headers;
-	char		*body;
+	std::string					headers;
+	std::vector<unsigned char>	body;
 
 	Client			*client;
 	VirtualServer	*virtual_server;
@@ -54,18 +54,7 @@ public:
 	int			parser();
 	int			parseFirstLine();
 	int			parseHeaders();
-	int			prebody();
 
-	enum Step {
-		FIRST_LINE,
-		HEADERS,
-		PREBODY,
-		BODY,
-		CHUNK,
-		COMPLETE,
-		ERROR
-	};
-	Step parsing_step;
 };
 
 #endif
