@@ -650,8 +650,15 @@ In the configuration file, you should be able to:
 		- Your server should work with one CGI (php-CGI, Python, and so forth).
 
 
-## Parsing de Request
-- 
+## Detection of a body indication
+Voir nginx quand on envoie:
+- plusieurs Content-Length
+- plusieurs Transfer-Encoding differents
+- un Transfer-Encoding sans chunked
+- un Content-Length et un Transfer-Encoding
+- un Transfer-encoding et plusieurs Content-Length
+
+A recipient that receives whitespace between the start-line and the first header field MUST  reject the message as invalid
 
 
 # Testing

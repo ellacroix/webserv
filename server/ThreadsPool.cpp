@@ -5,30 +5,46 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine\n");
 
-	//Simulating the processing of a big request
-	//sleep(5);
-
-/* 	t_size end = client->request_buffer.find("\r\n\r\n");
+	t_size end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
 	{
+		client->CreateRequest();
+		
 		std::string headers = client->request_buffer.substr(0, end);
 
-		t_size start = headers.find("Transfer-Encoding: ");
+		t_size start = headers.find_last_of("Transfer-Encoding: ");
 		if (start != std::string::npos)
 		{
-			std::string transfer = headers.substr(start, end);
+			std::string transfer_line = headers.substr(start, end);
 			if (transfer.find("Transfer-Encoding: ") != std::string::npos)
 
 			std::string transfer = headers.substr(start + 19, start + 27);
 		}
+
 		t_size start = headers.find("Content-Length: ");
 		if (start != std::string::npos)
 		{
 
 		}
-	} */
 
-	//We dont create the Request instance until we have at least a double "CRLF"
+		if (client->read_more == false)
+		{
+			client->request->parser();
+			client->CreateResponse();
+			client->response->ConstructResponse();
+
+			//Response is ready to be sent, so we monitor client->stream_socket for writing only
+			pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+			thread_info->event.data.fd = client->stream_socket;
+			thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
+			epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+			client->response_ready = true;
+			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+			return ;
+		}
+	}
+
+/* 	//We dont create the Request instance until we have at least a double "CRLF"
 	if (client->request == NULL)
 		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
 			client->CreateRequest();
@@ -54,7 +70,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 			return ;
 		}
-	}
+	} */
 
 	//The request is incomplete, we monitor the connection again to read the rest
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);

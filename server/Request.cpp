@@ -44,7 +44,7 @@ int Request::parseFirstLine()
 	std::string tmp;
 
 	std::getline(stream_request, tmp, ' ');
-	if (tmp != "GET" || tmp != "POST" || tmp != "DELETE")
+	if (tmp != "GET" && tmp != "POST" && tmp != "DELETE")
 		return 501;
 	method = tmp;
 

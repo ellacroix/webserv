@@ -39,7 +39,9 @@ public:
 	int ContentLength;
 	std::string method;
 	std::string URI;
+
 	std::string headers;
+	char		*body;
 
 	Client			*client;
 	VirtualServer	*virtual_server;
