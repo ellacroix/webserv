@@ -1,0 +1,20 @@
+1 - se mettre dans un des dossiers avec un Dockerfile
+
+2 - Build l'image
+	docker build . -t nom_de_limage
+	ex : docker build . -t nginx_img_2_static
+
+3 - run l'image
+	docker run -it (interactif) -p localPort:containerPort --rm (supprime l'image a la fin du run) --name nom_du_container nom_de_l_img
+	ex : docker run -it -p 9000:9000 --rm --name nginx_ctn_2 nginx_img_2_static
+
+4 - entrer dans le container pour pouvoir le modifier en direct
+	docker exec -it (interactif) nom_du_container commande_a_exec
+	ex : docker exec -it nginx_ctn_2  /bin/sh
+	pour relancer nginx avec une modif faite via cette methode 
+	nginx -s reload
+	
+5 - modifier la config nginx
+	modifier le Dockerfile
+	re-build (2)
+	re-run (3)
