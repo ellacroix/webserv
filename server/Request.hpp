@@ -40,8 +40,8 @@ public:
 	std::string method;
 	std::string URI;
 
-	std::string					headers;
-	std::vector<unsigned char>	body;
+	std::string		headers;
+	std::string		body;
 
 	Client			*client;
 	VirtualServer	*virtual_server;

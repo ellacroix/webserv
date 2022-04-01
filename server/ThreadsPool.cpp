@@ -3,7 +3,8 @@
 
 bool	IsChunkComplete()
 {
-
+	//while ()
+	return true;
 }
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
@@ -24,9 +25,10 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 			if (TE_line.find("chunked"))
 				if (IsChunkComplete() = true);
 		}
-		else if(t_size start = headers.find("Content-Length: ") != std::string::npos)
+		else if((t_size start = headers.find("Content-Length: ")) != std::string::npos)
 		{
 			std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
+			
 			
 		}
 
