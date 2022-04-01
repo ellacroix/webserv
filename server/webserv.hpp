@@ -3,6 +3,7 @@
 
 //	GLIBC
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -34,6 +35,28 @@
 #include "Port.hpp"
 #include "ConfigParser.hpp"
 */
+
+class Client ;
+
+typedef struct	s_thread_info
+{
+	std::deque<Client*> *queue;
+	pthread_mutex_t		queue_mutex;
+
+	pthread_cond_t		condition_var;
+
+	pthread_mutex_t		epoll_fd_mutex;
+	int					*epoll_fd;
+	struct epoll_event	event;
+
+}				t_thread_info;
+
+
+// ThreadsPool.cpp
+void	*thread_loop(void* arg);
+void	thread_recv_routine(Client *client, t_thread_info *thread_info);
+void	thread_send_routine(Client *client, t_thread_info *thread_info);
+
 
 //	utils.cpp
 bool			isNumber(std::string s);

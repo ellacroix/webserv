@@ -14,6 +14,8 @@
 #include <iostream>
 #include <sstream>
 */
+
+
 #include "webserv.hpp"
 
 #include "Client.hpp"
@@ -22,7 +24,7 @@
 class Client ;
 class VirtualServer ;
 
-class Request{
+class Request {
 
 private:
 
@@ -32,11 +34,14 @@ public:
 	std::string			raw_request;
 	std::istringstream	stream_request;
 
-	int status_code;
+	int				status_code;
 	bool Chunked;
 	int ContentLength;
-	std::string METHOD;
-	std::string headers;
+	std::string method;
+	std::string URI;
+
+	std::string		headers;
+	std::string		body;
 
 	Client			*client;
 	VirtualServer	*virtual_server;
@@ -44,23 +49,12 @@ public:
 
 	Request() {};
 	~Request() {};
-	Request(std::string raw);
+	Request(std::string raw, Client *parent_client);
 
 	int			parser();
 	int			parseFirstLine();
 	int			parseHeaders();
 
 };
-
-/* class Response{
-	isReponseChunked();
-
-	int	GET();
-	int POST();
-	int	DELETE();
-	int CGI();
-
-};
- */
 
 #endif

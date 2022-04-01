@@ -3,6 +3,7 @@
 
 #include "Port.hpp"
 #include "Request.hpp"
+#include "Response.hpp"
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -16,10 +17,14 @@
 #include <iostream>
 #include <string>
 #include <pthread.h>
+#include <sys/time.h>
+#include <time.h>
+
+#include "webserv.hpp"
 
 class Port ;
 class Request ;
-
+class Response ;
 class Client{
 
 private:
@@ -32,18 +37,21 @@ public:
 	bool				connected;
 	std::string			request_buffer;
 	pthread_mutex_t		client_mutex;
+	struct timeval		last_activity;
 
+	bool				read_more;
 	bool				response_ready;
 
 	Request				*request;
-	//Response			*response;
+	Response			*response;
 
 	Client() {};
 	Client(int fd, Port *port);
 	~Client();
 
-	bool	CheckCompleteRequest();
 	int		CreateRequest();
+
+	int		CreateResponse();
 
 };
 
