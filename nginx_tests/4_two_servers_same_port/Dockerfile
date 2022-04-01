@@ -1,4 +1,8 @@
+#FROM nginx:latest
 FROM fabiocicerchia/nginx-lua
+
+#RUN apt-get update
+#RUN apt-get install vim -y
 
 RUN apk update
 RUN apk add vim 
@@ -9,10 +13,15 @@ RUN rm /etc/nginx/nginx.conf
 RUN mkdir /data ; \
 	mkdir /data/images ; \
 	mkdir /data/www
+RUN mkdir /data2 ; \
+	mkdir /data2/images ; \
+	mkdir /data2/www
 
 RUN chmod +r /data
+RUN chmod +r /data2
 
 COPY ./index.html /data/www/.
+COPY ./index2.html /data2/www/.
 COPY ./image.png /data/images/.
 COPY ./image.jpg /data/images/.
 COPY ./favicon.ico /data/www/.
