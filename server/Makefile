@@ -8,6 +8,7 @@ SRCS			=	Client.cpp \
 					ConfigParser.cpp \
 					ConfigParserFile.cpp \
 					ConfigParserDirArgs.cpp \
+					ThreadsPoolRoutines.cpp \
 					ThreadsPool.cpp \
 					parsingUtils.cpp \
 					Request.cpp \

@@ -37,8 +37,9 @@
 */
 
 # define SUCCESS 0
-# define RECV_BUFFER_SIZE 50000
 # define FAILURE 1
+# define RECV_BUFFER_SIZE 50000
+# define THREADS 2
 
 class	ConfigParser ;
 class	Port ;
@@ -58,14 +59,16 @@ typedef struct	s_thread_info
 	int					*epoll_fd;
 	struct epoll_event	event;
 
+	int		start(int *epoll_fd, pthread_t *thread_pool);
+
 }				t_thread_info;
 
 
-// ThreadsPool.cpp
+//	ThreadsPoolRoutines.cpp
 void	*thread_loop(void* arg);
 void	thread_recv_routine(Client *client, t_thread_info *thread_info);
 void	thread_send_routine(Client *client, t_thread_info *thread_info);
-
+//	ThreadPool.cpp
 
 //	utils.cpp
 bool			isNumber(std::string s);
