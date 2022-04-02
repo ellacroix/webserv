@@ -78,34 +78,22 @@ int main(int argc, char *argv[])
 		usleep(500);
 	}
 	
-
-	std::list<Port*>::iterator	it;
-	std::list<Port*>::iterator	ite;
-	it = config.getPortsList().begin();
-	ite = config.getPortsList().end();
-	while (it != ite)
-	{
-		(*it)->start();
-		event.data.fd = (*it)->listen_socket;
-		event.events = EPOLLIN | EPOLLET;
-		epoll_ctl(epoll_fd, EPOLL_CTL_ADD, (*it)->listen_socket, &event);
-		it++;
-	}
+	if (startAllPorts(config, event, epoll_fd) != SUCCESS)
+		return (FAILURE);
 
 	while (1)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
-		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 5000);
+		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 60000);
 
-		printf("MainProcess: epoll_wait() activated by %d file descriptors\n", new_events);
+		printf("MainProcess: epoll_wait() activated by %d file descriptors\n",
+				new_events);
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
-		if (new_events == 0){
-			printf("MainProcess: epoll_wait() timed out.  Checking for clients timeout.\n");
-		}
-
+		if (new_events == 0)
+			printf("MainProcess: epoll_wait() timed out. Checking clients timeout.\n");
 		DisconnectTimeout408(config.getPortsList());
 
 		//LOOP TO CHECK ALL ACTIVATED FD
@@ -113,13 +101,18 @@ int main(int argc, char *argv[])
 		{
 			int event_fd = events[i].data.fd;
 
-			for (std::list<Port*>::iterator it_p = config.getPortsList().begin(); it_p != config.getPortsList().end(); it_p++)
+			for (t_portListIt it_p = config.getPortsList().begin() ;
+					it_p != config.getPortsList().end() ;
+					it_p++)
 			{
 				Port *current_port = *it_p;
 
-				//Check if the listen_socket of the current port has activated, meaning we have connections to accept()
+				//Check if the listen_socket of the current port has activated,
+				//meaning we have connections to accept()
 				if (current_port->listen_socket == event_fd)
 				{
+					acceptIncomingConnections(current_port, event, epoll_fd, thread_info);
+					/*
 					//Loop to accept all connections on the backlog
 					int connection = 0;
 					while (connection != -1)
@@ -156,18 +149,22 @@ int main(int argc, char *argv[])
 						epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection, &event);
 						pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 					}
-					continue;
+					*/
+					continue;	// WHAT IF SOMETHING TO READ WAS ADDED TOO ?
 				}
 				
 				//Check if find() found the event_fd in this clients map,
 				//meaning there is work to do in it.
-				std::map<int, Client*>::iterator it_c;
+
+				t_clientMapIt	it_c;
 				it_c = current_port->_clientsMap.find(event_fd);
 				if (it_c != current_port->_clientsMap.end())
 				{
+					recvClientsRequest(current_port, thread_info, it_c);
+					/*
 					int		connection;
 					Client	*current_client;
-					char	buffer[BUFFER_SIZE];
+					char	buffer[RECV_BUFFER_SIZE];
 					int		ret;
 
 				   	connection = it_c->first;
@@ -175,8 +172,8 @@ int main(int argc, char *argv[])
 
 					gettimeofday(&current_client->last_activity, NULL);
 					//Receiving all we can from the client
-					bzero(buffer, BUFFER_SIZE);
-					ret = recv(current_client->stream_socket, buffer, BUFFER_SIZE, 0);
+					bzero(buffer, RECV_BUFFER_SIZE);
+					ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
 
 					pthread_mutex_lock(&current_client->client_mutex);
 					if (ret == 0)
@@ -197,6 +194,7 @@ int main(int argc, char *argv[])
 						pthread_mutex_unlock(&thread_info->queue_mutex);
 						pthread_mutex_unlock(&current_client->client_mutex);
 					}
+					*/
 				}
 			}
 		}

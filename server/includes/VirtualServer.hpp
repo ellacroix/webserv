@@ -7,6 +7,8 @@
 # define K 1000
 # define M 1000000
 
+class	Location ;
+
 class	VirtualServer {
 
 	private:

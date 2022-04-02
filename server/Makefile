@@ -9,9 +9,10 @@ SRCS			=	Client.cpp \
 					ConfigParserFile.cpp \
 					ConfigParserDirArgs.cpp \
 					ThreadsPool.cpp \
-					utils.cpp \
+					parsingUtils.cpp \
 					Request.cpp \
 					Response.cpp \
+					engineUtils.cpp
 
 HEADERS			=	includes/Client.hpp \
 					includes/Port.hpp \

@@ -36,7 +36,16 @@
 #include "ConfigParser.hpp"
 */
 
-class Client ;
+# define SUCCESS 0
+# define RECV_BUFFER_SIZE 50000
+# define FAILURE 1
+
+class	ConfigParser ;
+class	Port ;
+typedef	std::list<Port*>::iterator			t_portListIt;
+class	Client ;
+typedef	std::map<int, Client*>::iterator	t_clientMapIt;
+
 
 typedef struct	s_thread_info
 {
@@ -74,5 +83,15 @@ bool			isSupportedHttpRedirCode(std::string s);
 bool			isValidReturn(std::vector<std::string> & v);
 bool			isSupportedHttpMethod(std::string s);
 bool			isValidLimitExcept(std::vector<std::string> v);
+
+//	engineUtils.cpp
+int	startAllPorts(ConfigParser & config, struct epoll_event,
+		int epoll_fd);
+int	acceptIncomingConnections(Port *current_port, struct epoll_event &event,
+		int epoll_fd, t_thread_info *thread_info);
+void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
+		t_clientMapIt it_c);
+
+
 
 #endif
