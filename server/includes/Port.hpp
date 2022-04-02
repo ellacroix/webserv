@@ -14,7 +14,7 @@ class	Port {
 
 	public:
 		// UNDERLYING DATA STRUCTURES	=>	Map OF Clients
-		std::map<int, Client*>			Clients;
+		std::map<int, Client*>			_clientsMap;
 		//								=>	List OF VirtualServers
 		std::list<VirtualServer*>		_VSList;
 		int					port_number;

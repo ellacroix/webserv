@@ -4,8 +4,8 @@ Request::Request(std::string raw, Client *parent_client)
 {
 	client = parent_client;
 	this->raw_request = raw;
-	stream_request.str(raw_request);
-	parsing_step = FIRST_LINE;
+//	stream_request.str(raw_request);
+//	parsing_step = FIRST_LINE;
 }
 
 int	Request::parser()

@@ -1,37 +1,47 @@
-NAME		=	webserv
+NAME			=	webserv
 
-SRCS		=	Client.cpp \
-				main.cpp \
-				Port.cpp \
-				Location.cpp \
-				VirtualServer.cpp \
-				ConfigParser.cpp \
-				ConfigParserFile.cpp \
-				ConfigParserDirArgs.cpp \
-				ThreadsPool.cpp \
-				utils.cpp \
-				Request.cpp \
-				Response.cpp \
+SRCS			=	Client.cpp \
+					main.cpp \
+					Port.cpp \
+					Location.cpp \
+					VirtualServer.cpp \
+					ConfigParser.cpp \
+					ConfigParserFile.cpp \
+					ConfigParserDirArgs.cpp \
+					ThreadsPool.cpp \
+					utils.cpp \
+					Request.cpp \
+					Response.cpp \
 
-OBJS		=	${SRCS:.cpp=.o}
+HEADERS			=	includes/Client.hpp \
+					includes/Port.hpp \
+					includes/VirtualServer.hpp \
+					includes/ConfigParser.hpp \
+					includes/webserv.hpp \
+					includes/Location.hpp \
+					includes/Request.hpp \
+					includes/Response.hpp
 
-CXX			=	c++
+INC_FLD			=	includes/
 
-CXXFLAGS	= -pthread -Wall -Wextra -Werror -std=c++98
+OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
-SANITIZE_FLAGS = -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
+
+CXX				=	c++
+
+CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98
+
+SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
 
 
 all			:	${NAME}
 
 ${NAME}		:	${OBJS}
-			${CXX} ${CXXFLAGS} ${OBJS} -o ${NAME}
+			${CXX} ${CXXFLAGS} -I ${INC_FLD} ${OBJS} -o ${NAME}
 
 
-%.o			:	%.cpp Client.hpp Port.hpp VirtualServer.hpp ConfigParser.hpp \
-	webserv.hpp \
-	Location.hpp
-			${CXX} ${CXXFLAGS} -c $< -o ${<:.cpp=.o}
+%.o			:	%.cpp ${HEADERS}
+			${CXX} ${CXXFLAGS} -I ${INC_FLD} -c $< -o ${<:.cpp=.o}
 
 clean		:
 			rm -rf ${OBJS}

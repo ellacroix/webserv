@@ -28,7 +28,7 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 	{
 		Port *current_port = *it_p;
 
-		for (std::map<int, Client*>::iterator it_c = current_port->Clients.begin(), next_it_c = it_c; it_c != current_port->Clients.end(); it_c = next_it_c)
+		for (std::map<int, Client*>::iterator it_c = current_port->_clientsMap.begin(), next_it_c = it_c; it_c != current_port->_clientsMap.end(); it_c = next_it_c)
 		{
 			Client *current_client = it_c->second;
 			next_it_c++;
@@ -38,7 +38,7 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 			if (result > TIMEOUT)
 			{
 				current_client->connected = false;
-				current_port->Clients.erase(current_client->stream_socket);
+				current_port->_clientsMap.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
 				continue;
@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 	ConfigParser	config;
 	config.parse(argv[1]);
 
-	/*
 	//EPOLL
 	struct epoll_event event;
 	struct epoll_event events[MAX_EVENTS];
@@ -143,10 +142,12 @@ int main(int argc, char *argv[])
 							exit(-1);
 						}
 						
-						//Creating a new Client instance to represent the connection and add it to this port's map.
-						printf("MainProcess: Accepted new connection on port:%d\n", current_port->port_number);
+						//Creating a new Client instance to represent the connection
+						//and add it to this port's map.
+						printf("MainProcess: Accepted new connection on port:%d\n",
+								current_port->port_number);
 						Client *newClient = new Client(connection, current_port);
-						current_port->Clients[connection] = newClient;
+						current_port->_clientsMap[connection] = newClient;
 						
 						// Monitor this new connection for reading.
 						event.data.fd = connection;
@@ -158,14 +159,19 @@ int main(int argc, char *argv[])
 					continue;
 				}
 				
-				//Check if find() found the event_fd in this port's map, meaning there is work to do in it.
-				std::map<int, Client*>::iterator it_c = current_port->Clients.find(event_fd);
-				if (it_c != current_port->Clients.end())
+				//Check if find() found the event_fd in this clients map,
+				//meaning there is work to do in it.
+				std::map<int, Client*>::iterator it_c;
+				it_c = current_port->_clientsMap.find(event_fd);
+				if (it_c != current_port->_clientsMap.end())
 				{
-					int connection = it_c->first;
-					Client *current_client = it_c->second;
+					int		connection;
+					Client	*current_client;
 					char	buffer[BUFFER_SIZE];
 					int		ret;
+
+				   	connection = it_c->first;
+					current_client = it_c->second;
 
 					gettimeofday(&current_client->last_activity, NULL);
 					//Receiving all we can from the client
@@ -177,11 +183,10 @@ int main(int argc, char *argv[])
 					{
 						//Client disconnected itself
 						current_client->connected = false;
-						current_port->Clients.erase(current_client->stream_socket);
+						current_port->_clientsMap.erase(current_client->stream_socket);
 						pthread_mutex_unlock(&current_client->client_mutex);
 						delete current_client;
 					}
-					
 					else
 					{
 						current_client->request_buffer.append(buffer, ret);
@@ -196,6 +201,5 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	*/
 	return 0;
 }
