@@ -1,55 +1,83 @@
 #include "webserv.hpp"
 #include "Client.hpp"
 
-bool	IsChunkComplete()
+bool	IsChunkComplete(Client *client)
 {
-	//while ()
-	return true;
+	printf("Checking if chunked is complete\n");
+	
+	size_t			start = client->request_buffer.find("\r\n\r\n");
+	std::string 	body = client->request_buffer.substr(start + 4);
+
+	if (body.find("0/r/n/r/n") == std::string::npos)
+		return false;
+
+	std::string		nextLine = body.substr(0, 100);
+	int				chunksize = strtol(nextLine.c_str(), NULL, 16);
+	size_t			chunkstart = 0;
+	//size_t			len = body.length();
+	std::string		chunk;
+
+	while (chunksize != 0)
+	{
+//		if (chunkstart + chunksize > len)
+//			ON VA SORTIR DE LA body
+		chunkstart = body.find("\r\n", chunkstart) + 2;
+		chunk = body.substr(chunkstart, chunksize);
+		printf("chunk: %s\n", chunk.c_str());
+		nextLine = body.substr(chunkstart + chunksize + 2, 100);
+		chunkstart += chunksize + 2;
+		chunksize = strtol(nextLine.c_str(), NULL, 16);
+	}
+
+	return false;
 }
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine\n");
 
-	/* 	t_size end = client->request_buffer.find("\r\n\r\n");
-		if (end != std::string::npos)
-		{
-		client->CreateRequest();
+	size_t end = client->request_buffer.find("\r\n\r\n");
+	if (end != std::string::npos)
+	{
+		printf("Received all headers\n");
+		if (!client->request)
+			client->CreateRequest();
 
 		std::string headers = client->request_buffer.substr(0, end);
 
-		t_size start = headers.find_last_of("Transfer-Encoding: ");
+		size_t start = headers.find_last_of("Transfer-Encoding: ");
 		if (start != std::string::npos)
 		{
-		std::string TE_line = headers.substr(start, headers.find(start,"\r\n"));
-		if (TE_line.find("chunked"))
-		if (IsChunkComplete() = true);
+			std::string TE_line = headers.substr(start);
+			TE_line = TE_line.substr(0, TE_line.find("\r\n"));
+			if (TE_line.find("chunked"))
+				if (IsChunkComplete(client) == false)
+					client->read_more = true;
 		}
-		else if((t_size start = headers.find("Content-Length: ")) != std::string::npos)
+		else if ((start = headers.find("Content-Length: ")) != std::string::npos)
 		{
-		std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
-
-
+			//std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
+			client->read_more = false;
 		}
 
 		if (client->read_more == false)
 		{
-		client->request->parser();
-		client->CreateResponse();
-		client->response->ConstructResponse();
+			//client->request->parser();
+			client->CreateResponse();
+			client->response->ConstructResponse();
 
-	//Response is ready to be sent, so we monitor client->stream_socket for writing only
-	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-	thread_info->event.data.fd = client->stream_socket;
-	thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
-	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response_ready = true;
-	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-	return ;
+			//Response is ready to be sent, so we monitor client->stream_socket for writing only
+			pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+			thread_info->event.data.fd = client->stream_socket;
+			thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
+			epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+			client->response_ready = true;
+			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+			return ;
+		}
 	}
-	} */
 
-	//We dont create the Request instance until we have at least a double "CRLF"
+/* 	//We dont create the Request instance until we have at least a double "CRLF"
 	if (client->request == NULL)
 		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
 			client->CreateRequest();
@@ -80,7 +108,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 			return ;
 		}
 	}
-
+ */
 	//The request is incomplete, we monitor the connection again to read the rest
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;

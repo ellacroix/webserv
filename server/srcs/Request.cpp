@@ -9,6 +9,7 @@ Request::Request(std::string raw, Client *parent_client)
 int	Request::parser()
 {
 	printf("In the parser, working on:\n%s\n", raw_request.c_str());
+	printf("Body:\n%s\n", body.c_str());
 
 	return 0;
 }

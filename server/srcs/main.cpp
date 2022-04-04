@@ -14,8 +14,6 @@
 #include "webserv.hpp"
 
 #define MAX_EVENTS 20
-//#define THREADS 2
-#define BUFFER_SIZE 50000
 #define TIMEOUT	100
 
 int	DisconnectTimeout408(std::list<Port*> PortsList)
