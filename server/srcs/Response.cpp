@@ -4,7 +4,7 @@ Response::Response(Client *parent_client)
 {
 	client = parent_client;
 	request = parent_client->request;
-	status_code = parent_client->request->status_code;
+	status_code = parent_client->request->_statusCode;
 }
 
 int	Response::ConstructResponse()

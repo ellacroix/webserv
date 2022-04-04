@@ -102,7 +102,7 @@ bool	isSupportedHttpErrorCode(std::string s)
 			|| s == "505");
 }
 
-bool	isValidUri(std::string & s)
+bool	isValidFile(std::string & s)
 {
 	if (isValidPrefix(&s) == false)
 		return (false);
@@ -133,7 +133,7 @@ bool	isValidErrorPage(std::vector<std::string> & v)
 		}
 		i++;
 	}
-	if (isValidUri(v[size - 1]) == false)
+	if (isValidFile(v[size - 1]) == false)
 		return (false);
 	return (true);
 }
@@ -165,7 +165,7 @@ bool	isSupportedHttpRedirCode(std::string s)
 bool	isValidReturn(std::vector<std::string> & v)
 {
 	if (isSupportedHttpRedirCode(v[1])
-			&& isValidUri(v[2]))
+			&& isValidFile(v[2]))
 		return (true);
 	return (false);
 }
@@ -213,4 +213,11 @@ bool	isValidLimitExcept(std::vector<std::string> v)
 		i++;
 	}
 	return (true);
+}
+
+bool	isValidReqUri(std::string const & s)
+{
+	return (s[0] == '/'
+			&& s.find("..") == std::string::npos
+			&& s.find("//") == std::string::npos);
 }

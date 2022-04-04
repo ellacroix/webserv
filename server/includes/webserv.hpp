@@ -77,7 +77,7 @@ bool			isValidPort(std::string s);
 bool			isValidDomainName(std::string s);
 bool			isValidClientMaxBodySize(std::string & s);
 bool			isValidHttpErrorCode(std::string s);
-bool			isValidUri(std::string & s);
+bool			isValidFile(std::string & s);
 bool			isValidErrorPage(std::vector<std::string> & v);
 bool			isValidAutoindex(std::string s);
 //bool			isValidIndex(std::vector<std::string> v);
@@ -86,6 +86,7 @@ bool			isSupportedHttpRedirCode(std::string s);
 bool			isValidReturn(std::vector<std::string> & v);
 bool			isSupportedHttpMethod(std::string s);
 bool			isValidLimitExcept(std::vector<std::string> v);
+bool			isValidReqUri(std::string const & s);
 
 //	engineUtils.cpp
 int	startAllPorts(ConfigParser & config, struct epoll_event,

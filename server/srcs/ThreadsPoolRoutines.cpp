@@ -11,44 +11,6 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine\n");
 
-	/* 	t_size end = client->request_buffer.find("\r\n\r\n");
-		if (end != std::string::npos)
-		{
-		client->CreateRequest();
-
-		std::string headers = client->request_buffer.substr(0, end);
-
-		t_size start = headers.find_last_of("Transfer-Encoding: ");
-		if (start != std::string::npos)
-		{
-		std::string TE_line = headers.substr(start, headers.find(start,"\r\n"));
-		if (TE_line.find("chunked"))
-		if (IsChunkComplete() = true);
-		}
-		else if((t_size start = headers.find("Content-Length: ")) != std::string::npos)
-		{
-		std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
-
-
-		}
-
-		if (client->read_more == false)
-		{
-		client->request->parser();
-		client->CreateResponse();
-		client->response->ConstructResponse();
-
-	//Response is ready to be sent, so we monitor client->stream_socket for writing only
-	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-	thread_info->event.data.fd = client->stream_socket;
-	thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
-	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
-	client->response_ready = true;
-	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-	return ;
-	}
-	} */
-
 	//We dont create the Request instance until we have at least a double "CRLF"
 	if (client->request == NULL)
 		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
@@ -57,10 +19,11 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	//We enter here if we received the headers or wanted to read more
 	if (client->request)
 	{
-		client->request->status_code = client->request->parser();
+		client->request->_statusCode = client->request->parser();
 
 		if (client->read_more == false)
 		{
+			/*
 			printf("ThreadsPool: Reponse ready \n");
 			//The request is complete and ready to be processed
 			client->CreateResponse();
@@ -77,6 +40,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 					&thread_info->event);
 			client->response_ready = true;
 			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+			*/
 			return ;
 		}
 	}
@@ -133,13 +97,13 @@ void	*thread_loop(void* arg)
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		if (thread_info->queue->empty() == true)
 		{
-			printf("ThreadsPool: No work in the queue, waiting...\n");
+	//		printf("ThreadsPool: No work in the queue, waiting...\n");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
 			currentClient = thread_info->queue->front();
 		}
 		else
 			currentClient = thread_info->queue->front();
-		printf("ThreadsPool: Grabbed a task\n");
+	//	printf("ThreadsPool: Grabbed a task\n");
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 
