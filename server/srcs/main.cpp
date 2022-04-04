@@ -16,7 +16,7 @@
 #define MAX_EVENTS 20
 //#define THREADS 2
 #define BUFFER_SIZE 50000
-#define TIMEOUT	10
+#define TIMEOUT	100
 
 int	DisconnectTimeout408(std::list<Port*> PortsList)
 {
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
-		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 60000);
+		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 600000);
 
 		printf("MainProcess: epoll_wait() activated by %d file descriptors\n",
 				new_events);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 				{
 					acceptIncomingConnections(current_port,
 							event, epoll_fd, thread_info);
-					continue;	// WHAT IF SOMETHING TO READ WAS ADDED TOO ?
+					continue;
 				}
 				//Check if find() found the event_fd in this clients map,
 				//meaning there is work to do in it.

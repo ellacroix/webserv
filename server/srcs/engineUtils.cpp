@@ -67,7 +67,7 @@ int		acceptIncomingConnections(Port *current_port,
 
 void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c)
-{
+{	
 	int     connection;
 	Client  *current_client;
 	char    buffer[RECV_BUFFER_SIZE];
@@ -80,7 +80,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	//Receiving all we can from the client
 	bzero(buffer, RECV_BUFFER_SIZE);
 	ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
-	// WHY NOT READ IN CLIENT'S BUFFER DIRECTLY ?
+	printf("recvClientsReq - ret = %d\n", ret);
 
 	pthread_mutex_lock(&current_client->client_mutex);
 	if (ret == 0)
@@ -90,6 +90,15 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		current_port->_clientsMap.erase(current_client->stream_socket);
 		pthread_mutex_unlock(&current_client->client_mutex);
 		delete current_client;
+	}
+	if (ret == -1)
+	{
+		pthread_mutex_lock(&thread_info->queue_mutex);
+		thread_info->queue->push_back(current_client);
+		pthread_cond_signal(&thread_info->condition_var);
+		printf("MainProcess: added client %d to the queue\n", connection);
+		pthread_mutex_unlock(&thread_info->queue_mutex);
+		pthread_mutex_unlock(&current_client->client_mutex);
 	}
 	else
 	{
