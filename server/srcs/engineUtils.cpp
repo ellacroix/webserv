@@ -80,6 +80,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	//Receiving all we can from the client
 	bzero(buffer, RECV_BUFFER_SIZE);
 	ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
+	// WHY NOT READ IN CLIENT'S BUFFER DIRECTLY ?
 
 	pthread_mutex_lock(&current_client->client_mutex);
 	if (ret == 0)

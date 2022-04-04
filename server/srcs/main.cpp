@@ -63,11 +63,11 @@ int main(int argc, char *argv[])
 
 
 	//CREATE AND LAUNCH THREAD_POOL
-	
 	t_thread_info *thread_info = new t_thread_info();
 	pthread_t   thread_pool[THREADS];
 	if (thread_info->start(&epoll_fd, thread_pool) != SUCCESS)
 		return (FAILURE);
+	//START LISTENING ON PORTS
 	if (startAllPorts(config, event, epoll_fd) != SUCCESS)
 		return (FAILURE);
 	while (1)
@@ -104,7 +104,6 @@ int main(int argc, char *argv[])
 							event, epoll_fd, thread_info);
 					continue;	// WHAT IF SOMETHING TO READ WAS ADDED TOO ?
 				}
-				
 				//Check if find() found the event_fd in this clients map,
 				//meaning there is work to do in it.
 				t_clientMapIt	it_c;
@@ -114,5 +113,5 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	return 0;
+	return (SUCCESS);
 }

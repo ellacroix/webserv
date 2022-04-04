@@ -38,7 +38,7 @@
 
 # define SUCCESS 0
 # define FAILURE 1
-# define RECV_BUFFER_SIZE 50000
+# define RECV_BUFFER_SIZE 256
 # define THREADS 2
 
 class	ConfigParser ;
