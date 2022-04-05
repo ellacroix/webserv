@@ -38,7 +38,7 @@
 
 # define SUCCESS 0
 # define FAILURE 1
-# define RECV_BUFFER_SIZE 256
+# define RECV_BUFFER_SIZE 5000
 # define THREADS 2
 # define TIMEOUT 100
 

@@ -1,5 +1,5 @@
-#include "Request.hpp"
 
+<<<<<<< HEAD
 Request::Request(std::string raw, Client *parent_client) :
 	_statusCode(0),
 	_chunked(false),

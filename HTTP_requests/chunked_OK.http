@@ -1,0 +1,17 @@
+POST / HTTP/1.1
+Host: blaexamplebobbla.fr
+Content-Type: text/plain
+Transfer-Encoding: chunked
+
+27
+Voici les données du premier morceau
+
+1C
+et voici un second morceau
+
+20
+et voici deux derniers morceaux 
+12
+sans saut de ligne
+0
+
