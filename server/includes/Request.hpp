@@ -78,6 +78,8 @@ class   Request {
 		void	setHeaderValue(const unsigned int headerIndex,
 				std::string const & value);
 
+		unsigned int	decodeChunk(void);
+
 };
 
 

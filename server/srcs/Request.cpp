@@ -39,10 +39,8 @@ unsigned int	Request::parser(void)
 			return (this->_statusCode);
 		}
 	}
-	/*
-   if (this->_parsingStep == BODY)
-   this->_statusCode = this->parseBody();
-   */
+/* 	if (this->_parsingStep == BODY)
+		this->_statusCode = this->decodeChunk(); */
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
 	return (SUCCESS);
@@ -173,3 +171,12 @@ const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =
 {
 	"transfer-encoding", "host", "content-length"
 };
+
+
+unsigned int	Request::decodeChunk(void)
+{
+	std::string decodedBody;
+
+	this->body = decodedBody;
+	return 0;
+}
