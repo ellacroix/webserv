@@ -10,7 +10,7 @@ bool	IsChunkComplete(Client *client)
 	{
 		std::string body = client->request_buffer.substr(bodyStart, bodyEnd + 5 - bodyStart);
 
-		client->request->body = body;
+		client->request->_body = body;
 		
 		// No trailer case
 		if (body.find("\r\n0\r\n\r\n") != std::string::npos)
@@ -50,7 +50,7 @@ bool	IsBodyComplete(Client *client, size_t length)
 	if (body.size() < length)
 		return false;
 	else
-		client->request->body = body.substr(0, length);
+		client->request->_body = body.substr(0, length);
 	return true;
 }
 
@@ -65,10 +65,10 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		if (!client->request)
 			client->CreateRequest();
 
-		size_t start = client->request->headers.rfind("Transfer-Encoding: ");
+		size_t start = client->request->_headers.rfind("Transfer-Encoding: ");
 		if (start != std::string::npos)
 		{
-			std::string TE_line = client->request->headers.substr(start);
+			std::string TE_line = client->request->_headers.substr(start);
 			TE_line = TE_line.substr(0, TE_line.find("\r\n"));
 			if (TE_line.find("chunked") != std::string::npos)
 			{
@@ -78,9 +78,9 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 					client->read_more = false;
 			}
 		}
-		else if ((start = client->request->headers.find("Content-Length: ")) != std::string::npos)
+		else if ((start = client->request->_headers.find("Content-Length: ")) != std::string::npos)
 		{
-			std::string CL_line = client->request->headers.substr(start);
+			std::string CL_line = client->request->_headers.substr(start);
 			CL_line = CL_line.substr(CL_line.find(":") + 1, CL_line.find("\r\n") + 2);
 			size_t length = strtol(CL_line.c_str(), NULL, 10);
 			if (IsBodyComplete(client, length) == false)
@@ -92,8 +92,8 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		if (client->read_more == false)
 		{
 			printf("Sending to parser: \n");
-			printf("%s\n", client->request->headers.c_str());
-			printf("%s\n", client->request->body.c_str());
+			printf("%s\n", client->request->_headers.c_str());
+			printf("%s\n", client->request->_body.c_str());
 			//client->request->parser();
 			client->CreateResponse();
 			client->response->ConstructResponse();
