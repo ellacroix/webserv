@@ -40,6 +40,7 @@
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 256
 # define THREADS 2
+# define TIMEOUT 100
 
 class	ConfigParser ;
 class	Port ;
@@ -89,12 +90,14 @@ bool			isValidLimitExcept(std::vector<std::string> v);
 bool			isValidReqUri(std::string const & s);
 
 //	engineUtils.cpp
-int	startAllPorts(ConfigParser & config, struct epoll_event,
+int		startAllPorts(ConfigParser & config, struct epoll_event,
 		int epoll_fd);
-int	acceptIncomingConnections(Port *current_port, struct epoll_event &event,
+int		acceptIncomingConnections(Port *current_port, struct epoll_event &event,
 		int epoll_fd, t_thread_info *thread_info);
 void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
+int		DisconnectTimeout408(std::list<Port*> PortsList);
+
 
 
 

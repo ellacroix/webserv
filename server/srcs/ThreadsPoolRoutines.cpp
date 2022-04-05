@@ -23,7 +23,6 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 
 		if (client->read_more == false)
 		{
-			/*
 			printf("ThreadsPool: Reponse ready \n");
 			//The request is complete and ready to be processed
 			client->CreateResponse();
@@ -40,7 +39,6 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 					&thread_info->event);
 			client->response_ready = true;
 			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-			*/
 			return ;
 		}
 	}
@@ -82,6 +80,8 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 			client->stream_socket,
 			&thread_info->event);
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+	printf("ThreadsPool: send routine DONE\n");
+	
 }
 
 void	*thread_loop(void* arg)
@@ -97,13 +97,13 @@ void	*thread_loop(void* arg)
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		if (thread_info->queue->empty() == true)
 		{
-	//		printf("ThreadsPool: No work in the queue, waiting...\n");
+			printf("ThreadsPool: No work in the queue, waiting...\n");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
 			currentClient = thread_info->queue->front();
 		}
 		else
 			currentClient = thread_info->queue->front();
-	//	printf("ThreadsPool: Grabbed a task\n");
+		printf("ThreadsPool: Grabbed a task\n");
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 

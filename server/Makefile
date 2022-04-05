@@ -12,6 +12,7 @@ SRCS			=	Client.cpp \
 					ThreadsPool.cpp \
 					parsingUtils.cpp \
 					Request.cpp \
+					RequestHeaderArgs.cpp \
 					Response.cpp \
 					engineUtils.cpp
 

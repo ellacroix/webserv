@@ -113,3 +113,34 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
 }
+
+int	DisconnectTimeout408(std::list<Port*> PortsList)
+{
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+
+	printf("MainProcess: Checking for timeouts\n");
+	for (std::list<Port*>::iterator it_p = PortsList.begin(); it_p != PortsList.end(); it_p++)
+	{
+		Port *current_port = *it_p;
+
+		for (std::map<int, Client*>::iterator it_c = current_port->_clientsMap.begin(), next_it_c = it_c; it_c != current_port->_clientsMap.end(); it_c = next_it_c)
+		{
+			Client *current_client = it_c->second;
+			next_it_c++;
+
+			pthread_mutex_lock(&current_client->client_mutex);
+			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
+			if (result > TIMEOUT)
+			{
+				current_client->connected = false;
+				current_port->_clientsMap.erase(current_client->stream_socket);
+				pthread_mutex_unlock(&current_client->client_mutex);
+				delete current_client;
+				continue;
+			}
+			pthread_mutex_unlock(&current_client->client_mutex);
+		}
+	}
+	return 0;
+}

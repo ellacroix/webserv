@@ -59,7 +59,7 @@ void				ConfigParser::parse(char *arg)
 		}
 	}
 //	this->displayPortsMap();
-	this->displayPortsList();
+//	this->displayPortsList();
 //	this->makeListFromMap();
 	if (this->validate() == false)
 	{
