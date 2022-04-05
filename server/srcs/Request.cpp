@@ -33,16 +33,16 @@ unsigned int	Request::parser(void)
 			this->_statusCode = this->parseReqLine();
 		else if (this->_parsingStep == HEADERS)
 			this->_statusCode = this->parseHeaders();
-		/*
-		   if (this->_parsingStep == BODY)
-		   this->_statusCode = this->parseBody();
-		   */
 		if (this->_statusCode >= 400)
 		{
 			std::cout << "parser()\t- RETURNING " << this->_statusCode << std::endl;
 			return (this->_statusCode);
 		}
 	}
+	/*
+   if (this->_parsingStep == BODY)
+   this->_statusCode = this->parseBody();
+   */
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
 	return (SUCCESS);
@@ -74,7 +74,7 @@ unsigned int	Request::parseHeaders(void)
 	if (/*value.find(":") != std::string::npos
 		  ||*/ firstPrintValChar == std::string::npos)
 		return (400);
-	// REMOVE HEADING LWS
+	// REMOVE LEADING LWS
 	else if (firstPrintValChar != 0)
 		value = value.substr(firstPrintValChar, value.length() - firstPrintValChar);
 	std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl

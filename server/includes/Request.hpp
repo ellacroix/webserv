@@ -11,7 +11,8 @@ enum    e_parsingSteps
 	REQ_ERROR = -1,
 	REQUEST_LINE,
 	HEADERS,
-	BODY
+	BODY,
+	COMPLETE
 };
 
 # define N_SUPPORTED_HEADERS 3
