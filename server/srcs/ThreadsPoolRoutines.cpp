@@ -91,7 +91,8 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 
 		if (client->read_more == false)
 		{
-			//client->request->parser();
+			printf("body = \n%s\n", client->request->_body.c_str());
+			client->request->parser();
 			client->CreateResponse();
 			client->response->ConstructResponse();
 
