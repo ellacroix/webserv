@@ -21,7 +21,7 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 
-	printf("MainProcess: Checking for timeouts\n");
+	//printf("MainProcess: Checking for timeouts\n");
 	for (std::list<Port*>::iterator it_p = PortsList.begin(); it_p != PortsList.end(); it_p++)
 	{
 		Port *current_port = *it_p;

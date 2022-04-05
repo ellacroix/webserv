@@ -3,15 +3,25 @@
 
 bool	IsChunkComplete(Client *client)
 {
-	printf("Checking if chunked is complete\n");
-	
-	size_t			start = client->request_buffer.find("\r\n\r\n");
-	std::string 	body = client->request_buffer.substr(start + 4);
+	size_t			bodyStart = client->request_buffer.find("\r\n\r\n") + 4;
+	size_t			bodyEnd = client->request_buffer.find("\r\n0\r\n", bodyStart);
 
-	if (body.find("0/r/n/r/n") == std::string::npos)
+	if (bodyEnd != std::string::npos)
+	{
+		std::string body = client->request_buffer.substr(bodyStart, bodyEnd + 5 - bodyStart);
+
+		client->request->body = body;
+		
+		// No trailer case
+		if (body.find("\r\n0\r\n\r\n") != std::string::npos)
+			return true;
+		//Trailer case to do ?
+		return true;
+	}
+	else
 		return false;
 
-	std::string		nextLine = body.substr(0, 100);
+/* 	std::string		nextLine = body.substr(0, 100);
 	int				chunksize = strtol(nextLine.c_str(), NULL, 16);
 	size_t			chunkstart = 0;
 	//size_t			len = body.length();
@@ -27,14 +37,26 @@ bool	IsChunkComplete(Client *client)
 		nextLine = body.substr(chunkstart + chunksize + 2, 100);
 		chunkstart += chunksize + 2;
 		chunksize = strtol(nextLine.c_str(), NULL, 16);
-	}
+	} */
 
-	return false;
+}
+
+bool	IsBodyComplete(Client *client, size_t length)
+{
+	size_t		bodyStart = client->request_buffer.find("\r\n\r\n") + 4;
+
+	std::string	body = client->request_buffer.substr(bodyStart);
+
+	if (body.size() < length)
+		return false;
+	else
+		client->request->body = body.substr(0, length);
+	return true;
 }
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: recv routine\n");
+	printf("ThreadsPool: recv routine: ");
 
 	size_t end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
@@ -43,25 +65,35 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		if (!client->request)
 			client->CreateRequest();
 
-		std::string headers = client->request_buffer.substr(0, end);
-
-		size_t start = headers.find_last_of("Transfer-Encoding: ");
+		size_t start = client->request->headers.rfind("Transfer-Encoding: ");
 		if (start != std::string::npos)
 		{
-			std::string TE_line = headers.substr(start);
+			std::string TE_line = client->request->headers.substr(start);
 			TE_line = TE_line.substr(0, TE_line.find("\r\n"));
-			if (TE_line.find("chunked"))
+			if (TE_line.find("chunked") != std::string::npos)
+			{
 				if (IsChunkComplete(client) == false)
 					client->read_more = true;
+				else
+					client->read_more = false;
+			}
 		}
-		else if ((start = headers.find("Content-Length: ")) != std::string::npos)
+		else if ((start = client->request->headers.find("Content-Length: ")) != std::string::npos)
 		{
-			//std::string CL_line = headers.substr(start, headers.find(start,"\r\n"));
-			client->read_more = false;
+			std::string CL_line = client->request->headers.substr(start);
+			CL_line = CL_line.substr(CL_line.find(":") + 1, CL_line.find("\r\n") + 2);
+			size_t length = strtol(CL_line.c_str(), NULL, 10);
+			if (IsBodyComplete(client, length) == false)
+				client->read_more = true;
+			else
+				client->read_more = false;
 		}
 
 		if (client->read_more == false)
 		{
+			printf("Sending to parser: \n");
+			printf("%s\n", client->request->headers.c_str());
+			printf("%s\n", client->request->body.c_str());
 			//client->request->parser();
 			client->CreateResponse();
 			client->response->ConstructResponse();
@@ -77,39 +109,8 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		}
 	}
 
-/* 	//We dont create the Request instance until we have at least a double "CRLF"
-	if (client->request == NULL)
-		if (client->request_buffer.find("\r\n\r\n") != std::string::npos)
-			client->CreateRequest();
-
-	//We enter here if we received the headers or wanted to read more
-	if (client->request)
-	{
-		client->request->status_code = client->request->parser();
-
-		if (client->read_more == false)
-		{
-			printf("ThreadsPool: Reponse ready \n");
-			//The request is complete and ready to be processed
-			client->CreateResponse();
-			client->response->ConstructResponse();
-
-			//Response is ready to be sent,
-			//so we monitor client->stream_socket for writing only
-			pthread_mutex_lock(&thread_info->epoll_fd_mutex);
-			thread_info->event.data.fd = client->stream_socket;
-			thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
-			epoll_ctl(*thread_info->epoll_fd,
-					EPOLL_CTL_MOD,
-					client->stream_socket,
-					&thread_info->event);
-			client->response_ready = true;
-			pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-			return ;
-		}
-	}
- */
 	//The request is incomplete, we monitor the connection again to read the rest
+	printf("Incomplete request \n");
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;
 	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
@@ -167,7 +168,7 @@ void	*thread_loop(void* arg)
 		}
 		else
 			currentClient = thread_info->queue->front();
-		printf("ThreadsPool: Grabbed a task\n");
+		//printf("ThreadsPool: Grabbed a task\n");
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 

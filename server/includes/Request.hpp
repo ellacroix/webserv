@@ -16,8 +16,6 @@ private:
 protected:
 
 public:
-	std::string			raw_request;
-	std::istringstream	stream_request;
 
 	int				status_code;
 	bool Chunked;
