@@ -75,8 +75,10 @@ class   Request {
 		unsigned int	parseBody(void);
 		int				isSupportedHeader(std::string & key);
 		//		RequestHeaderArgs.cpp
-		void	setHeaderValue(const unsigned int headerIndex,
-				std::string const & value);
+		void			setHeaderValue(const unsigned int headerIndex,
+						std::string const & value);
+		bool			valueIsValid(const unsigned int headerIndex,
+						std::string const & value);
 
 		unsigned int	decodeChunk(void);
 
