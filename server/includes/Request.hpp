@@ -26,12 +26,8 @@ enum	e_supportedHeaders
 	CONTENT_LENGTH
 };
 
-<<<<<<< HEAD
 class Client ;
 class VirtualServer ;
-=======
-public:
->>>>>>> main
 
 class   Request {
 	private:
