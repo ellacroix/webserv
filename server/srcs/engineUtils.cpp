@@ -91,19 +91,9 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_unlock(&current_client->client_mutex);
 		delete current_client;
 	}
-	if (ret == -1)
-	{
-		pthread_mutex_lock(&thread_info->queue_mutex);
-		thread_info->queue->push_back(current_client);
-		pthread_cond_signal(&thread_info->condition_var);
-		printf("MainProcess: added client %d to the queue\n", connection);
-		pthread_mutex_unlock(&thread_info->queue_mutex);
-		pthread_mutex_unlock(&current_client->client_mutex);
-	}
 	else
 	{
 		//Add the client to the wait_queue
-		//
 		current_client->request_buffer.append(buffer, ret);
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		thread_info->queue->push_back(current_client);
@@ -112,6 +102,25 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
+}
+
+void	sendClientResponse(t_thread_info *thread_info,
+		t_clientMapIt it_c)
+{	
+	int     connection;
+	Client  *current_client;
+	//int     ret;
+
+	connection = it_c->first;
+	current_client = it_c->second;
+
+	pthread_mutex_lock(&current_client->client_mutex);
+	pthread_mutex_lock(&thread_info->queue_mutex);
+	thread_info->queue->push_back(current_client);
+	pthread_cond_signal(&thread_info->condition_var);
+	printf("MainProcess: added client %d to the queue\n", connection);
+	pthread_mutex_unlock(&thread_info->queue_mutex);
+	pthread_mutex_unlock(&current_client->client_mutex);
 }
 
 int	DisconnectTimeout408(std::list<Port*> PortsList)

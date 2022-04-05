@@ -76,7 +76,12 @@ int main(int argc, char *argv[])
 				t_clientMapIt	it_c;
 				it_c = current_port->_clientsMap.find(event_fd);
 				if (it_c != current_port->_clientsMap.end())
-					recvClientsRequest(current_port, thread_info, it_c);
+				{
+					if (events[i].events & EPOLLOUT)
+						sendClientResponse(thread_info, it_c);
+					else
+						recvClientsRequest(current_port, thread_info, it_c);
+				}
 			}
 		}
 	}

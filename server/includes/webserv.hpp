@@ -96,6 +96,8 @@ int		acceptIncomingConnections(Port *current_port, struct epoll_event &event,
 		int epoll_fd, t_thread_info *thread_info);
 void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
+void	sendClientResponse(t_thread_info *thread_info,
+		t_clientMapIt it_c);
 int		DisconnectTimeout408(std::list<Port*> PortsList);
 
 
