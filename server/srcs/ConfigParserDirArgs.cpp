@@ -62,24 +62,24 @@ int ConfigParser::validateClientMaxBodySizeArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidClientMaxBodySize(this->_line[1])
-//			&& this->_curVS->_clientMaxBodySizeIsSet == false)
-//			&& this->_curLoc->_clientMaxBodySizeIsSet == false)
-			)
-	{
-//		this->_curVS->setClientMaxBodySize(this->_line[1]);
-//		this->_curVS->_clientMaxBodySizeIsSet = true;
-		if (this->_context == LOCATION_CONTEXT)
+			//			&& this->_curVS->_clientMaxBodySizeIsSet == false)
+			//			&& this->_curLoc->_clientMaxBodySizeIsSet == false)
+		)
 		{
-			this->_curLoc->setClientMaxBodySize(this->_line[1]);
-			this->_curLoc->_clientMaxBodySizeIsSet = true;
+			//		this->_curVS->setClientMaxBodySize(this->_line[1]);
+			//		this->_curVS->_clientMaxBodySizeIsSet = true;
+			if (this->_context == LOCATION_CONTEXT)
+			{
+				this->_curLoc->setClientMaxBodySize(this->_line[1]);
+				this->_curLoc->_clientMaxBodySizeIsSet = true;
+			}
+			else if (this->_context == SERVER_CONTEXT)
+			{
+				this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
+				this->_defLocPtr->_clientMaxBodySizeIsSet = true;
+			}
+			return (true);
 		}
-		else if (this->_context == SERVER_CONTEXT)
-		{
-			this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
-			this->_defLocPtr->_clientMaxBodySizeIsSet = true;
-		}
-		return (true);
-	}
 	return (ARG_ERROR);
 }
 
@@ -87,10 +87,19 @@ int ConfigParser::validateRootArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidPrefix(&this->_line[1]) == true
-			&& this->_curLoc->_rootIsSet == false)
+//			&& this->_curLoc->_rootIsSet == false)
+		)
 	{
-		this->_curLoc->setRoot(this->_line[1]);
-		this->_curLoc->_rootIsSet = true;
+		if (this->_context == LOCATION_CONTEXT)
+		{
+			this->_curLoc->setRoot(this->_line[1]);
+			this->_curLoc->_rootIsSet = true;
+		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			this->_defLocPtr->setRoot(this->_line[1]);
+			this->_defLocPtr->_rootIsSet = true;
+		}
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -100,9 +109,13 @@ int ConfigParser::validateErrorPageArgs(void)
 {
 	if (this->_line.size() > 2
 			&& isValidErrorPage(this->_line) == true
-			&& this->noDuplicateErrorPage() == true)
+//			&& this->noDuplicateErrorPage() == true)
+		)
 	{
-		this->_curLoc->_errorPageIsSet = true;
+		if (this->_context == LOCATION_CONTEXT)
+			this->_curLoc->_errorPageIsSet = true;
+		else if (this->_context == SERVER_CONTEXT)
+			this->_defLocPtr->_errorPageIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -112,13 +125,25 @@ int ConfigParser::validateAutoindexArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidAutoindex(this->_line[1])
-			&& this->_curLoc->_autoIndexIsSet == false)
+//			&& this->_curLoc->_autoIndexIsSet == false)
+			)
 	{
-		if (this->_line[1] == "on")
-			this->_curLoc->setAutoindex(true);
-		else
-			this->_curLoc->setAutoindex(false);
-		this->_curLoc->_autoIndexIsSet = true;
+		if (this->_context == LOCATION_CONTEXT)
+		{
+			if (this->_line[1] == "on")
+				this->_curLoc->setAutoindex(true);
+			else
+				this->_curLoc->setAutoindex(false);
+			this->_curLoc->_autoIndexIsSet = true;
+		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			if (this->_line[1] == "on")
+				this->_defLocPtr->setAutoindex(true);
+			else
+				this->_defLocPtr->setAutoindex(false);
+			this->_defLocPtr->_autoIndexIsSet = true;
+		}
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -126,21 +151,30 @@ int ConfigParser::validateAutoindexArgs(void)
 
 int ConfigParser::validateIndexArgs(void)
 {
-//	std::vector<std::string>::iterator	it;
-//	std::vector<std::string>::iterator	ite;
+	//	std::vector<std::string>::iterator	it;
+	//	std::vector<std::string>::iterator	ite;
 
 	if (this->_line.size() >= 2
-//			&& isValidIndex(this->_line)
+			//			&& isValidIndex(this->_line)
 			&& isValidIndex(this->_line[1])
-			&& this->_curLoc->_indexIsSet == false)
+//			&& this->_curLoc->_indexIsSet == false)
+			)
 	{
 		/*
-		it = this->_line.begin() + 1;
-		ite = this->_line.end();
-		this->_curLoc->setIndex(std::vector<std::string>(it, ite));
-		*/
-		this->_curLoc->setIndex(this->_line[1]);
-		this->_curLoc->_indexIsSet = true;
+		   it = this->_line.begin() + 1;
+		   ite = this->_line.end();
+		   this->_curLoc->setIndex(std::vector<std::string>(it, ite));
+		   */
+		if (this->_context == LOCATION_CONTEXT)
+		{
+			this->_curLoc->setIndex(this->_line[1]);
+			this->_curLoc->_indexIsSet = true;
+		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			this->_defLocPtr->setIndex(this->_line[1]);
+			this->_defLocPtr->_indexIsSet = true;
+		}
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -148,15 +182,25 @@ int ConfigParser::validateIndexArgs(void)
 
 int ConfigParser::validateReturnArgs(void)
 {
-//	PROBABLY A LOT OF MUTUAL DIRECTIVE EXCLUSIONS IN THE CASE OF RETURN
-//	PATTERN : return HTTP_CODE URI
+	//	PROBABLY A LOT OF MUTUAL DIRECTIVE EXCLUSIONS IN THE CASE OF RETURN
+	//	PATTERN : return HTTP_CODE URI
 	if (this->_line.size() == 3
 			&& isValidReturn(this->_line)
-			&& this->_curLoc->_returnIsSet == false)
+//			&& this->_curLoc->_returnIsSet == false)
+			)
 	{
-		this->_curLoc->setReturnCode(std::atoi(this->_line[1].c_str()));
-		this->_curLoc->setReturnUri(this->_line[2]);
-		this->_curLoc->_returnIsSet = true;
+		if (this->_context == LOCATION_CONTEXT)
+		{
+			this->_curLoc->setReturnCode(std::atoi(this->_line[1].c_str()));
+			this->_curLoc->setReturnUri(this->_line[2]);
+			this->_curLoc->_returnIsSet = true;
+		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			this->_defLocPtr->setReturnCode(std::atoi(this->_line[1].c_str()));
+			this->_defLocPtr->setReturnUri(this->_line[2]);
+			this->_defLocPtr->_returnIsSet = true;
+		}
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -165,7 +209,7 @@ int ConfigParser::validateReturnArgs(void)
 
 int	ConfigParser::validateLimitExceptArgs(void)
 {
-//	limit_except method ...
+	//	limit_except method ...
 	if (this->_line.size() >= 2 && this->_line.size() <= 4
 			&& isValidLimitExcept(this->_line)
 			&& this->_curLoc->_limitExceptIsSet == false)
@@ -183,7 +227,7 @@ int ConfigParser::validateOpeningBracketArgs(void)
 		return (true);
 	return (ARG_ERROR);
 }
-	
+
 int ConfigParser::validateClosingBracketArgs(void)
 {
 	Port	*port;
