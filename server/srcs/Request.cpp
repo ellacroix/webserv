@@ -39,8 +39,8 @@ unsigned int	Request::parser(void)
 			return (this->_statusCode);
 		}
 	}
-/* 	if (this->_parsingStep == BODY)
-		this->_statusCode = this->decodeChunk(); */
+	if (this->_parsingStep == BODY)
+		this->_statusCode = this->decodeChunk();
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
 	return (SUCCESS);
@@ -174,8 +174,27 @@ const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =
 
 
 unsigned int	Request::decodeChunk(void)
-{
+{	
 	std::string decodedBody;
+
+	size_t		chunkSize = strtol(_body.c_str(), NULL, 16);
+	size_t		chunkStart = 0;
+	std::string chunk;
+
+	while (chunkSize > 0)
+	{
+		chunkStart = _body.find("\r\n", chunkStart) + 2;
+		chunk = _body.substr(chunkStart, chunkSize);
+		printf("Chunk %lu = %s\n", chunkSize, chunk.c_str());
+		decodedBody.append(chunk.c_str(), chunkSize);
+		chunkStart += chunkSize + 2;
+		chunkSize = strtol(_body.c_str() + chunkStart, NULL, 16);
+	}
+
+	//Checking if we're on 0 and the chunked is not corrupted
+	size_t		bodyEnd = _body.find("\r\n0\r\n") + 2;
+	if (chunkStart != bodyEnd)
+		return 400;
 
 	this->_body = decodedBody;
 	return 0;

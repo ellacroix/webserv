@@ -20,25 +20,6 @@ bool	IsChunkComplete(Client *client)
 	}
 	else
 		return false;
-
-/* 	std::string		nextLine = body.substr(0, 100);
-	int				chunksize = strtol(nextLine.c_str(), NULL, 16);
-	size_t			chunkstart = 0;
-	//size_t			len = body.length();
-	std::string		chunk;
-
-	while (chunksize != 0)
-	{
-//		if (chunkstart + chunksize > len)
-//			ON VA SORTIR DE LA body
-		chunkstart = body.find("\r\n", chunkstart) + 2;
-		chunk = body.substr(chunkstart, chunksize);
-		printf("chunk: %s\n", chunk.c_str());
-		nextLine = body.substr(chunkstart + chunksize + 2, 100);
-		chunkstart += chunksize + 2;
-		chunksize = strtol(nextLine.c_str(), NULL, 16);
-	} */
-
 }
 
 bool	IsBodyComplete(Client *client, size_t length)
@@ -57,6 +38,22 @@ bool	IsBodyComplete(Client *client, size_t length)
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine: ");
+
+	if (client->request_buffer.find("\r\n") == 0)
+	{
+		//The request is ignored, we monitor the connection again to read a new request
+		printf("Ignored request \n");
+		client->request_buffer.clear();
+		pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+		thread_info->event.data.fd = client->stream_socket;
+		thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
+		epoll_ctl(*thread_info->epoll_fd,
+				EPOLL_CTL_MOD,
+				client->stream_socket,
+				&thread_info->event);
+		pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+		return ;
+	}
 
 	size_t end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
@@ -145,7 +142,6 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 			&thread_info->event);
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 	printf("ThreadsPool: send routine DONE\n");
-	
 }
 
 void	*thread_loop(void* arg)

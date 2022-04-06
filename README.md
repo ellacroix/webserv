@@ -10,7 +10,7 @@
 7. Execution des CGI si necessaire
 8. Parsing de l'output du CGI
 9. Envoi des reponses 
-10. Fermeture de la connection
+10. Fermeture de la connection si necessaire, ou retour a l'etape 5
 
 ## Architecture (Voir le dossier app.diagrams.net)
 - Une classe Port, qui contient une std::map<int, Client*>
@@ -53,10 +53,9 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 
 
 ## Questions
-- Concept de chunk et utilité dans le projet ?
 - Doit on gerer l'access authentication ?
 - Si le client ferme la connection apres l'envoi de sa requete, doit on lui repondre ? (https://stackoverflow.com/questions/4824451/detect-end-of-http-request-body)
-- 
+- Gestion des trailers pas necessaires, car on peut les ignorer ? [IBM](https://www.ibm.com/docs/en/zvse/6.2?topic=SSB27H_6.2.0/dfhe7_use_chunked_tranfercoding.html#:~:text=Note%20that%20the%20HTTP/1.1%20specification%20sets%20requirements%20for%20the%20use%20of%20trailing%20headers%2C%20including%20that%20it%20should%20not%20matter%20if%20the%20recipient%20ignores%20them.)
 
 ## Resources
 
@@ -163,7 +162,6 @@ Ensure the conversion of short and long numbers between Host and Network, regard
 - Au vu des discussions Discord, le pipelining n'a pas a etre géré, notamment car il est abandonné en HTTP2.0 et par la plupart des navigateurs.
 - Caching: plutot une notion pour les intermediaires, pas a gerer
 - Charset = token, le token specifie quel charset a employer, voir cas de Missing Charset
-- Transfer-coding: chunked, identity, gzip, compress, deflate 
 - Chunked transfer Coding: OPTIONAL trailer
 - If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
 - See Nagle's algorithm if send/recv takes too much time (https://stackoverflow.com/questions/4428088/reasons-for-a-slow-recv-call)
