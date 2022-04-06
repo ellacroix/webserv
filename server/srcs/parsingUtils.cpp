@@ -174,6 +174,22 @@ bool	isValidIndex(std::string s)
 	return (true);
 }
 
+bool	areValidIndexes(std::vector<std::string> & v)
+{
+	size_t	i;
+	size_t	size;
+
+	i = 1;
+	size = v.size();
+	while (i < size)
+	{
+		if (isValidIndex(v[i]) == false)
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
 bool	isSupportedHttpRedirCode(std::string s)
 {
 	return (s == "301" || s == "302" || s == "304");

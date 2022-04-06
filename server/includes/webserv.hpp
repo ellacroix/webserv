@@ -73,7 +73,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info);
 void	thread_send_routine(Client *client, t_thread_info *thread_info);
 //	ThreadPool.cpp
 
-//	utils.cpp
+//	parsingUtils.cpp
 bool			isNumber(std::string s);
 bool			isValidPrefix(std::string *s);
 bool			isValidPort(std::string s);
@@ -83,7 +83,7 @@ bool			isValidHttpErrorCode(std::string s);
 bool			isValidFile(std::string & s);
 bool			isValidErrorPage(std::vector<std::string> & v);
 bool			isValidAutoindex(std::string s);
-//bool			isValidIndex(std::vector<std::string> v);
+bool			areValidIndexes(std::vector<std::string> & v);
 bool			isValidIndex(std::string s);
 bool			isSupportedHttpRedirCode(std::string s);
 bool			isValidReturn(std::vector<std::string> & v);

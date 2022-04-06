@@ -168,30 +168,21 @@ int ConfigParser::validateIndexArgs(void)
 	//	std::vector<std::string>::iterator	ite;
 
 	if (this->_line.size() >= 2
-			//			&& isValidIndex(this->_line)
-			&& isValidIndex(this->_line[1])
-			//			&& this->_curLoc->_indexIsSet == false)
-		)
+			&& areValidIndexes(this->_line))
+		//			&& this->_curLoc->_indexIsSet == false)
+	{
+		if (this->_context == LOCATION_CONTEXT)
 		{
-			/*
-			   it = this->_line.begin() + 1;
-			   ite = this->_line.end();
-			   this->_curLoc->setIndex(std::vector<std::string>(it, ite));
-			   */
-			if (this->_context == LOCATION_CONTEXT)
-			{
-//				this->_curLoc->setIndex(this->_line[1]);
-				this->_curLoc->setIndex(this->_line);
-				this->_curLoc->_indexIsSet = true;
-			}
-			else if (this->_context == SERVER_CONTEXT)
-			{
-//				this->_defLocPtr->setIndex(this->_line[1]);
-				this->_defLocPtr->setIndex(this->_line);
-				this->_defLocPtr->_indexIsSet = true;
-			}
-			return (true);
+			this->_curLoc->setIndex(this->_line);
+			this->_curLoc->_indexIsSet = true;
 		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			this->_defLocPtr->setIndex(this->_line);
+			this->_defLocPtr->_indexIsSet = true;
+		}
+		return (true);
+	}
 	return (ARG_ERROR);
 }
 
