@@ -81,10 +81,25 @@ void	Location::setAutoindex(bool b)
 }
 
 //void	Location::setIndex(std::vector<std::string> v)
-void	Location::setIndex(std::string s)
+//void	Location::setIndex(std::string s)
+//{
+//	//	this->_index = std::vector<std::string>(v);
+//	this->_index = s;
+//}
+
+void	Location::setIndex(std::vector<std::string> v)
 {
-	//	this->_index = std::vector<std::string>(v);
-	this->_index = s;
+	size_t	i;
+	size_t	size;
+
+	i = 1;
+	size = v.size();
+	while (i < size)
+	{
+		this->_index.push_back(v[i]);
+		i++;
+	}
+	// OR REPLACE WHOLE VECTOR ?
 }
 
 void	Location::setReturnCode(int	n)
@@ -140,7 +155,8 @@ void	Location::reset(void)
 	this->_root = "";
 	this->_errorPage = std::map<int, std::string>();
 	this->_autoIndex = false;
-	this->_index = "";
+//	this->_index = "";
+	this->_index = std::vector<std::string>();
 	this->_limitExcept = std::vector<std::string>();
 	this->_returnCode = -1;
 	this->_returnUri = "";
@@ -180,7 +196,22 @@ void	Location::display(void) const
 	}
 	std::cout << std::boolalpha;
 	std::cout << "\t\t_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
-	std::cout << "\t\t_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
+//	std::cout << "\t\t_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
+	if (this->_index.empty() == true)
+		std::cout << "\t\t_index[ ]\t\t=\tempty" << std::endl;
+	else
+	{
+		vct_it = this->_index.begin();
+		vct_ite = this->_index.end();
+		i = 0;
+		while (vct_it != vct_ite)
+		{
+			std::cout << "\t\t_index[" << i << "]\t\t=\t\""
+				<< *vct_it << "\"" << std::endl;
+			vct_it++;
+			i++;
+		}
+	}
 	if (this->_limitExcept.empty() == true)
 		std::cout << "\t\t_limitExcept[ ]\t\t=\tempty" << std::endl;
 	else

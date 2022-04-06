@@ -56,7 +56,6 @@ int ConfigParser::validateServerNameArgs(void)
 	//		return (true);
 	//	}
 	if (this->_line.size() >= 2
-//			&& isValidDomainName(this->_line[1])
 			&& areValidDomainNames(this->_line)
 			&& this->_curVS->_serverNameIsSet == false)
 	{
@@ -181,12 +180,14 @@ int ConfigParser::validateIndexArgs(void)
 			   */
 			if (this->_context == LOCATION_CONTEXT)
 			{
-				this->_curLoc->setIndex(this->_line[1]);
+//				this->_curLoc->setIndex(this->_line[1]);
+				this->_curLoc->setIndex(this->_line);
 				this->_curLoc->_indexIsSet = true;
 			}
 			else if (this->_context == SERVER_CONTEXT)
 			{
-				this->_defLocPtr->setIndex(this->_line[1]);
+//				this->_defLocPtr->setIndex(this->_line[1]);
+				this->_defLocPtr->setIndex(this->_line);
 				this->_defLocPtr->_indexIsSet = true;
 			}
 			return (true);

@@ -10,8 +10,8 @@ class	Location
 		std::string							_root;
 		std::map<int, std::string>			_errorPage;
 		bool								_autoIndex;
-//		std::vector<std::string>			_index; // IF MANY INDEXES
-		std::string							_index; // IF ONE INDEX
+		std::vector<std::string>			_index; // IF MANY INDEXES
+//		std::string							_index; // IF ONE INDEX
 //		int									_limitExcept; // IF BITSHIFTING
 		std::vector<std::string>			_limitExcept; // STRINGS
 		int									_returnCode;
@@ -40,8 +40,8 @@ class	Location
 		void		setPrefix(std::string s);
 		void		setRoot(std::string s);
 		void		setAutoindex(bool b);
-//		void		setIndex(std::vector<std::string> v);
-		void		setIndex(std::string s);
+		void		setIndex(std::vector<std::string> v);
+//		void		setIndex(std::string s);
 		void		setReturnCode(int n);
 		void		setReturnUri(std::string s);
 		void		setLimitExcept(std::vector<std::string> v);
