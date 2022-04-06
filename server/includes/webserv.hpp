@@ -90,6 +90,7 @@ bool			isValidReturn(std::vector<std::string> & v);
 bool			isSupportedHttpMethod(std::string s);
 bool			isValidLimitExcept(std::vector<std::string> v);
 bool			isValidReqUri(std::string const & s);
+bool			areValidDomainNames(std::vector<std::string> & v);
 
 //	engineUtils.cpp
 int		startAllPorts(ConfigParser & config, struct epoll_event,

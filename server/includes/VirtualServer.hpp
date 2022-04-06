@@ -11,8 +11,8 @@ class	VirtualServer {
 	private:
 		//	VIRTUAL SERVER PARAMS
 		int									_listenPort;
-		//	std::vector<std::string>		_serverName; // IF MANY NAMES
-		std::string							_serverName;
+		std::vector<std::string>			_serverName; // IF MANY NAMES
+//		std::string							_serverName;
 //		ssize_t								_clientMaxBodySize;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
@@ -33,7 +33,8 @@ class	VirtualServer {
 
 		//	SETTERS
 		void		setListenPort(int n);
-		void		setServerName(std::string s);
+//		void		setServerName(std::string s);
+		void		setServerName(std::vector<std::string> v);
 //		void		setClientMaxBodySize(std::string s);
 		//	GETTERS
 		int			getListenPort(void) const;
