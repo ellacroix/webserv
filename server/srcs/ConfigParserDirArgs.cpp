@@ -61,20 +61,19 @@ int ConfigParser::validateServerNameArgs(void)
 int ConfigParser::validateClientMaxBodySizeArgs(void)
 {
 	if (this->_line.size() == 2
-			&& isValidClientMaxBodySize(this->_line[1])
-			//			&& this->_curVS->_clientMaxBodySizeIsSet == false)
-			//			&& this->_curLoc->_clientMaxBodySizeIsSet == false)
-		)
+			&& isValidClientMaxBodySize(this->_line[1]))
 		{
-			//		this->_curVS->setClientMaxBodySize(this->_line[1]);
-			//		this->_curVS->_clientMaxBodySizeIsSet = true;
 			if (this->_context == LOCATION_CONTEXT)
 			{
+				if (this->_curLoc->_clientMaxBodySizeIsSet == true)
+					return (ALRDY_SET_ERROR);
 				this->_curLoc->setClientMaxBodySize(this->_line[1]);
 				this->_curLoc->_clientMaxBodySizeIsSet = true;
 			}
 			else if (this->_context == SERVER_CONTEXT)
 			{
+				if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+					return (ALRDY_SET_ERROR);
 				this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
 				this->_defLocPtr->_clientMaxBodySizeIsSet = true;
 			}
@@ -92,11 +91,15 @@ int ConfigParser::validateRootArgs(void)
 	{
 		if (this->_context == LOCATION_CONTEXT)
 		{
+			if (this->_curLoc->_rootIsSet == true)
+				return (ALRDY_SET_ERROR);
 			this->_curLoc->setRoot(this->_line[1]);
 			this->_curLoc->_rootIsSet = true;
 		}
 		else if (this->_context == SERVER_CONTEXT)
 		{
+			if (this->_defLocPtr->_rootIsSet == true)
+				return (ALRDY_SET_ERROR);
 			this->_defLocPtr->setRoot(this->_line[1]);
 			this->_defLocPtr->_rootIsSet = true;
 		}
@@ -109,8 +112,7 @@ int ConfigParser::validateErrorPageArgs(void)
 {
 	if (this->_line.size() > 2
 			&& isValidErrorPage(this->_line) == true
-//			&& this->noDuplicateErrorPage() == true)
-		)
+			&& this->noDuplicateErrorPage() == true)
 	{
 		if (this->_context == LOCATION_CONTEXT)
 			this->_curLoc->_errorPageIsSet = true;
@@ -125,11 +127,12 @@ int ConfigParser::validateAutoindexArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidAutoindex(this->_line[1])
-//			&& this->_curLoc->_autoIndexIsSet == false)
 			)
 	{
 		if (this->_context == LOCATION_CONTEXT)
 		{
+			if (this->_curLoc->_autoIndexIsSet == true)
+				return (ALRDY_SET_ERROR);
 			if (this->_line[1] == "on")
 				this->_curLoc->setAutoindex(true);
 			else
@@ -138,6 +141,8 @@ int ConfigParser::validateAutoindexArgs(void)
 		}
 		else if (this->_context == SERVER_CONTEXT)
 		{
+			if (this->_defLocPtr->_autoIndexIsSet == true)
+				return (ALRDY_SET_ERROR);
 			if (this->_line[1] == "on")
 				this->_defLocPtr->setAutoindex(true);
 			else
@@ -236,6 +241,7 @@ int ConfigParser::validateClosingBracketArgs(void)
 		return (ARG_ERROR);
 	if (this->_context == SERVER_CONTEXT)		// (== LOCATION_CONTEXT)
 	{
+		this->setDefLocTrueBoolsInCurLoc();
 		if (this->_curLoc->validate() == false)
 			return (LOC_BLCK_ERROR);
 		//	this->_curVS->noDuplicateLocation(*this->_curLoc);

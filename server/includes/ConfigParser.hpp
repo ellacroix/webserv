@@ -29,7 +29,7 @@ enum	directives
 	ERROR_PAGE,
 	AUTOINDEX,
 	INDEX,
-	RETURN,
+	RETURN,				// PASS return DIRECTIVE AS LOCATION CONTEXT ONLY ?
 	LIMIT_EXCEPT,
 	LOCATION,
 	OPENING_BRACKET,
@@ -38,8 +38,9 @@ enum	directives
 
 enum	arguments
 {
-	SERV_BLCK_ERROR = -3,
+	SERV_BLCK_ERROR = -4,
 	LOC_BLCK_ERROR,
+	ALRDY_SET_ERROR,
 	ARG_ERROR,
 	IP,
 	PORT,
@@ -109,6 +110,7 @@ class	ConfigParser {
 		bool				validate(void) const;	
 		Port *				findPortInList(int port) const;
 		Location *			getDefLocPtr(void) const;
+		void				setDefLocTrueBoolsInCurLoc(void);
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

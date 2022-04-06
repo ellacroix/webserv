@@ -39,12 +39,21 @@ void				ConfigParser::parse(char *arg)
 			}
 			ret = validateArguments();
 			if (ret == ARG_ERROR || ret == LOC_BLCK_ERROR
-					|| ret == SERV_BLCK_ERROR)
+					|| ret == SERV_BLCK_ERROR || ret == ALRDY_SET_ERROR)
 			{
 				std::cerr << "webserv\t- ERROR line " << this->_lineN;
 				if (ret == ARG_ERROR)
 					std::cerr << " - \"" << this->_line[0]
 						<< "\" has invalid arguments." << std::endl;
+				else if (ret == ALRDY_SET_ERROR)
+				{
+					std::cerr << " - \"" << this->_line[0]
+						<< "\" is already set in this context (";
+					if (this->_context == LOCATION_CONTEXT)
+						std::cerr << "location context)." << std::endl;
+					else if (this->_context == SERVER_CONTEXT)
+						std::cerr << "server context)." << std::endl;
+				}
 				else if (ret == LOC_BLCK_ERROR)
 					std::cerr << " - location block needs at least "
 						<< "1 \"root\" directive or 1 \"return\" directive."
@@ -161,7 +170,6 @@ bool        ConfigParser::validateContext(void)
 		this->_context = LOCATION_CONTEXT;
 		return (true);
 	}
-	//else if (this->_dir >= LISTEN && this->_dir <= CLIENT_MAX_BODY_SIZE
 	else if (this->_dir >= LISTEN
 			&& this->_dir <= RETURN
 			&& this->_context == SERVER_CONTEXT)
@@ -215,16 +223,21 @@ bool    ConfigParser::noDuplicateErrorPage(void)
 	std::map<int, std::string>::iterator    ite;
 	size_t                                  i;
 	size_t                                  size;
+	Location								*locPtr;
 
-	ite = this->_curLoc->getErrorPage().end();
+	if (this->_context == LOCATION_CONTEXT)
+		locPtr = this->_curLoc;
+	else// if (this->_context == SERVER_CONTEXT)
+		locPtr = this->_defLocPtr;
+	ite = locPtr->getErrorPage().end();
 	i = 1;
 	size = this->_line.size();
 	while (i < size - 1)
 	{
 		httpCode = std::atoi(this->_line[i].c_str());
-		if (this->_curLoc->getErrorPage().find(httpCode) != ite)
+		if (locPtr->getErrorPage().find(httpCode) != ite)
 			return (false);
-		this->_curLoc->getErrorPage()[httpCode] = this->_line[size - 1];
+		locPtr->getErrorPage()[httpCode] = this->_line[size - 1];
 		i++;
 	}
 	return (true);

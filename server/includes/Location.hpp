@@ -57,6 +57,7 @@ class	Location
 		Location *	clone(void) const;
 		bool		validate(void) const;
 		void		resetIsDefBooleans(void);
+
 };
 
 #endif
