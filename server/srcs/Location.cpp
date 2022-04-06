@@ -196,7 +196,6 @@ void	Location::display(void) const
 	}
 	std::cout << std::boolalpha;
 	std::cout << "\t\t_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
-//	std::cout << "\t\t_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
 	if (this->_index.empty() == true)
 		std::cout << "\t\t_index[ ]\t\t=\tempty" << std::endl;
 	else
@@ -232,7 +231,6 @@ void	Location::display(void) const
 	std::cout << "\t\t_clientMaxBodySize\t=\t"
 		<< this->_clientMaxBodySize << std::endl;
 
-	//	std::cout << "\t\t_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
 
 	std::cout << "\t\t_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
 	std::cout << "\t\t_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
