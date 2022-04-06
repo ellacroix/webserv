@@ -3,18 +3,17 @@
 
 void				ConfigParser::parse(char *arg)
 {
-	std::ifstream		ifs;
 	int					ret;
 
-	ifs.open(arg);
-	if (ifs.good() == false)
+	this->_ifs.open(arg);
+	if (this->_ifs.good() == false)
 	{
 		std::cerr << "webserv\t- ERROR - failed to open(2) \""
 			<< arg << "\" file." << std::endl;
 		exit(1);
 	}
 	this->_dir = DIR_ERROR;
-	while (std::getline(ifs, this->_curLine))
+	while (std::getline(this->_ifs, this->_curLine))
 	{
 		this->_lineN++;
 		if (this->hasContent() == true && this->isComment() == false)
@@ -59,15 +58,14 @@ void				ConfigParser::parse(char *arg)
 		}
 	}
 //	this->displayPortsMap();
-//	this->displayPortsList();
-//	this->makeListFromMap();
+	this->displayPortsList();
 	if (this->validate() == false)
 	{
 		std::cerr << "webserv\t- ERROR - there is no Port to be listened to."
 			<< std::endl;
 		exit(1);
 	}
-	ifs.close();
+	this->_ifs.close();
 }
 
 void				ConfigParser::splitLineIntoTokens(void)
@@ -163,11 +161,13 @@ bool        ConfigParser::validateContext(void)
 		this->_context = LOCATION_CONTEXT;
 		return (true);
 	}
-	//	else if (this->_dir >= LISTEN && this->_dir <= RETURN
-	else if (this->_dir >= LISTEN && this->_dir <= CLIENT_MAX_BODY_SIZE
+	//else if (this->_dir >= LISTEN && this->_dir <= CLIENT_MAX_BODY_SIZE
+	else if (this->_dir >= LISTEN
+			&& this->_dir <= RETURN
 			&& this->_context == SERVER_CONTEXT)
 		return (true);
-	else if (this->_dir >= ROOT && this->_dir <= LIMIT_EXCEPT
+	else if (this->_dir >= CLIENT_MAX_BODY_SIZE
+			&& this->_dir <= LIMIT_EXCEPT
 			&& this->_context == LOCATION_CONTEXT)
 		return (true);
 	else if (this->_dir == CLOSING_BRACKET

@@ -4,10 +4,10 @@
 VirtualServer::VirtualServer(void) :
 	_listenPort(-1),
 	_serverName(""),
-	_clientMaxBodySize(0),
+//	_clientMaxBodySize(0),
 	_serverNameIsSet(false),
 	_listenPortIsSet(false),
-	_clientMaxBodySizeIsSet(false),
+//	_clientMaxBodySizeIsSet(false),
 	_locationIsSet(false)
 {
 	return ;
@@ -35,11 +35,12 @@ VirtualServer::~VirtualServer(void)
 VirtualServer::VirtualServer(VirtualServer const & src) :
 	_listenPort(src._listenPort),
 	_serverName(src._serverName),
-	_clientMaxBodySize(src._clientMaxBodySize),
+//	_clientMaxBodySize(src._clientMaxBodySize),
 	_locationMap(src._locationMap),		// !!! DEEP COPY
 	_serverNameIsSet(src._serverNameIsSet),
 	_listenPortIsSet(src._listenPortIsSet),
-	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
+	_locationIsSet(src._locationIsSet)
+//	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
 {
 	return ;
 }
@@ -55,16 +56,16 @@ void	VirtualServer::setServerName(std::string s)
 	this->_serverName = s;
 }
 
-void	VirtualServer::setClientMaxBodySize(std::string s)
-{
-	char	*endPtr;
-
-	this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
-	if (*endPtr == 'k')
-		this->_clientMaxBodySize *= K;
-	if (*endPtr == 'm')
-		this->_clientMaxBodySize *= M;
-}
+//void	VirtualServer::setClientMaxBodySize(std::string s)
+//{
+//	char	*endPtr;
+//
+//	this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
+//	if (*endPtr == 'k')
+//		this->_clientMaxBodySize *= K;
+//	if (*endPtr == 'm')
+//		this->_clientMaxBodySize *= M;
+//}
 
 //	GETTERS
 int		VirtualServer::getListenPort(void) const
@@ -76,13 +77,13 @@ void	VirtualServer::reset(void)
 {
 	this->_listenPort = -1;
 	this->_serverName = "";
-	this->_clientMaxBodySize = 0;
+//	this->_clientMaxBodySize = 0;
 
 	this->_locationMap = std::map<std::string, Location*>();
 
 	this->_serverNameIsSet = false;
 	this->_listenPortIsSet = false;
-	this->_clientMaxBodySizeIsSet = false;
+//	this->_clientMaxBodySizeIsSet = false;
 	this->_locationIsSet = false;
 }
 
@@ -93,12 +94,12 @@ void	VirtualServer::display(void) const
 
 	std::cout << "\t_listenPort\t\t=\t" << this->_listenPort << std::endl;
 	std::cout << "\t_serverName\t\t=\t\"" << this->_serverName << "\"" << std::endl;
-	std::cout << "\t_clientMaxBodySize\t=\t" << this->_clientMaxBodySize << std::endl;
+//	std::cout << "\t_clientMaxBodySize\t=\t" << this->_clientMaxBodySize << std::endl;
 	std::cout << std::boolalpha;
 	std::cout << "\t_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
 	std::cout << "\t_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
-	std::cout << "\t_clientMaxBodySizeIsSet\t=\t" <<
-		this->_clientMaxBodySizeIsSet << std::endl;
+//	std::cout << "\t_clientMaxBodySizeIsSet\t=\t" <<
+//		this->_clientMaxBodySizeIsSet << std::endl;
 	std::cout << "\t_locationIsSet\t\t=\t" << this->_locationIsSet << std::endl;
 
 	if (this->_locationMap.empty() == true)

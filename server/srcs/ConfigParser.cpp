@@ -4,10 +4,11 @@ ConfigParser::ConfigParser(void) :
 	_context(MAIN_CONTEXT),
 	_dir(-1),
 	_lineN(0),
-	_tmpVSIsStored(false),
-	_tmpLocIsStored(false),
+//	_tmpVSIsStored(false),
+//	_tmpLocIsStored(false),
 	_curVS(&this->_tmpVS),
-	_curLoc(&this->_tmpLoc)
+	_curLoc(&this->_tmpLoc),
+	_defLocPtr(&this->_defLoc)
 {
 	return ;
 }
@@ -208,6 +209,11 @@ Port *			ConfigParser::findPortInList(int port) const
 		cit++;
 	}
 	return (NULL);
+}
+
+Location *		ConfigParser::getDefLocPtr(void) const
+{
+	return (this->_defLocPtr);
 }
 
 const char *	ConfigParser::_directives[N_DIR] =

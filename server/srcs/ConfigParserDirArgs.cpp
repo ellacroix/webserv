@@ -19,6 +19,8 @@ int ConfigParser::validateLocationArgs(void)
 			&& this->_line[2] == ConfigParser::_directives[OPENING_BRACKET])
 	{
 		this->_curLoc->reset();
+		*(this->_curLoc) = *(this->_defLocPtr);
+		this->_curLoc->resetIsDefBooleans();
 		this->_curLoc->setPrefix(this->_line[1]);
 		this->_curVS->_locationIsSet = true;
 		return (true);
@@ -35,9 +37,6 @@ int ConfigParser::validateListenArgs(void)
 	{
 		this->_curVS->setListenPort(std::atoi(_line[1].c_str()));
 		this->_curVS->_listenPortIsSet = true;
-		// ALLOCATE NEW Port
-		// TO BE STORED IN
-		//		this->_portsList[port];
 		return (true);
 	}
 	//	TWO MORE POTENTIAL PATTERNS 
@@ -63,10 +62,22 @@ int ConfigParser::validateClientMaxBodySizeArgs(void)
 {
 	if (this->_line.size() == 2
 			&& isValidClientMaxBodySize(this->_line[1])
-			&& this->_curVS->_clientMaxBodySizeIsSet == false)
+//			&& this->_curVS->_clientMaxBodySizeIsSet == false)
+//			&& this->_curLoc->_clientMaxBodySizeIsSet == false)
+			)
 	{
-		this->_curVS->setClientMaxBodySize(this->_line[1]);
-		this->_curVS->_clientMaxBodySizeIsSet = true;
+//		this->_curVS->setClientMaxBodySize(this->_line[1]);
+//		this->_curVS->_clientMaxBodySizeIsSet = true;
+		if (this->_context == LOCATION_CONTEXT)
+		{
+			this->_curLoc->setClientMaxBodySize(this->_line[1]);
+			this->_curLoc->_clientMaxBodySizeIsSet = true;
+		}
+		else if (this->_context == SERVER_CONTEXT)
+		{
+			this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
+			this->_defLocPtr->_clientMaxBodySizeIsSet = true;
+		}
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -176,9 +187,10 @@ int ConfigParser::validateOpeningBracketArgs(void)
 int ConfigParser::validateClosingBracketArgs(void)
 {
 	Port	*port;
+
 	if (this->_line.size() != 1)
 		return (ARG_ERROR);
-	if (this->_context == SERVER_CONTEXT)
+	if (this->_context == SERVER_CONTEXT)		// (== LOCATION_CONTEXT)
 	{
 		if (this->_curLoc->validate() == false)
 			return (LOC_BLCK_ERROR);
@@ -186,8 +198,9 @@ int ConfigParser::validateClosingBracketArgs(void)
 		this->_curVS->addLocation(this->_curLoc->clone());
 		return (true);
 	}
-	else if (this->_context == MAIN_CONTEXT)
+	else if (this->_context == MAIN_CONTEXT)	// (== SERVER_CONTEXT)
 	{
+		this->_defLocPtr->reset();
 		if (this->_curVS->validate() == false)
 			return (SERV_BLCK_ERROR);
 		port = this->findPortInList(this->_curVS->getListenPort());

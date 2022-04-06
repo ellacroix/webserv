@@ -16,6 +16,7 @@ class	Location
 		std::vector<std::string>			_limitExcept; // STRINGS
 		int									_returnCode;
 		std::string							_returnUri;
+		ssize_t								_clientMaxBodySize;
 //		std::string							_returnBody;
 
 	public:
@@ -24,6 +25,7 @@ class	Location
 		Location(void);
 		~Location(void);
 		Location(Location const & src);
+		Location &	operator=(Location const & rhs);
 
 		//	SET BOOLEANS
 		bool								_rootIsSet;
@@ -32,6 +34,7 @@ class	Location
 		bool								_indexIsSet;
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
+		bool								_clientMaxBodySizeIsSet;
 
 		//	SETTERS
 		void		setPrefix(std::string s);
@@ -42,6 +45,7 @@ class	Location
 		void		setReturnCode(int n);
 		void		setReturnUri(std::string s);
 		void		setLimitExcept(std::vector<std::string> v);
+		void		setClientMaxBodySize(std::string s);
 
 		//	GETTERS
 		std::map<int, std::string> & 	getErrorPage(void);
@@ -52,6 +56,7 @@ class	Location
 		void		display(void) const;
 		Location *	clone(void) const;
 		bool		validate(void) const;
+		void		resetIsDefBooleans(void);
 };
 
 #endif

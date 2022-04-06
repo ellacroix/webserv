@@ -65,6 +65,7 @@ class	ConfigParser {
 		std::string									_curLine;
 		int											_dir;
 		int											_lineN;
+		std::ifstream								_ifs;
 
 		//	STATIC STRING CONSTANTS
 		static const char *							_directives[N_DIR];
@@ -72,13 +73,15 @@ class	ConfigParser {
 
 		//	TO STORE TEMP VALUES AS LONG AS PORT IS NOT DEFINED
 		VirtualServer								_tmpVS;
-		bool										_tmpVSIsStored;
+//		bool										_tmpVSIsStored;
 		Location									_tmpLoc;
-		bool										_tmpLocIsStored;
+//		bool										_tmpLocIsStored;
+		Location									_defLoc;
 
 		//	PTRS TO KEEP TRACK OF CURRENT INSTANCES BEING TREATED
 		VirtualServer								*_curVS;
 		Location									*_curLoc;
+		Location									*_defLocPtr;
 
 		//	UNDERLYING DATA STRUCTURE => List OF Ports
 		std::list<Port*>							_portsList;
@@ -105,6 +108,7 @@ class	ConfigParser {
 		std::list<Port*> &	getPortsList(void);
 		bool				validate(void) const;	
 		Port *				findPortInList(int port) const;
+		Location *			getDefLocPtr(void) const;
 
 		//	ConfigParserFile.cpp	
 		void		parse(char *arg);

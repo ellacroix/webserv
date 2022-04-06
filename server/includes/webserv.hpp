@@ -41,6 +41,8 @@
 # define RECV_BUFFER_SIZE 5000
 # define THREADS 2
 # define TIMEOUT 100
+# define K 1000
+# define M 1000000
 
 class	ConfigParser ;
 class	Port ;
