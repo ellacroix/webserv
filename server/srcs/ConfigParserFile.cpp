@@ -174,7 +174,7 @@ bool        ConfigParser::validateContext(void)
 			&& this->_dir <= RETURN
 			&& this->_context == SERVER_CONTEXT)
 		return (true);
-	else if (this->_dir >= CLIENT_MAX_BODY_SIZE
+	else if (this->_dir >= ROOT
 			&& this->_dir <= LIMIT_EXCEPT
 			&& this->_context == LOCATION_CONTEXT)
 		return (true);
@@ -223,21 +223,23 @@ bool    ConfigParser::noDuplicateErrorPage(void)
 	std::map<int, std::string>::iterator    ite;
 	size_t                                  i;
 	size_t                                  size;
-	Location								*locPtr;
+//	Location								*locPtr;
 
+	/*
 	if (this->_context == LOCATION_CONTEXT)
 		locPtr = this->_curLoc;
 	else// if (this->_context == SERVER_CONTEXT)
 		locPtr = this->_defLocPtr;
-	ite = locPtr->getErrorPage().end();
+	*/
+	ite = this->_curVS->getErrorPage().end();
 	i = 1;
 	size = this->_line.size();
 	while (i < size - 1)
 	{
 		httpCode = std::atoi(this->_line[i].c_str());
-		if (locPtr->getErrorPage().find(httpCode) != ite)
+		if (this->_curVS->getErrorPage().find(httpCode) != ite)
 			return (false);
-		locPtr->getErrorPage()[httpCode] = this->_line[size - 1];
+		this->_curVS->getErrorPage()[httpCode] = this->_line[size - 1];
 		i++;
 	}
 	return (true);

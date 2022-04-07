@@ -5,14 +5,14 @@
 Location::Location(void) :
 	_autoIndex(false),
 	_returnCode(-1),
-	_clientMaxBodySize(0),
+//	_clientMaxBodySize(0),
 	_rootIsSet(false),
-	_errorPageIsSet(false),
+//	_errorPageIsSet(false),
 	_autoIndexIsSet(false),
 	_indexIsSet(false),
 	_returnIsSet(false),
-	_limitExceptIsSet(false),
-	_clientMaxBodySizeIsSet(false)
+	_limitExceptIsSet(false)//,
+//	_clientMaxBodySizeIsSet(false)
 {
 	return ;
 }
@@ -25,20 +25,20 @@ Location::~Location(void)
 Location::Location(Location const & src) :
 	_prefix(src._prefix),
 	_root(src._root),
-	_errorPage(src._errorPage),
+//	_errorPage(src._errorPage),
 	_autoIndex(src._autoIndex),
 	_index(src._index),
 	_limitExcept(src._limitExcept),
 	_returnCode(src._returnCode),
 	_returnUri(src._returnUri),
-	_clientMaxBodySize(src._clientMaxBodySize),
+//	_clientMaxBodySize(src._clientMaxBodySize),
 	_rootIsSet(src._rootIsSet),
-	_errorPageIsSet(src._errorPageIsSet),
+//	_errorPageIsSet(src._errorPageIsSet),
 	_autoIndexIsSet(src._autoIndexIsSet),
 	_indexIsSet(src._indexIsSet),
 	_returnIsSet(src._returnIsSet),
-	_limitExceptIsSet(src._limitExceptIsSet),
-	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
+	_limitExceptIsSet(src._limitExceptIsSet)//,
+//	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
 {
 	return ;
 }
@@ -47,20 +47,20 @@ Location &	Location::operator=(Location const & rhs)
 {
 	this->_prefix = rhs._prefix;
 	this->_root = rhs._root;
-	this->_errorPage = rhs._errorPage;
+//	this->_errorPage = rhs._errorPage;
 	this->_autoIndex = rhs._autoIndex;
 	this->_index = rhs._index;
 	this->_limitExcept = rhs._limitExcept;
 	this->_returnCode = rhs._returnCode;
 	this->_returnUri = rhs._returnUri;
-	this->_clientMaxBodySize = rhs._clientMaxBodySize;
+//	this->_clientMaxBodySize = rhs._clientMaxBodySize;
 	this->_rootIsSet = rhs._rootIsSet;
-	this->_errorPageIsSet = rhs._errorPageIsSet;
+//	this->_errorPageIsSet = rhs._errorPageIsSet;
 	this->_autoIndexIsSet = rhs._autoIndexIsSet;
 	this->_indexIsSet = rhs._indexIsSet;
 	this->_returnIsSet = rhs._returnIsSet;
 	this->_limitExceptIsSet = rhs._limitExceptIsSet;
-	this->_clientMaxBodySizeIsSet = rhs._clientMaxBodySizeIsSet;
+//	this->_clientMaxBodySizeIsSet = rhs._clientMaxBodySizeIsSet;
 	return (*this);
 }
 
@@ -126,6 +126,7 @@ void	Location::setLimitExcept(std::vector<std::string> v)
 	}
 }
 
+/*
 void	Location::setClientMaxBodySize(std::string s)
 {
 	char	*endPtr;
@@ -136,12 +137,15 @@ void	Location::setClientMaxBodySize(std::string s)
 	if (*endPtr == 'm')
 		this->_clientMaxBodySize *= M;
 }
+*/
 
 //	GETTERS
+/*
 std::map<int, std::string> &	Location::getErrorPage(void)
 {
 	return (this->_errorPage);
 }
+*/
 
 std::string						Location::getPrefix(void) const
 {
@@ -153,34 +157,35 @@ void	Location::reset(void)
 {
 	this->_prefix = "";
 	this->_root = "";
-	this->_errorPage = std::map<int, std::string>();
+//	this->_errorPage = std::map<int, std::string>();
 	this->_autoIndex = false;
 //	this->_index = "";
 	this->_index = std::vector<std::string>();
 	this->_limitExcept = std::vector<std::string>();
 	this->_returnCode = -1;
 	this->_returnUri = "";
-	this->_clientMaxBodySize = 0;
+//	this->_clientMaxBodySize = 0;
 
 	this->_rootIsSet = false;
-	this->_errorPageIsSet = false;
+//	this->_errorPageIsSet = false;
 	this->_autoIndexIsSet = false;
 	this->_indexIsSet = false;
 	this->_returnIsSet = false;
 	this->_limitExceptIsSet = false;
-	this->_clientMaxBodySizeIsSet = false;
+//	this->_clientMaxBodySizeIsSet = false;
 }
 
 void	Location::display(void) const
 {
-	std::map<int, std::string>::const_iterator	map_it;
-	std::map<int, std::string>::const_iterator	map_ite;
+//	std::map<int, std::string>::const_iterator	map_it;
+//	std::map<int, std::string>::const_iterator	map_ite;
 	std::vector<std::string>::const_iterator	vct_it;
 	std::vector<std::string>::const_iterator	vct_ite;
 	int											i;
 
 	std::cout << "\t\t_prefix\t\t\t=\t\"" << this->_prefix << "\"" << std::endl;
 	std::cout << "\t\t_root\t\t\t=\t\"" << this->_root << "\"" << std::endl;
+	/*
 	if (this->_errorPage.empty() == true)
 		std::cout << "\t\t_errorPage[ ]\t\t=\tempty" << std::endl;
 	else
@@ -194,6 +199,7 @@ void	Location::display(void) const
 			map_it++;
 		}
 	}
+	*/
 	std::cout << std::boolalpha;
 	std::cout << "\t\t_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
 	if (this->_index.empty() == true)
@@ -228,18 +234,18 @@ void	Location::display(void) const
 	}
 	std::cout << "\t\t_return\t\t\t=\t" << this->_returnCode << std::endl;
 	std::cout << "\t\t_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
-	std::cout << "\t\t_clientMaxBodySize\t=\t"
-		<< this->_clientMaxBodySize << std::endl;
+//	std::cout << "\t\t_clientMaxBodySize\t=\t"
+//		<< this->_clientMaxBodySize << std::endl;
 
 
 	std::cout << "\t\t_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
-	std::cout << "\t\t_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
+//	std::cout << "\t\t_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
 	std::cout << "\t\t_autoIndexIsSet\t\t=\t" << this->_autoIndexIsSet << std::endl;
 	std::cout << "\t\t_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
 	std::cout << "\t\t_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
 	std::cout << "\t\t_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
-	std::cout << "\t\t_clientMaxBodySizeIsSet\t=\t"
-		<< this->_clientMaxBodySizeIsSet << std::endl;
+//	std::cout << "\t\t_clientMaxBodySizeIsSet\t=\t"
+//		<< this->_clientMaxBodySizeIsSet << std::endl;
 }
 
 Location *	Location::clone(void) const
@@ -258,10 +264,10 @@ bool	Location::validate(void) const
 void	Location::resetIsDefBooleans(void)
 {
 	this->_rootIsSet = false;
-	this->_errorPageIsSet = false;
+//	this->_errorPageIsSet = false;
 	this->_autoIndexIsSet = false;
 	this->_indexIsSet = false;
 	this->_returnIsSet = false;
 	this->_limitExceptIsSet = false;
-	this->_clientMaxBodySizeIsSet = false;
+//	this->_clientMaxBodySizeIsSet = false;
 }
