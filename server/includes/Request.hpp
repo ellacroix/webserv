@@ -49,6 +49,8 @@ class   Request {
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
+//		std::string			_queryString;
+
 		//  HEADERS
 		std::string			_headers;
 		ssize_t				_contentLength;

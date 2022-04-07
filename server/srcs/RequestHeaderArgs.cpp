@@ -15,7 +15,7 @@ void	Request::setHeaderValue(const unsigned int headerIndex,
 			this->_host = value;
 			break;
 		case CONTENT_LENGTH :
-			this->_contentLength =	std::strtol(value.c_str(), &endPtr, 10);
+			this->_contentLength = std::strtol(value.c_str(), &endPtr, 10);
 			this->_hasBody = true;
 			break;
 	}
@@ -25,6 +25,8 @@ bool	Request::valueIsValid(const unsigned int headerIndex,
 		std::string const & value)
 {
 	char	*endPtr;
+
+	std::cout << "HEADER_INDEX = " << headerIndex << std::endl;
 
 	switch (headerIndex)
 	{
@@ -53,5 +55,6 @@ bool	Request::valueIsValid(const unsigned int headerIndex,
 			}
 			break;
 	}
+	std::cout << "VALUE IS false" << std::endl;
 	return (false);
 }

@@ -87,7 +87,7 @@ unsigned int	Request::parseHeaders(void)
 	if (headerIndex != NOT_SUPPORTED_HEADER)
 	{
 		//	CHECK VALUE
-		if (this->valueIsValid(keyIndex, value) == false)
+		if (this->valueIsValid(headerIndex, value) == false)
 			return (400);
 		this->setHeaderValue(headerIndex, value);
 		this->_headerAlrdySet[headerIndex] = true;
@@ -164,7 +164,7 @@ int				Request::isSupportedHeader(std::string & key)
 	for (i = 0 ; i < N_SUPPORTED_HEADERS ; i++)
 		if (key == Request::_supportedHeaders[i])
 			return (i);
-	return (false);
+	return (NOT_SUPPORTED_HEADER);
 }
 
 const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =
