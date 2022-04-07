@@ -60,12 +60,13 @@ class	ConfigParser {
 
 	private:
 		//	PARSING INFOS
-		int											_context;
+		// int											_context;
 		std::vector<std:: vector<std::string > >	_lines;
 		std::vector<std::string>					_line;
 		std::string									_curLine;
 		int											_dir;
 		int											_lineN;
+		int											_context;
 		std::ifstream								_ifs;
 
 		//	STATIC STRING CONSTANTS
@@ -100,7 +101,6 @@ class	ConfigParser {
 		std::vector<std::vector<std::string> >	getLines(void) const;	
 		std::string								getCurLine(void) const;
 		void				displayLine(std::vector<std::string> v) const;
-		void				displayLines(void) const;
 		void				displayContextSwitch(int newContext) const;
 		void				displayPortsMap(void) const;
 		void				displayPortsList(void) const;
@@ -137,5 +137,7 @@ class	ConfigParser {
 		int			validateClosingBracketArgs(void);
 		bool		noDuplicateErrorPage(void);
 };
+
+std::ostream & operator<<(std::ostream & o, ConfigParser const & rhs );
 
 #endif

@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 		return (-1);
 	ConfigParser	config;
 	config.parse(argv[1]);
+	std::cout << config;
 
 	//EPOLL
 	struct epoll_event event;

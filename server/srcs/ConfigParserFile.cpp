@@ -19,7 +19,6 @@ void				ConfigParser::parse(char *arg)
 		if (this->hasContent() == true && this->isComment() == false)
 		{
 			this->splitLineIntoTokens();
-			this->displayLine(this->_line);
 			this->_dir = this->validateDirective();
 			if (this->_dir == DIR_ERROR)
 			{
@@ -66,7 +65,7 @@ void				ConfigParser::parse(char *arg)
 			}
 		}
 	}
-//	this->displayPortsMap();
+	// this->displayPortsMap();
 	this->displayPortsList();
 	if (this->validate() == false)
 	{

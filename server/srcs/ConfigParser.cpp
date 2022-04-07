@@ -80,16 +80,18 @@ void		ConfigParser::displayLine(std::vector<std::string> v) const
 	std::cout << std::endl;
 }
 
-void	ConfigParser::displayLines(void) const
+std::ostream & operator<<(std::ostream & o, ConfigParser const & rhs )
 {
-	std::vector<std::vector<std::string> >::const_iterator	it = this->_lines.begin();
-	std::vector<std::vector<std::string> >::const_iterator	ite = this->_lines.end();
+	int tab;
+
+	std::vector<std::vector<std::string> > lines = rhs.getLines();
+	
+	std::vector<std::vector<std::string> >::const_iterator	it = lines.begin();
+	std::vector<std::vector<std::string> >::const_iterator	ite = lines.end();
 
 	while (it != ite)
-	{
-		this->displayLine(*it);
-		it++;
-	}
+		rhs.displayLine(*it++);
+	return (o);
 }
 
 void	ConfigParser::displayContextSwitch(int newContext) const
@@ -246,3 +248,4 @@ const char *	ConfigParser::_contexts[N_CONTEXTS] =
 	"MAIN_CONTEXT", "SERVER_CONTEXT", "LOCATION_CONTEXT",
 	"SWITCHING_TO_SERVER", "SWITCHING_TO_LOCATION"
 };
+
