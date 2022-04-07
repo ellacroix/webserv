@@ -40,13 +40,15 @@ public:
 	Client			*client;
 	Request			*request;
 	VirtualServer	*virtual_server;
+	Location		*location;
 
 
 	Response() {};
 	~Response() {};
 	Response(Client *parent_client);
 
-	int	ConstructResponse();
+	int		ConstructResponse();
+	void	constructError();
 
 };
 

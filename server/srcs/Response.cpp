@@ -28,7 +28,7 @@ int	Response::ConstructResponse()
 	return 0;
 }
 
-void	constructRequestError()
+void	constructError()
 {
 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
 

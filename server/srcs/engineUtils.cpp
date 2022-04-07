@@ -40,6 +40,11 @@ int		acceptIncomingConnections(Port *current_port,
 			}
 			break;
 		}
+
+/* 		current_connections++;
+		if (current_connections == max_connections)
+			close(connection); */
+
 		//Setting the connection socket to non blocking
 		int rc = fcntl(connection, F_SETFL, O_NONBLOCK);
 		if (rc < 0){
