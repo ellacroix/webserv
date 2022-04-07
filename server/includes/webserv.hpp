@@ -41,9 +41,11 @@
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
 # define THREADS 2
-# define TIMEOUT 100
+# define TIMEOUT 50
 # define K 1000
 # define M 1000000
+# define SERVER_MAX_BODY_SIZE 10 * M
+# define SERVER_MAX_HEADERS_SIZE 1 * M
 
 class	ConfigParser ;
 class	Port ;
@@ -72,6 +74,13 @@ typedef struct	s_thread_info
 void	*thread_loop(void* arg);
 void	thread_recv_routine(Client *client, t_thread_info *thread_info);
 void	thread_send_routine(Client *client, t_thread_info *thread_info);
+void	isRequestComplete(Client *client);
+bool	IsChunkComplete(Client *client);
+bool	IsBodyComplete(Client *client, size_t length);
+void	createAndConstructResponse(Client *client);
+void	monitorForReading(Client *client, t_thread_info *thread_info);
+void	monitorForWriting(Client *client, t_thread_info *thread_info);
+
 //	ThreadPool.cpp
 
 //	parsingUtils.cpp

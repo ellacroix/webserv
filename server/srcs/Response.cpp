@@ -17,7 +17,7 @@ Response::Response(Client *parent_client)
 }
 
 int	Response::ConstructResponse()
-{
+{	
 	if (client->statusCode != 0)
 		constructError();
 	
@@ -29,8 +29,8 @@ int	Response::ConstructResponse()
 
 void	Response::constructError()
 {
-	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-/* 	if (virtual_server->_errorPage.find(client->statusCode) != virtual_server->_errorPage.end())
+/* 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
 	{
 		printf("Page defined in config file\n");
 	} */
@@ -41,7 +41,7 @@ void	Response::constructError()
 	body.append("<html>\r\n");
 	body.append("<head><title>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</title></head>\r\n");
 	body.append("<body>\r\n");
-	body.append("<center><h1>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
+	body.append("<center><h1> DEFAULT PAGE " + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
 	body.append("</body>\r\n");
 	body.append("</html>\r\n");
 
@@ -104,6 +104,8 @@ std::string	Response::getErrorMessage(int code)
 			return " Unsupported Media Type";
 		case 417:
 			return " Expectation Failed";
+		case 431:
+			return " Request Header Fields Too Large";
 		case 500:
 			return " Internal Server Error";
 		case 501:
