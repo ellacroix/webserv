@@ -220,8 +220,8 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 {
 	if (this->_defLocPtr->_rootIsSet == true)
 		this->_curLoc->_rootIsSet = true;
-	if (this->_defLocPtr->_errorPageIsSet == true)
-		this->_curLoc->_errorPageIsSet = true;
+//	if (this->_defLocPtr->_errorPageIsSet == true)
+//		this->_curLoc->_errorPageIsSet = true;
 	if (this->_defLocPtr->_autoIndexIsSet == true)
 		this->_curLoc->_autoIndexIsSet = true;
 	if (this->_defLocPtr->_indexIsSet == true)
@@ -230,15 +230,16 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 		this->_curLoc->_returnIsSet = true;
 	if (this->_defLocPtr->_limitExceptIsSet == true)
 		this->_curLoc->_limitExceptIsSet = true;
-	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
-		this->_curLoc->_clientMaxBodySizeIsSet = true;
+//	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+//		this->_curLoc->_clientMaxBodySizeIsSet = true;
 }
 
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
-	"root", "error_page", "autoindex", "index",
-	"return", "limit_except", "location", "{", "}"
+	"error_page",
+	"root", "autoindex", "index", "return", "limit_except",
+	"location", "{", "}"
 };
 
 const char *	ConfigParser::_contexts[N_CONTEXTS] =

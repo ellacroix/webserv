@@ -71,20 +71,16 @@ int ConfigParser::validateClientMaxBodySizeArgs(void)
 	if (this->_line.size() == 2
 			&& isValidClientMaxBodySize(this->_line[1]))
 	{
-		if (this->_context == LOCATION_CONTEXT)
-		{
-			if (this->_curLoc->_clientMaxBodySizeIsSet == true)
-				return (ALRDY_SET_ERROR);
-			this->_curLoc->setClientMaxBodySize(this->_line[1]);
-			this->_curLoc->_clientMaxBodySizeIsSet = true;
-		}
-		else if (this->_context == SERVER_CONTEXT)
-		{
-			if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
-				return (ALRDY_SET_ERROR);
-			this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
-			this->_defLocPtr->_clientMaxBodySizeIsSet = true;
-		}
+		/*
+		if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+			return (ALRDY_SET_ERROR);
+		this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
+		this->_defLocPtr->_clientMaxBodySizeIsSet = true;
+		*/
+		if (this->_curVS->_clientMaxBodySizeIsSet == true)
+			return (ALRDY_SET_ERROR);
+		this->_curVS->setClientMaxBodySize(this->_line[1]);
+		this->_curVS->_clientMaxBodySizeIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -122,10 +118,12 @@ int ConfigParser::validateErrorPageArgs(void)
 			&& isValidErrorPage(this->_line) == true
 			&& this->noDuplicateErrorPage() == true)
 	{
+		/*
 		if (this->_context == LOCATION_CONTEXT)
 			this->_curLoc->_errorPageIsSet = true;
 		else if (this->_context == SERVER_CONTEXT)
-			this->_defLocPtr->_errorPageIsSet = true;
+		*/
+		this->_curVS->_errorPageIsSet = true;
 		return (true);
 	}
 	return (ARG_ERROR);
