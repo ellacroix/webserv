@@ -18,6 +18,8 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {	
+	// if this->_request == NULL
+	//		this->_virtualServer = client->parent_port->_VSList.front();
 	if (client->statusCode != 0)
 		constructError();
 	

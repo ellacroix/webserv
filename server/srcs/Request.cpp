@@ -39,7 +39,7 @@ unsigned int	Request::parser(void)
 			return (this->_statusCode);
 		}
 	}
-	if (this->_parsingStep == BODY)
+	if (this->_parsingStep == BODY/* && this->_chunked == true && this->_hasBody == true*/)
 		this->_statusCode = this->decodeChunk();
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
