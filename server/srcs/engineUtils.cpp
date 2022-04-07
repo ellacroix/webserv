@@ -98,7 +98,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		thread_info->queue->push_back(current_client);
 		pthread_cond_signal(&thread_info->condition_var);
-		printf("MainProcess: added client %d to the queue\n", connection);
+		printf("MainProcess: added client %d to the queue for recv routine\n", connection);
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
@@ -109,7 +109,6 @@ void	sendClientResponse(t_thread_info *thread_info,
 {	
 	int     connection;
 	Client  *current_client;
-	//int     ret;
 
 	connection = it_c->first;
 	current_client = it_c->second;
@@ -118,7 +117,7 @@ void	sendClientResponse(t_thread_info *thread_info,
 	pthread_mutex_lock(&thread_info->queue_mutex);
 	thread_info->queue->push_back(current_client);
 	pthread_cond_signal(&thread_info->condition_var);
-	printf("MainProcess: added client %d to the queue\n", connection);
+	printf("MainProcess: added client %d to the queue for send routine\n", connection);
 	pthread_mutex_unlock(&thread_info->queue_mutex);
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
