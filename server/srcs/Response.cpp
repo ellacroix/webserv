@@ -9,8 +9,10 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {
+	/*
 	if (client->_statusCode != 0)
 		constructRequestError();
+	*/
 	
 	//Shitty c++98 conversion of int to std::string
 	std::ostringstream ss;

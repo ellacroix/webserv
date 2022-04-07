@@ -3,9 +3,11 @@
 //	CONSTRUCTORS / DESTRUCTOR
 VirtualServer::VirtualServer(void) :
 	_listenPort(-1),
-	//	_serverName(""),
+	_clientMaxBodySize(0),
 	_serverNameIsSet(false),
 	_listenPortIsSet(false),
+	_clientMaxBodySizeIsSet(false),
+	_errorPageIsSet(false),
 	_locationIsSet(false)
 {
 	return ;
@@ -33,12 +35,14 @@ VirtualServer::~VirtualServer(void)
 VirtualServer::VirtualServer(VirtualServer const & src) :
 	_listenPort(src._listenPort),
 	_serverName(src._serverName),
-	//	_clientMaxBodySize(src._clientMaxBodySize),
-	_locationMap(src._locationMap),		// !!! DEEP COPY
+	_clientMaxBodySize(src._clientMaxBodySize),
+	_errorPage(src._errorPage),
+	_locationMap(src._locationMap),
 	_serverNameIsSet(src._serverNameIsSet),
 	_listenPortIsSet(src._listenPortIsSet),
+	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet),
+	_errorPageIsSet(src._errorPageIsSet),
 	_locationIsSet(src._locationIsSet)
-	//	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
 {
 	return ;
 }
@@ -68,29 +72,48 @@ void	VirtualServer::setServerName(std::vector<std::string> v)
 	}
 }
 
+void    VirtualServer::setClientMaxBodySize(std::string s)
+{
+    char    *endPtr;
+
+    this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
+    if (*endPtr == 'k')
+        this->_clientMaxBodySize *= K;
+    if (*endPtr == 'm')
+        this->_clientMaxBodySize *= M;
+}
+
 //	GETTERS
-int		VirtualServer::getListenPort(void) const
+int								VirtualServer::getListenPort(void) const
 {
 	return (this->_listenPort);
 }
 
+std::map<int, std::string> &	VirtualServer::getErrorPage(void)
+{
+	return (this->_errorPage);
+}
+
+//	UTILITIES
 void	VirtualServer::reset(void)
 {
 	this->_listenPort = -1;
-	//	this->_serverName = "";
 	this->_serverName = std::vector<std::string>();
-	//	this->_clientMaxBodySize = 0;
+	this->_clientMaxBodySize = 0;
+	this->_errorPage = std::map<int, std::string>();
 
 	this->_locationMap = std::map<std::string, Location*>();
 
 	this->_serverNameIsSet = false;
 	this->_listenPortIsSet = false;
-	//	this->_clientMaxBodySizeIsSet = false;
+	this->_clientMaxBodySizeIsSet = false;
 	this->_locationIsSet = false;
 }
 
 void	VirtualServer::display(void) const
 {
+	std::map<int, std::string>::const_iterator			map_it;
+	std::map<int, std::string>::const_iterator			map_ite;
 	std::map<std::string, Location*>::const_iterator	it;
 	std::map<std::string, Location*>::const_iterator	ite;
 	std::vector<std::string>::const_iterator			v_it;
@@ -115,6 +138,23 @@ void	VirtualServer::display(void) const
 			v_it++;
 		}
 	}
+	std::cout << "\t_clientMaxBodySize\t=\t"
+		<< this->_clientMaxBodySize << std::endl;
+    if (this->_errorPage.empty() == true)
+        std::cout << "\t_errorPage[ ]\t\t=\tempty" << std::endl;
+    else
+    {
+        map_it = this->_errorPage.begin();
+        map_ite = this->_errorPage.end();
+        while (map_it != map_ite)
+        {
+            std::cout << "\t_errorPage[" << (*map_it).first << "]\t\t=\t\""
+                << (*map_it).second << "\"" << std::endl;
+            map_it++;
+        }
+    }
+
+
 	std::cout << std::boolalpha;
 	std::cout << "\t_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
 	std::cout << "\t_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
