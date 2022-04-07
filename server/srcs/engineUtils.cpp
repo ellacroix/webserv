@@ -147,6 +147,7 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 			if (result > TIMEOUT)
 			{
 				current_client->connected = false;
+				
 				current_port->_clientsMap.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
