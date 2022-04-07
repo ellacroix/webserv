@@ -42,9 +42,6 @@ class	VirtualServer {
 		int								getListenPort(void) const;
 		std::map<int, std::string> &    getErrorPage(void);
 
-		//TEMP
-		std::map<int, std::string>			_errorPage;
-
 		//	UTILITIES
 		void				reset(void);
 		void				display(void) const ;

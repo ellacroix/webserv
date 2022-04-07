@@ -18,19 +18,10 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {
-	
-	//Shitty c++98 conversion of int to std::string
-	std::ostringstream ss;\
-	ss << status_code;
-/* 	raw_response.append("RESPONSE CODE = ");
-	raw_response.append(ss.str());
-	raw_response.append("\n\n"); */
-	/*
-	raw_response.append("HTTP/1.1 200 OK\r\nServer: nginx/1.21.6\r\nDate: Tue, 05 Apr 2022 12:13:11 GMT\r\nContent-Type: text/plain\r\nContent-Length: 207\r\nLast-Modified: Fri, 01 Apr 2022 16:56:44 GMT\r\nConnection: keep-alive\r\nAccept-Ranges: bytes\r\n\r\n<!doctype html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Docker Nginx</title>\n</head>\n<body>\n  <h2>Hello from Nginx container</h2>\n  <h2>STATIC TESTS</h2>\n  <h2>SERVER1</h2>\n</body>\n</html>\n");
-	*/
-
 	if (client->statusCode != 0)
 		constructError();
+	
+	//else Response a du travail a faire pour determiner le code de reponse
 
 
 	return 0;
@@ -48,16 +39,16 @@ void	Response::constructError()
 
 	//Constructing body
 	body.append("<html>\r\n");
-	body.append("<head><title>" + numberToString(client->statusCode) + " Corresponding message</title></head>\r\n");
+	body.append("<head><title>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</title></head>\r\n");
 	body.append("<body>\r\n");
-	body.append("<center><h1>" + numberToString(client->statusCode) + " Corresponding message</h1></center>\r\n");
+	body.append("<center><h1>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
 	body.append("</body>\r\n");
 	body.append("</html>\r\n");
 
 	//Status line
 	raw_response.append("HTTP/1.1 ");
 	raw_response.append(numberToString(client->statusCode));
-	raw_response.append(" Bad Request");
+	raw_response.append(getErrorMessage(client->statusCode));
 	//Additional Info ??
 	raw_response.append("\r\n");
 
@@ -71,4 +62,55 @@ void	Response::constructError()
 
 
 	
+}
+
+std::string	Response::getErrorMessage(int code)
+{
+	switch (code)
+	{
+		case 200:
+			return " OK";
+		case 201:
+			return " Created";
+		case 204:
+			return " No Content";
+		case 206:
+			return " Partial Content";
+		case 301:
+			return " Moved Permanently";
+		case 304:
+			return " Not Modified";
+		case 400:
+			return " Bad Request";
+		case 401:
+			return " Unauthorized";
+		case 403:
+			return " Forbidden";
+		case 404:
+			return " Not Found";
+		case 405:
+			return " Method Not Allowed";
+		case 406:
+			return " Not Acceptable";
+		case 408:
+			return " Request Timeout";
+		case 411:
+			return " Length Required";
+		case 413:
+			return " Request Entity Too Large";
+		case 414:
+			return " Request-URI Too Long";
+		case 415:
+			return " Unsupported Media Type";
+		case 417:
+			return " Expectation Failed";
+		case 500:
+			return " Internal Server Error";
+		case 501:
+			return " Not Implemented";
+		case 505:
+			return " Forbidden";			
+		default:
+			return "Should not happen";
+	}
 }

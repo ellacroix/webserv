@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	ConfigParser	config;
 	config.parse(argv[1]);
 
-	/*
+	
 	//EPOLL
 	struct epoll_event event;
 	struct epoll_event events[MAX_EVENTS];
@@ -86,6 +86,6 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-	*/
+	
 	return (SUCCESS);
 }

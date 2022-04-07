@@ -50,6 +50,7 @@ public:
 
 	int		ConstructResponse();
 	void	constructError();
+	std::string	getErrorMessage(int code);
 
 };
 
