@@ -9,6 +9,9 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {
+	if (client->_statusCode != 0)
+		constructRequestError();
+	
 	//Shitty c++98 conversion of int to std::string
 	std::ostringstream ss;
 	ss << status_code;
@@ -23,4 +26,11 @@ int	Response::ConstructResponse()
 
 
 	return 0;
+}
+
+void	constructRequestError()
+{
+	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+
+	
 }

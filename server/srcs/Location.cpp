@@ -5,12 +5,14 @@
 Location::Location(void) :
 	_autoIndex(false),
 	_returnCode(-1),
+	_clientMaxBodySize(0),
 	_rootIsSet(false),
 	_errorPageIsSet(false),
 	_autoIndexIsSet(false),
 	_indexIsSet(false),
 	_returnIsSet(false),
-	_limitExceptIsSet(false)
+	_limitExceptIsSet(false),
+	_clientMaxBodySizeIsSet(false)
 {
 	return ;
 }
@@ -29,14 +31,37 @@ Location::Location(Location const & src) :
 	_limitExcept(src._limitExcept),
 	_returnCode(src._returnCode),
 	_returnUri(src._returnUri),
+	_clientMaxBodySize(src._clientMaxBodySize),
 	_rootIsSet(src._rootIsSet),
 	_errorPageIsSet(src._errorPageIsSet),
 	_autoIndexIsSet(src._autoIndexIsSet),
 	_indexIsSet(src._indexIsSet),
 	_returnIsSet(src._returnIsSet),
-	_limitExceptIsSet(src._limitExceptIsSet)
+	_limitExceptIsSet(src._limitExceptIsSet),
+	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet)
 {
 	return ;
+}
+
+Location &	Location::operator=(Location const & rhs)
+{
+	this->_prefix = rhs._prefix;
+	this->_root = rhs._root;
+	this->_errorPage = rhs._errorPage;
+	this->_autoIndex = rhs._autoIndex;
+	this->_index = rhs._index;
+	this->_limitExcept = rhs._limitExcept;
+	this->_returnCode = rhs._returnCode;
+	this->_returnUri = rhs._returnUri;
+	this->_clientMaxBodySize = rhs._clientMaxBodySize;
+	this->_rootIsSet = rhs._rootIsSet;
+	this->_errorPageIsSet = rhs._errorPageIsSet;
+	this->_autoIndexIsSet = rhs._autoIndexIsSet;
+	this->_indexIsSet = rhs._indexIsSet;
+	this->_returnIsSet = rhs._returnIsSet;
+	this->_limitExceptIsSet = rhs._limitExceptIsSet;
+	this->_clientMaxBodySizeIsSet = rhs._clientMaxBodySizeIsSet;
+	return (*this);
 }
 
 //	SETTERS
@@ -56,10 +81,25 @@ void	Location::setAutoindex(bool b)
 }
 
 //void	Location::setIndex(std::vector<std::string> v)
-void	Location::setIndex(std::string s)
+//void	Location::setIndex(std::string s)
+//{
+//	//	this->_index = std::vector<std::string>(v);
+//	this->_index = s;
+//}
+
+void	Location::setIndex(std::vector<std::string> v)
 {
-//	this->_index = std::vector<std::string>(v);
-	this->_index = s;
+	size_t	i;
+	size_t	size;
+
+	i = 1;
+	size = v.size();
+	while (i < size)
+	{
+		this->_index.push_back(v[i]);
+		i++;
+	}
+	// OR REPLACE WHOLE VECTOR ?
 }
 
 void	Location::setReturnCode(int	n)
@@ -86,6 +126,17 @@ void	Location::setLimitExcept(std::vector<std::string> v)
 	}
 }
 
+void	Location::setClientMaxBodySize(std::string s)
+{
+	char	*endPtr;
+
+	this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
+	if (*endPtr == 'k')
+		this->_clientMaxBodySize *= K;
+	if (*endPtr == 'm')
+		this->_clientMaxBodySize *= M;
+}
+
 //	GETTERS
 std::map<int, std::string> &	Location::getErrorPage(void)
 {
@@ -104,10 +155,12 @@ void	Location::reset(void)
 	this->_root = "";
 	this->_errorPage = std::map<int, std::string>();
 	this->_autoIndex = false;
-	this->_index = "";
+//	this->_index = "";
+	this->_index = std::vector<std::string>();
 	this->_limitExcept = std::vector<std::string>();
 	this->_returnCode = -1;
 	this->_returnUri = "";
+	this->_clientMaxBodySize = 0;
 
 	this->_rootIsSet = false;
 	this->_errorPageIsSet = false;
@@ -115,6 +168,7 @@ void	Location::reset(void)
 	this->_indexIsSet = false;
 	this->_returnIsSet = false;
 	this->_limitExceptIsSet = false;
+	this->_clientMaxBodySizeIsSet = false;
 }
 
 void	Location::display(void) const
@@ -142,7 +196,21 @@ void	Location::display(void) const
 	}
 	std::cout << std::boolalpha;
 	std::cout << "\t\t_autoIndex\t\t=\t" << this->_autoIndex << std::endl;
-	std::cout << "\t\t_index\t\t\t=\t\"" << this->_index << "\"" << std::endl;
+	if (this->_index.empty() == true)
+		std::cout << "\t\t_index[ ]\t\t=\tempty" << std::endl;
+	else
+	{
+		vct_it = this->_index.begin();
+		vct_ite = this->_index.end();
+		i = 0;
+		while (vct_it != vct_ite)
+		{
+			std::cout << "\t\t_index[" << i << "]\t\t=\t\""
+				<< *vct_it << "\"" << std::endl;
+			vct_it++;
+			i++;
+		}
+	}
 	if (this->_limitExcept.empty() == true)
 		std::cout << "\t\t_limitExcept[ ]\t\t=\tempty" << std::endl;
 	else
@@ -160,7 +228,9 @@ void	Location::display(void) const
 	}
 	std::cout << "\t\t_return\t\t\t=\t" << this->_returnCode << std::endl;
 	std::cout << "\t\t_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
-//	std::cout << "\t\t_returnBody\t\t=\t\"" << this->_returnBody << "\"" << std::endl;
+	std::cout << "\t\t_clientMaxBodySize\t=\t"
+		<< this->_clientMaxBodySize << std::endl;
+
 
 	std::cout << "\t\t_rootIsSet\t\t=\t" << this->_rootIsSet << std::endl;
 	std::cout << "\t\t_errorPageIsSet\t\t=\t" << this->_errorPageIsSet << std::endl;
@@ -168,6 +238,8 @@ void	Location::display(void) const
 	std::cout << "\t\t_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
 	std::cout << "\t\t_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
 	std::cout << "\t\t_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
+	std::cout << "\t\t_clientMaxBodySizeIsSet\t=\t"
+		<< this->_clientMaxBodySizeIsSet << std::endl;
 }
 
 Location *	Location::clone(void) const
@@ -181,4 +253,15 @@ Location *	Location::clone(void) const
 bool	Location::validate(void) const
 {
 	return (this->_rootIsSet || this->_returnIsSet);
+}
+
+void	Location::resetIsDefBooleans(void)
+{
+	this->_rootIsSet = false;
+	this->_errorPageIsSet = false;
+	this->_autoIndexIsSet = false;
+	this->_indexIsSet = false;
+	this->_returnIsSet = false;
+	this->_limitExceptIsSet = false;
+	this->_clientMaxBodySizeIsSet = false;
 }

@@ -76,6 +76,23 @@ bool	isValidDomainName(std::string s)
 	return (true);
 }
 
+bool	areValidDomainNames(std::vector<std::string> & v)
+{
+	std::vector<std::string>::const_iterator	it;
+	std::vector<std::string>::const_iterator	ite;
+
+	it = v.begin();
+	it++;
+	ite = v.end();
+	while (it != ite)
+	{
+		if (isValidDomainName(*it) == false)
+			return (false);
+		it++;
+	}
+	return (true);
+}
+
 bool	isValidClientMaxBodySize(std::string & s)
 {
 	size_t		i;
@@ -153,6 +170,22 @@ bool	isValidIndex(std::string s)
 	while (s[i])
 	{
 		if (s[i] == '/')
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+bool	areValidIndexes(std::vector<std::string> & v)
+{
+	size_t	i;
+	size_t	size;
+
+	i = 1;
+	size = v.size();
+	while (i < size)
+	{
+		if (isValidIndex(v[i]) == false)
 			return (false);
 		i++;
 	}

@@ -10,12 +10,13 @@ class	Location
 		std::string							_root;
 		std::map<int, std::string>			_errorPage;
 		bool								_autoIndex;
-//		std::vector<std::string>			_index; // IF MANY INDEXES
-		std::string							_index; // IF ONE INDEX
+		std::vector<std::string>			_index; // IF MANY INDEXES
+//		std::string							_index; // IF ONE INDEX
 //		int									_limitExcept; // IF BITSHIFTING
 		std::vector<std::string>			_limitExcept; // STRINGS
 		int									_returnCode;
 		std::string							_returnUri;
+		ssize_t								_clientMaxBodySize;
 //		std::string							_returnBody;
 
 	public:
@@ -24,6 +25,7 @@ class	Location
 		Location(void);
 		~Location(void);
 		Location(Location const & src);
+		Location &	operator=(Location const & rhs);
 
 		//	SET BOOLEANS
 		bool								_rootIsSet;
@@ -32,16 +34,18 @@ class	Location
 		bool								_indexIsSet;
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
+		bool								_clientMaxBodySizeIsSet;
 
 		//	SETTERS
 		void		setPrefix(std::string s);
 		void		setRoot(std::string s);
 		void		setAutoindex(bool b);
-//		void		setIndex(std::vector<std::string> v);
-		void		setIndex(std::string s);
+		void		setIndex(std::vector<std::string> v);
+//		void		setIndex(std::string s);
 		void		setReturnCode(int n);
 		void		setReturnUri(std::string s);
 		void		setLimitExcept(std::vector<std::string> v);
+		void		setClientMaxBodySize(std::string s);
 
 		//	GETTERS
 		std::map<int, std::string> & 	getErrorPage(void);
@@ -52,6 +56,8 @@ class	Location
 		void		display(void) const;
 		Location *	clone(void) const;
 		bool		validate(void) const;
+		void		resetIsDefBooleans(void);
+
 };
 
 #endif

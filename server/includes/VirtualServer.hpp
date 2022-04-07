@@ -4,9 +4,6 @@
 # include "webserv.hpp"
 # include "Location.hpp"
 
-# define K 1000
-# define M 1000000
-
 class	Location ;
 
 class	VirtualServer {
@@ -14,9 +11,9 @@ class	VirtualServer {
 	private:
 		//	VIRTUAL SERVER PARAMS
 		int									_listenPort;
-		//	std::vector<std::string>		_serverName; // IF MANY NAMES
-		std::string							_serverName;
-		ssize_t								_clientMaxBodySize;
+		std::vector<std::string>			_serverName; // IF MANY NAMES
+//		std::string							_serverName;
+//		ssize_t								_clientMaxBodySize;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
 		std::map<std::string, Location*>	_locationMap;
@@ -31,13 +28,14 @@ class	VirtualServer {
 		//	ALREADY SET BOOLEANS
 		bool		_serverNameIsSet;
 		bool		_listenPortIsSet;
-		bool		_clientMaxBodySizeIsSet;
+//		bool		_clientMaxBodySizeIsSet;
 		bool		_locationIsSet;
 
 		//	SETTERS
 		void		setListenPort(int n);
-		void		setServerName(std::string s);
-		void		setClientMaxBodySize(std::string s);
+//		void		setServerName(std::string s);
+		void		setServerName(std::vector<std::string> v);
+//		void		setClientMaxBodySize(std::string s);
 		//	GETTERS
 		int			getListenPort(void) const;
 

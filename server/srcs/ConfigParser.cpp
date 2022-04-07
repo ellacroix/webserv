@@ -4,10 +4,11 @@ ConfigParser::ConfigParser(void) :
 	_context(MAIN_CONTEXT),
 	_dir(-1),
 	_lineN(0),
-	_tmpVSIsStored(false),
-	_tmpLocIsStored(false),
+	//	_tmpVSIsStored(false),
+	//	_tmpLocIsStored(false),
 	_curVS(&this->_tmpVS),
-	_curLoc(&this->_tmpLoc)
+	_curLoc(&this->_tmpLoc),
+	_defLocPtr(&this->_defLoc)
 {
 	return ;
 }
@@ -208,6 +209,29 @@ Port *			ConfigParser::findPortInList(int port) const
 		cit++;
 	}
 	return (NULL);
+}
+
+Location *		ConfigParser::getDefLocPtr(void) const
+{
+	return (this->_defLocPtr);
+}
+
+void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
+{
+	if (this->_defLocPtr->_rootIsSet == true)
+		this->_curLoc->_rootIsSet = true;
+	if (this->_defLocPtr->_errorPageIsSet == true)
+		this->_curLoc->_errorPageIsSet = true;
+	if (this->_defLocPtr->_autoIndexIsSet == true)
+		this->_curLoc->_autoIndexIsSet = true;
+	if (this->_defLocPtr->_indexIsSet == true)
+		this->_curLoc->_indexIsSet = true;
+	if (this->_defLocPtr->_returnIsSet == true)
+		this->_curLoc->_returnIsSet = true;
+	if (this->_defLocPtr->_limitExceptIsSet == true)
+		this->_curLoc->_limitExceptIsSet = true;
+	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+		this->_curLoc->_clientMaxBodySizeIsSet = true;
 }
 
 const char *	ConfigParser::_directives[N_DIR] =
