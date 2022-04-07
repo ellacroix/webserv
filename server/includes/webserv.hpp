@@ -26,6 +26,7 @@
 #include <cstring>
 #include <sstream>
 #include <deque>
+#include <string>
 
 //	CUSTOM HEADERS
 /*

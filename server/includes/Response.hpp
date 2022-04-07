@@ -34,6 +34,7 @@ protected:
 
 public:
 	std::string		raw_response;
+	std::string		body;
 
 	int				status_code;
 

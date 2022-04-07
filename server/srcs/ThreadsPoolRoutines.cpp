@@ -39,6 +39,21 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine: ");
 
+	//TESTING
+
+	client->statusCode = 400;
+	client->CreateResponse();
+	client->response->ConstructResponse();
+	//Response is ready to be sent, so we monitor client->stream_socket for writing only
+	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
+	thread_info->event.data.fd = client->stream_socket;
+	thread_info->event.events = EPOLLOUT | EPOLLET | EPOLLONESHOT;
+	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
+	client->response_ready = true;
+	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
+	return ;
+	//TESTING
+
 	if (client->request_buffer.find("\r\n") == 0)
 	{
 		//The request is ignored, we monitor the connection again to read a new request
@@ -88,7 +103,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 
 		if (client->read_more == false)
 		{
-			client->request->parser();
+			client->statusCode = client->request->parser();
 			client->CreateResponse();
 			client->response->ConstructResponse();
 
