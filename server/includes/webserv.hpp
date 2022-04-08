@@ -50,15 +50,6 @@
 # define SERVER_MAX_BODY_SIZE 10 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 
-#define DOES_NOT_EXIST	404
-#define	FORBIDDEN		403
-#define	IS_A_DIRECTORY	1
-#define IS_A_FILE		2
-#define	READ			1
-#define	WRITE			2
-#define	EXECUTE			3
-
-
 class	ConfigParser ;
 class	Port ;
 typedef	std::list<Port*>::iterator					t_portListIt;

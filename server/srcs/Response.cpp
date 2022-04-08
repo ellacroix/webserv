@@ -36,7 +36,7 @@ int	Response::ConstructResponse()
 void	Response::constructError()
 {
  	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
+/* 	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
 	{
 		printf("Page defined in config file\n");
 		std::string path = virtual_server->getErrorPage().find(client->statusCode)->second;
@@ -50,7 +50,7 @@ void	Response::constructError()
 		}
 		else
 			printf("Page not found\n");
-	}
+	} */
 
 	//Constructing body
 	if (body.empty())
