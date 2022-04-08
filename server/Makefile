@@ -15,7 +15,8 @@ SRCS			=	Client.cpp \
 					RequestHeaderArgs.cpp \
 					Response.cpp \
 					ResponseProcessing.cpp \
-					engineUtils.cpp
+					engineUtils.cpp \
+					fileUtils.cpp
 
 HEADERS			=	includes/Client.hpp \
 					includes/Port.hpp \

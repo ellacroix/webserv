@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 //	CPP
 #include <vector>
@@ -47,6 +49,15 @@
 # define M 1000000
 # define SERVER_MAX_BODY_SIZE 10 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
+
+#define DOES_NOT_EXIST	404
+#define	FORBIDDEN		403
+#define	IS_A_DIRECTORY	1
+#define IS_A_FILE		2
+#define	READ			1
+#define	WRITE			2
+#define	EXECUTE			3
+
 
 class	ConfigParser ;
 class	Port ;
@@ -117,7 +128,8 @@ void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
 int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
 
-
+//	fileUtils.cpp
+int		checkPath(std::string &path, int permission);
 
 
 #endif
