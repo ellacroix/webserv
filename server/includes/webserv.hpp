@@ -129,7 +129,12 @@ void	sendClientResponse(t_thread_info *thread_info,
 int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
 
 //	fileUtils.cpp
-int		checkPath(std::string &path, int permission);
+bool pathExists(std::string path);
+bool isDirectory(std::string path);
+bool isFile(std::string path);
+bool canRead(std::string path);
+bool canWrite(std::string path);
+bool canExecute(std::string path);
 
 
 #endif

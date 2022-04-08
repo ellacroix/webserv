@@ -41,7 +41,7 @@ void	Response::constructError()
 		printf("Page defined in config file\n");
 		std::string path = virtual_server->getErrorPage().find(client->statusCode)->second;
 
-		if (checkPath(path, READ) == IS_A_FILE)
+		if (pathExists(path) && isFile(path) && canRead(path))
 		{
 			std::ifstream file(path.c_str() + 1);
 			std::stringstream buffer;
