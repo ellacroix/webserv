@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 //	CPP
 #include <vector>
@@ -117,7 +119,13 @@ void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
 int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
 
-
+//	fileUtils.cpp
+bool pathExists(std::string path);
+bool isDirectory(std::string path);
+bool isFile(std::string path);
+bool canRead(std::string path);
+bool canWrite(std::string path);
+bool canExecute(std::string path);
 
 
 #endif

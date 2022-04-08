@@ -86,36 +86,40 @@ int	Response::ConstructResponse()
 		}
 		
 	*/
-
-		
-
 	}
 	return (SUCCESS);
 }
 
 void	Response::constructError()
 {
-	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-	/* 	std::string path = virtual_server->getErrorPage().find(client->statusCode);
-		if (path != virtual_server->getErrorPage().end())
-		{
+ 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+/* 	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
+	{
 		printf("Page defined in config file\n");
+		std::string path = virtual_server->getErrorPage().find(client->statusCode)->second;
 
-	//Does path exists
-	stat(path.c_str());
-
-
-	}  */
-
-	printf("Redacting default page\n");
+		if (pathExists(path) && isFile(path) && canRead(path))
+		{
+			std::ifstream file(path.c_str() + 1);
+			std::stringstream buffer;
+			buffer << file.rdbuf();
+			body.append(buffer.str());
+		}
+		else
+			printf("Page not found\n");
+	} */
 
 	//Constructing body
-	body.append("<html>\r\n");
-	body.append("<head><title>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</title></head>\r\n");
-	body.append("<body>\r\n");
-	body.append("<center><h1> DEFAULT PAGE " + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
-	body.append("</body>\r\n");
-	body.append("</html>\r\n");
+	if (body.empty())
+	{
+		printf("Redacting default page\n");
+		body.append("<html>\r\n");
+		body.append("<head><title>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</title></head>\r\n");
+		body.append("<body>\r\n");
+		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
+		body.append("</body>\r\n");
+		body.append("</html>\r\n");
+	}
 
 	//Status line
 	raw_response.append("HTTP/1.1 ");
