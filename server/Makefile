@@ -34,7 +34,7 @@ OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
 CXX				=	c++
 
-CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98
+CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98 -g
 
 SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
 

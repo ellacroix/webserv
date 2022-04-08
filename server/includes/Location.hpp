@@ -50,9 +50,11 @@ class	Location
 		//	GETTERS
 //		std::map<int, std::string> & 	getErrorPage(void);
 		std::string						getPrefix(void) const;
+		std::string						getRoot(void) const;
 		int								getReturnCode(void) const;
 		std::string						getReturnUri(void) const;
 		std::vector<std::string> &		getLimitExcept(void);
+
 
 		//	UTILITIES
 		void		reset(void);

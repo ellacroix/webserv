@@ -1,4 +1,6 @@
 #include "Response.hpp"
+#include <sys/types.h>
+#include <dirent.h>
 
 std::string numberToString(size_t nb)
 {
@@ -29,6 +31,10 @@ int	Response::ConstructResponse()
 	//	IF ERROR DETECTED IN PARING
 		constructError();
 		return (SUCCESS);
+	}
+	else if (client->statusCode == 0)
+	{
+		constructAutoIndex();
 	}
 	else
 	//	ELSE (PROCESSING CONTINUES)
@@ -88,6 +94,22 @@ int	Response::ConstructResponse()
 	*/
 	}
 	return (SUCCESS);
+}
+
+void	Response::constructAutoIndex()
+{
+	struct dirent *entry;
+	// DIR *dir = opendir(client->request->_URI.append("data/www/").c_str());
+	DIR *dir = opendir(client->request->_URI.c_str());
+	std::cout << "TRY TO OPEN " << client->request->_URI.c_str() << std::endl;
+	// std::cout << client->request->_URI.append("data/www/").c_str() << std::endl;
+	std::cout << "-----------------------------------------------------------\n";
+
+	while ((entry = readdir(dir)) != NULL)
+		std::cout << entry->d_name << std::endl;
+	closedir(dir);
+
+	std::cout << "-----------------------------------------------------------\n";
 }
 
 void	Response::constructError()

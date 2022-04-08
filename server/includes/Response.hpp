@@ -54,6 +54,7 @@ public:
 	//	RESPONSE PROCESSING
 	int			ConstructResponse();
 	void		constructError();
+	void		constructAutoIndex();
 	std::string	getErrorMessage(int code);
 
 	//	FILE - ResponsePorcessing.cpp

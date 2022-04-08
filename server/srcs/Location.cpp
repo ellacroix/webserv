@@ -147,6 +147,11 @@ std::map<int, std::string> &	Location::getErrorPage(void)
 }
 */
 
+std::string						Location::getRoot(void) const
+{
+	return (this->_root);
+}
+
 std::string						Location::getPrefix(void) const
 {
 	return (this->_prefix);
