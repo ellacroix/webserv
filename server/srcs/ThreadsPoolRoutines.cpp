@@ -3,7 +3,7 @@
 
 void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: recv routine: ");
+	printf("ThreadsPool: recv routine \n");
 
 	//The request is ignored, we monitor the connection again to read a new request
 	if (client->request_buffer.find("\r\n") == 0)
@@ -74,14 +74,20 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 		size -= ret;
 	}
 
-	delete client->request;
+	if (client->request)
+		delete client->request;
 	client->request = NULL;
 	delete client->response;
 	client->response = NULL;
 	client->response_ready = false;
 	client->request_buffer.clear();
 
-	monitorForReading(client, thread_info);
+	//Signal for main to disconnect the client and not monitor it again
+	if (client->statusCode == 408)
+		client->connected = false;
+	else
+		monitorForReading(client, thread_info);
+
 	printf("ThreadsPool: send routine DONE\n");
 }
 
@@ -188,7 +194,6 @@ void	createAndConstructResponse(Client *client)
 void	monitorForReading(Client *client, t_thread_info *thread_info)
 {
 	//The request is incomplete, we monitor the connection again to read the rest
-	printf("Incomplete request \n");
 	pthread_mutex_lock(&thread_info->epoll_fd_mutex);
 	thread_info->event.data.fd = client->stream_socket;
 	thread_info->event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;

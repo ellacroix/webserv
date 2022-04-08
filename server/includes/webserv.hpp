@@ -115,7 +115,7 @@ void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
-int		DisconnectTimeout408(std::list<Port*> PortsList);
+int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
 
 
 

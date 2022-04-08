@@ -127,7 +127,7 @@ void	sendClientResponse(t_thread_info *thread_info,
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
 
-int	DisconnectTimeout408(std::list<Port*> PortsList)
+int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
@@ -143,15 +143,27 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 			next_it_c++;
 
 			pthread_mutex_lock(&current_client->client_mutex);
+
 			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
-			if (result > TIMEOUT)
+
+			if (current_client->connected == false)
 			{
-				current_client->connected = false;
-				
+				printf("CLIENT %d GOT HIS 408, WE DISCONNECT HIM\n", current_client->stream_socket);
 				current_port->_clientsMap.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
 				continue;
+			}
+
+			else if (result > TIMEOUT && current_client->response_ready == false)
+			{
+				printf("CLIENT %d EXCEEDED TIMEOUT CONSTRUCTING RESPONSE\n", current_client->stream_socket);
+				current_client->statusCode = 408;
+				current_client->response_ready = true;
+				current_client->CreateResponse();
+				current_client->response->ConstructResponse();
+
+				monitorForWriting(current_client, thread_info);
 			}
 			pthread_mutex_unlock(&current_client->client_mutex);
 		}
