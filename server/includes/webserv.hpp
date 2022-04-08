@@ -27,6 +27,7 @@
 #include <sstream>
 #include <deque>
 #include <string>
+#include <algorithm>
 
 //	CUSTOM HEADERS
 /*
@@ -49,9 +50,12 @@
 
 class	ConfigParser ;
 class	Port ;
-typedef	std::list<Port*>::iterator			t_portListIt;
+typedef	std::list<Port*>::iterator					t_portListIt;
 class	Client ;
-typedef	std::map<int, Client*>::iterator	t_clientMapIt;
+typedef	std::map<int, Client*>::iterator			t_clientMapIt;
+class	VirtualServer ;
+typedef std::list<VirtualServer*>::iterator			t_VSListIt;
+typedef std::list<VirtualServer*>::const_iterator	t_VSListCIt;
 
 
 typedef struct	s_thread_info

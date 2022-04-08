@@ -94,6 +94,11 @@ std::map<int, std::string> &	VirtualServer::getErrorPage(void)
 	return (this->_errorPage);
 }
 
+std::vector<std::string> &		VirtualServer::getServerName(void)
+{
+	return (this->_serverName);
+}
+
 //	UTILITIES
 void	VirtualServer::reset(void)
 {

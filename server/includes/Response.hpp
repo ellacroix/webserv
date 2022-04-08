@@ -52,6 +52,8 @@ public:
 	void	constructError();
 	std::string	getErrorMessage(int code);
 
+	VirtualServer	*findVirtualServer(std::string & s);
+
 };
 
 #endif

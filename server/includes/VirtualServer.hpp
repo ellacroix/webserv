@@ -41,6 +41,7 @@ class	VirtualServer {
 		//	GETTERS
 		int								getListenPort(void) const;
 		std::map<int, std::string> &    getErrorPage(void);
+		std::vector<std::string> &		getServerName(void);
 
 		//	UTILITIES
 		void				reset(void);

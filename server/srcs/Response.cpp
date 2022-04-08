@@ -18,8 +18,12 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {	
-	// if this->_request == NULL
-	//		this->_virtualServer = client->parent_port->_VSList.front();
+	if (this->request == NULL)
+		this->virtual_server = client->parent_port->_VSList.front();
+	else
+		this->virtual_server = this->findVirtualServer(this->request->_host);
+	std::cout << "Resp::ConstructResponse() - FOUND VIRTUAL SERVER IS :" << std::endl;
+	this->virtual_server->display();
 	if (client->statusCode != 0)
 		constructError();
 	

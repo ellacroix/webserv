@@ -75,7 +75,8 @@ unsigned int	Request::parseHeaders(void)
 	// REMOVE LEADING / TRAILING LWS
 	lastPrintValChar = value.find_last_not_of(" \t");
 	if (firstPrintValChar != 0 || lastPrintValChar != value.length())
-		value = value.substr(firstPrintValChar, lastPrintValChar - firstPrintValChar);
+		value = value.substr(firstPrintValChar,
+				lastPrintValChar + 1 - firstPrintValChar);
 	std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl
 		<< "\t\t- value\t= \"" << value << "\"" << std::endl;
 	// CHECK IF HEADER IS SUPPORTED
