@@ -13,7 +13,8 @@ class	VirtualServer {
 		int									_listenPort;
 		std::vector<std::string>			_serverName; // IF MANY NAMES
 //		std::string							_serverName;
-//		ssize_t								_clientMaxBodySize;
+		ssize_t								_clientMaxBodySize;
+		std::map<int, std::string>          _errorPage;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
 		std::map<std::string, Location*>	_locationMap;
@@ -28,16 +29,19 @@ class	VirtualServer {
 		//	ALREADY SET BOOLEANS
 		bool		_serverNameIsSet;
 		bool		_listenPortIsSet;
-//		bool		_clientMaxBodySizeIsSet;
+		bool		_clientMaxBodySizeIsSet;
+		bool		_errorPageIsSet;
 		bool		_locationIsSet;
 
 		//	SETTERS
 		void		setListenPort(int n);
-//		void		setServerName(std::string s);
 		void		setServerName(std::vector<std::string> v);
-//		void		setClientMaxBodySize(std::string s);
+		void		setClientMaxBodySize(std::string s);
 		//	GETTERS
-		int			getListenPort(void) const;
+		int								getListenPort(void) const;
+		std::map<int, std::string> &    getErrorPage(void);
+		std::vector<std::string> &		getServerName(void);
+//		std::vector<std::string> &		getLimitExcept(void);
 
 		//	UTILITIES
 		void				reset(void);

@@ -80,18 +80,16 @@ void		ConfigParser::displayLine(std::vector<std::string> v) const
 	std::cout << std::endl;
 }
 
-std::ostream & operator<<(std::ostream & o, ConfigParser const & rhs )
+void	ConfigParser::displayLines(void) const
 {
-	int tab;
-
-	std::vector<std::vector<std::string> > lines = rhs.getLines();
-	
-	std::vector<std::vector<std::string> >::const_iterator	it = lines.begin();
-	std::vector<std::vector<std::string> >::const_iterator	ite = lines.end();
+	std::vector<std::vector<std::string> >::const_iterator	it = this->_lines.begin();
+	std::vector<std::vector<std::string> >::const_iterator	ite = this->_lines.end();
 
 	while (it != ite)
-		rhs.displayLine(*it++);
-	return (o);
+	{
+		this->displayLine(*it);
+		it++;
+	}
 }
 
 void	ConfigParser::displayContextSwitch(int newContext) const
@@ -222,8 +220,8 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 {
 	if (this->_defLocPtr->_rootIsSet == true)
 		this->_curLoc->_rootIsSet = true;
-	if (this->_defLocPtr->_errorPageIsSet == true)
-		this->_curLoc->_errorPageIsSet = true;
+//	if (this->_defLocPtr->_errorPageIsSet == true)
+//		this->_curLoc->_errorPageIsSet = true;
 	if (this->_defLocPtr->_autoIndexIsSet == true)
 		this->_curLoc->_autoIndexIsSet = true;
 	if (this->_defLocPtr->_indexIsSet == true)
@@ -232,15 +230,16 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 		this->_curLoc->_returnIsSet = true;
 	if (this->_defLocPtr->_limitExceptIsSet == true)
 		this->_curLoc->_limitExceptIsSet = true;
-	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
-		this->_curLoc->_clientMaxBodySizeIsSet = true;
+//	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+//		this->_curLoc->_clientMaxBodySizeIsSet = true;
 }
 
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
-	"root", "error_page", "autoindex", "index",
-	"return", "limit_except", "location", "{", "}"
+	"error_page",
+	"root", "autoindex", "index", "return", "limit_except",
+	"location", "{", "}"
 };
 
 const char *	ConfigParser::_contexts[N_CONTEXTS] =
@@ -248,4 +247,3 @@ const char *	ConfigParser::_contexts[N_CONTEXTS] =
 	"MAIN_CONTEXT", "SERVER_CONTEXT", "LOCATION_CONTEXT",
 	"SWITCHING_TO_SERVER", "SWITCHING_TO_LOCATION"
 };
-

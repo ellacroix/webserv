@@ -1,0 +1,6 @@
+HTTP/1.0 400 Bad Request
+Content-Length: 52
+Content-Type: text/html; charset=UTF-8
+Date: Wed, 06 Apr 2022 13:14:56 GMT
+
+<html><title>Error 400 (Bad Request)1</title></html>

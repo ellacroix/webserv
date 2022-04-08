@@ -26,7 +26,7 @@ Client::~Client() {
 int	Client::CreateRequest()
 {
 	std::string request_headers = request_buffer.substr(0, request_buffer.find("\r\n\r\n") + 2);
-	
+
 	Request *req = new Request(request_headers, this);
 
 	if (this->request)

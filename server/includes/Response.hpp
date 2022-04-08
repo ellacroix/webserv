@@ -33,20 +33,32 @@ private:
 protected:
 
 public:
-	std::string		raw_response;
-
-	int				status_code;
-
+	//	DATA RESPONSE DEPENDS ON
 	Client			*client;
 	Request			*request;
 	VirtualServer	*virtual_server;
+	Location		*location;
 
+	//	RESPONSE DATA
+	std::string		raw_response;
+	std::string		body;
+	int				status_code;
+	std::string		location_header;
+	std::string		path;
 
+	//	CONSTRUCTOR / DESTRUCTOR
 	Response() {};
 	~Response() {};
 	Response(Client *parent_client);
 
-	int	ConstructResponse();
+	//	RESPONSE PROCESSING
+	int			ConstructResponse();
+	void		constructError();
+	std::string	getErrorMessage(int code);
+
+	//	FILE - ResponsePorcessing.cpp
+	VirtualServer *	findVirtualServer(std::string & s);
+	Location *		findLocation(std::string & URI);
 
 };
 

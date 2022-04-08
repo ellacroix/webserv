@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
 		return (-1);
 	ConfigParser	config;
 	config.parse(argv[1]);
-	std::cout << config;
 
+	
 	//EPOLL
 	struct epoll_event event;
 	struct epoll_event events[MAX_EVENTS];
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
-		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 600000);
+		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
 
 		printf("MainProcess: epoll_wait() activated by %d file descriptors\n",
 				new_events);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 		}
 		if (new_events == 0)
 			printf("MainProcess: epoll_wait() timed out. Checking clients timeout.\n");
-		DisconnectTimeout408(config.getPortsList());
+		DisconnectTimeout408(config.getPortsList(), thread_info);
 
 		//LOOP TO CHECK ALL ACTIVATED FD
 		for (int i = 0; i < new_events; i++)
@@ -86,5 +86,6 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+	
 	return (SUCCESS);
 }

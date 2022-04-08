@@ -39,7 +39,7 @@ unsigned int	Request::parser(void)
 			return (this->_statusCode);
 		}
 	}
-	if (this->_parsingStep == BODY)
+	if (this->_parsingStep == BODY/* && this->_chunked == true && this->_hasBody == true*/)
 		this->_statusCode = this->decodeChunk();
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
@@ -51,6 +51,7 @@ unsigned int	Request::parseHeaders(void)
 	std::string		headerLine;
 	size_t			colonPos;
 	size_t			firstPrintValChar;
+	size_t			lastPrintValChar;
 	std::string		key;
 	std::string		value;
 	int				headerIndex;
@@ -67,18 +68,18 @@ unsigned int	Request::parseHeaders(void)
 	// SPLIT KEY:VALUE
 	key = headerLine.substr(0, colonPos);
 	value = headerLine.substr(colonPos + 1, headerLine.length() - colonPos + 1);
-	// CHECK IF OTHER ':' OR IF NO EMPTY VALUE
+	// CHECK IF NO EMPTY VALUE
 	firstPrintValChar = value.find_first_not_of(" \t");
-	if (/*value.find(":") != std::string::npos
-		  ||*/ firstPrintValChar == std::string::npos)
+	if (firstPrintValChar == std::string::npos)
 		return (400);
-	// REMOVE LEADING LWS
-	else if (firstPrintValChar != 0)
-		value = value.substr(firstPrintValChar, value.length() - firstPrintValChar);
+	// REMOVE LEADING / TRAILING LWS
+	lastPrintValChar = value.find_last_not_of(" \t");
+	if (firstPrintValChar != 0 || lastPrintValChar != value.length())
+		value = value.substr(firstPrintValChar,
+				lastPrintValChar + 1 - firstPrintValChar);
 	std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl
 		<< "\t\t- value\t= \"" << value << "\"" << std::endl;
-
-	//	CHECK IF HEADER IS SUPPORTED
+	// CHECK IF HEADER IS SUPPORTED
 	headerIndex = this->isSupportedHeader(key);
 	if (headerIndex != NOT_SUPPORTED_HEADER
 			&& headerIndex >= HOST
@@ -87,8 +88,8 @@ unsigned int	Request::parseHeaders(void)
 	if (headerIndex != NOT_SUPPORTED_HEADER)
 	{
 		//	CHECK VALUE
-		//	if (this->valueIsValid(keyIndex, value) == false)
-		//		return (400);
+		if (this->valueIsValid(headerIndex, value) == false)
+			return (400);
 		this->setHeaderValue(headerIndex, value);
 		this->_headerAlrdySet[headerIndex] = true;
 	}
@@ -120,7 +121,7 @@ unsigned int	Request::parseReqLine(void)
 	tok = std::strtok(c_str, " \t");
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
-		return (405);
+		return (405);	//Plutot 501 "Not Implemented"
 	this->_method = std::string(tok);
 
 	//	URI
@@ -149,6 +150,13 @@ unsigned int	Request::parseReqLine(void)
 
 unsigned int	Request::parseBody(void)
 {
+	//If the method is POST
+	//	If _body == NULL
+	//		return (411)
+
+	//If body is chunked
+	//	return decodeChunk
+	
 	return (0);
 }
 
@@ -164,7 +172,7 @@ int				Request::isSupportedHeader(std::string & key)
 	for (i = 0 ; i < N_SUPPORTED_HEADERS ; i++)
 		if (key == Request::_supportedHeaders[i])
 			return (i);
-	return (false);
+	return (NOT_SUPPORTED_HEADER);
 }
 
 const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =

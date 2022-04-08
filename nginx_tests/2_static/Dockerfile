@@ -8,7 +8,10 @@ RUN rm /etc/nginx/nginx.conf
 
 RUN mkdir /data ; \
 	mkdir /data/images ; \
-	mkdir /data/www
+	mkdir /data/www ; \
+	mkdir /data/www/fld1 ; \
+	mkdir /data/www/fld2 ; \
+	mkdir /data/www/fld3 
 
 RUN chmod +r /data
 

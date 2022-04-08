@@ -2,6 +2,8 @@
 
 bool	isNumber(std::string s)
 {
+	if (s.empty() == true)
+		return (false);
 	for (int i = 0 ; s[i] ; i++)
 	{
 		if (std::isdigit(s[i]) == false)

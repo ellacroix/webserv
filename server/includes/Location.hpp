@@ -8,7 +8,7 @@ class	Location
 	private:
 		std::string							_prefix;
 		std::string							_root;
-		std::map<int, std::string>			_errorPage;
+//		std::map<int, std::string>			_errorPage;
 		bool								_autoIndex;
 		std::vector<std::string>			_index; // IF MANY INDEXES
 //		std::string							_index; // IF ONE INDEX
@@ -16,7 +16,7 @@ class	Location
 		std::vector<std::string>			_limitExcept; // STRINGS
 		int									_returnCode;
 		std::string							_returnUri;
-		ssize_t								_clientMaxBodySize;
+//		ssize_t								_clientMaxBodySize;
 //		std::string							_returnBody;
 
 	public:
@@ -29,12 +29,12 @@ class	Location
 
 		//	SET BOOLEANS
 		bool								_rootIsSet;
-		bool								_errorPageIsSet;
+//		bool								_errorPageIsSet;
 		bool								_autoIndexIsSet;
 		bool								_indexIsSet;
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
-		bool								_clientMaxBodySizeIsSet;
+//		bool								_clientMaxBodySizeIsSet;
 
 		//	SETTERS
 		void		setPrefix(std::string s);
@@ -48,8 +48,11 @@ class	Location
 		void		setClientMaxBodySize(std::string s);
 
 		//	GETTERS
-		std::map<int, std::string> & 	getErrorPage(void);
+//		std::map<int, std::string> & 	getErrorPage(void);
 		std::string						getPrefix(void) const;
+		int								getReturnCode(void) const;
+		std::string						getReturnUri(void) const;
+		std::vector<std::string> &		getLimitExcept(void);
 
 		//	UTILITIES
 		void		reset(void);

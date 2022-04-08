@@ -15,6 +15,8 @@
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 //	CPP
 #include <vector>
@@ -26,6 +28,8 @@
 #include <cstring>
 #include <sstream>
 #include <deque>
+#include <string>
+#include <algorithm>
 
 //	CUSTOM HEADERS
 /*
@@ -40,15 +44,20 @@
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
 # define THREADS 2
-# define TIMEOUT 100
+# define TIMEOUT 50
 # define K 1000
 # define M 1000000
+# define SERVER_MAX_BODY_SIZE 10 * M
+# define SERVER_MAX_HEADERS_SIZE 1 * M
 
 class	ConfigParser ;
 class	Port ;
-typedef	std::list<Port*>::iterator			t_portListIt;
+typedef	std::list<Port*>::iterator					t_portListIt;
 class	Client ;
-typedef	std::map<int, Client*>::iterator	t_clientMapIt;
+typedef	std::map<int, Client*>::iterator			t_clientMapIt;
+class	VirtualServer ;
+typedef std::list<VirtualServer*>::iterator			t_VSListIt;
+typedef std::list<VirtualServer*>::const_iterator	t_VSListCIt;
 
 
 typedef struct	s_thread_info
@@ -71,6 +80,13 @@ typedef struct	s_thread_info
 void	*thread_loop(void* arg);
 void	thread_recv_routine(Client *client, t_thread_info *thread_info);
 void	thread_send_routine(Client *client, t_thread_info *thread_info);
+void	isRequestComplete(Client *client);
+bool	IsChunkComplete(Client *client);
+bool	IsBodyComplete(Client *client, size_t length);
+void	createAndConstructResponse(Client *client);
+void	monitorForReading(Client *client, t_thread_info *thread_info);
+void	monitorForWriting(Client *client, t_thread_info *thread_info);
+
 //	ThreadPool.cpp
 
 //	parsingUtils.cpp
@@ -101,9 +117,15 @@ void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
-int		DisconnectTimeout408(std::list<Port*> PortsList);
+int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
 
-
+//	fileUtils.cpp
+bool pathExists(std::string path);
+bool isDirectory(std::string path);
+bool isFile(std::string path);
+bool canRead(std::string path);
+bool canWrite(std::string path);
+bool canExecute(std::string path);
 
 
 #endif

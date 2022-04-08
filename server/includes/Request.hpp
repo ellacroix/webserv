@@ -49,6 +49,8 @@ class   Request {
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
+//		std::string			_queryString;
+
 		//  HEADERS
 		std::string			_headers;
 		ssize_t				_contentLength;
@@ -75,8 +77,10 @@ class   Request {
 		unsigned int	parseBody(void);
 		int				isSupportedHeader(std::string & key);
 		//		RequestHeaderArgs.cpp
-		void	setHeaderValue(const unsigned int headerIndex,
-				std::string const & value);
+		void			setHeaderValue(const unsigned int headerIndex,
+						std::string const & value);
+		bool			valueIsValid(const unsigned int headerIndex,
+						std::string const & value);
 
 		unsigned int	decodeChunk(void);
 

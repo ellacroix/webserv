@@ -40,6 +40,11 @@ int		acceptIncomingConnections(Port *current_port,
 			}
 			break;
 		}
+
+/* 		current_connections++;
+		if (current_connections == max_connections)
+			close(connection); */
+
 		//Setting the connection socket to non blocking
 		int rc = fcntl(connection, F_SETFL, O_NONBLOCK);
 		if (rc < 0){
@@ -98,7 +103,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		thread_info->queue->push_back(current_client);
 		pthread_cond_signal(&thread_info->condition_var);
-		printf("MainProcess: added client %d to the queue\n", connection);
+		printf("MainProcess: added client %d to the queue for recv routine\n", connection);
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
@@ -109,7 +114,6 @@ void	sendClientResponse(t_thread_info *thread_info,
 {	
 	int     connection;
 	Client  *current_client;
-	//int     ret;
 
 	connection = it_c->first;
 	current_client = it_c->second;
@@ -118,12 +122,12 @@ void	sendClientResponse(t_thread_info *thread_info,
 	pthread_mutex_lock(&thread_info->queue_mutex);
 	thread_info->queue->push_back(current_client);
 	pthread_cond_signal(&thread_info->condition_var);
-	printf("MainProcess: added client %d to the queue\n", connection);
+	printf("MainProcess: added client %d to the queue for send routine\n", connection);
 	pthread_mutex_unlock(&thread_info->queue_mutex);
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
 
-int	DisconnectTimeout408(std::list<Port*> PortsList)
+int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
@@ -139,14 +143,27 @@ int	DisconnectTimeout408(std::list<Port*> PortsList)
 			next_it_c++;
 
 			pthread_mutex_lock(&current_client->client_mutex);
+
 			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
-			if (result > TIMEOUT)
+
+			if (current_client->connected == false)
 			{
-				current_client->connected = false;
+				printf("CLIENT %d GOT HIS 408, WE DISCONNECT HIM\n", current_client->stream_socket);
 				current_port->_clientsMap.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
 				continue;
+			}
+
+			else if (result > TIMEOUT && current_client->response_ready == false)
+			{
+				printf("CLIENT %d EXCEEDED TIMEOUT CONSTRUCTING RESPONSE\n", current_client->stream_socket);
+				current_client->statusCode = 408;
+				current_client->response_ready = true;
+				current_client->CreateResponse();
+				current_client->response->ConstructResponse();
+
+				monitorForWriting(current_client, thread_info);
 			}
 			pthread_mutex_unlock(&current_client->client_mutex);
 		}
