@@ -22,9 +22,9 @@ int	Response::ConstructResponse()
 	//		this->_virtualServer = client->parent_port->_VSList.front();
 	if (client->statusCode != 0)
 		constructError();
-	
 	//else Response a du travail a faire pour determiner le code de reponse
-
+	else
+		constructError();
 
 	return 0;
 }
@@ -61,9 +61,6 @@ void	Response::constructError()
 
 	//Body
 	raw_response.append(body);
-
-
-	
 }
 
 std::string	Response::getErrorMessage(int code)
@@ -113,7 +110,7 @@ std::string	Response::getErrorMessage(int code)
 		case 501:
 			return " Not Implemented";
 		case 505:
-			return " Forbidden";			
+			return " HTTP Version Not Supported";			
 		default:
 			return "Should not happen";
 	}
