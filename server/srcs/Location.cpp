@@ -167,6 +167,11 @@ std::vector<std::string> &		Location::getLimitExcept(void)
 	return (this->_limitExcept);
 }
 
+bool							Location::getAutoIndex(void) const
+{
+	return (this->_autoIndex);
+}
+
 //	UTILITIES
 void	Location::reset(void)
 {

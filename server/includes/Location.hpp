@@ -53,6 +53,7 @@ class	Location
 		int								getReturnCode(void) const;
 		std::string						getReturnUri(void) const;
 		std::vector<std::string> &		getLimitExcept(void);
+		bool							getAutoIndex(void) const;
 
 		//	UTILITIES
 		void		reset(void);
