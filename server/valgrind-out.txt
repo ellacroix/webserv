@@ -1,0 +1,9 @@
+==236115== Memcheck, a memory error detector
+==236115== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==236115== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==236115== Command: ./webserv confs/nginx.conf
+==236115== Parent PID: 236114
+==236115== 
+==236115== FATAL: in suppressions file "valgrind_ignore.txt" near line 4:
+==236115==    bad or missing extra suppression info
+==236115== exiting now.

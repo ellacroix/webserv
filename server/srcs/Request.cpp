@@ -120,7 +120,7 @@ unsigned int	Request::parseReqLine(void)
 	tok = std::strtok(c_str, " \t");
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
-		return (405);
+		return (405);	//Plutot 501 "Not Implemented"
 	this->_method = std::string(tok);
 
 	//	URI
@@ -149,6 +149,13 @@ unsigned int	Request::parseReqLine(void)
 
 unsigned int	Request::parseBody(void)
 {
+	//If the method is POST
+	//	If _body == NULL
+	//		return (411)
+
+	//If body is chunked
+	//	return decodeChunk
+	
 	return (0);
 }
 

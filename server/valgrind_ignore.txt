@@ -1,0 +1,6 @@
+{
+	leak readline
+	Memcheck:Param 
+	epoll_ctl(event)
+	fun:epoll_ctl
+}
