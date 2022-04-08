@@ -24,20 +24,26 @@ int	Response::ConstructResponse()
 		constructError();
 	//else Response a du travail a faire pour determiner le code de reponse
 	else
-		constructError();
+		constructError(); //Place holder
 
 	return 0;
 }
 
 void	Response::constructError()
 {
-/* 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
+ 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+/* 	std::string path = virtual_server->getErrorPage().find(client->statusCode);
+	if (path != virtual_server->getErrorPage().end())
 	{
 		printf("Page defined in config file\n");
-	} */
 
-	printf("Sending default page\n");
+		//Does path exists
+		stat(path.c_str());
+
+		
+	}  */
+
+	printf("Redacting default page\n");
 
 	//Constructing body
 	body.append("<html>\r\n");
@@ -112,6 +118,6 @@ std::string	Response::getErrorMessage(int code)
 		case 505:
 			return " HTTP Version Not Supported";			
 		default:
-			return "Should not happen";
+			return " Should not happen";
 	}
 }

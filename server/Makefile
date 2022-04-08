@@ -54,10 +54,13 @@ fclean		:	clean
 
 re			:	fclean all
 
+run			:	${NAME}
+			./webserv confs/nginx.conf
+
 sanitize	:	${OBJS}
 			${CXX} ${SANITIZE_FLAGS} ${OBJS} -o ${NAME}
 
-valgrind	: $(NAME)
+valgrind	:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
 
 .PHONY		:	all re clean fclean
