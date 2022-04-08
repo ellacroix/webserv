@@ -152,6 +152,16 @@ std::string						Location::getPrefix(void) const
 	return (this->_prefix);
 }
 
+int								Location::getReturnUri(void) const
+{
+	return (this->_returnCode);
+}
+
+std::string						Location::getReturnUri(void) const
+{
+	return (this->_returnUri);
+}
+
 //	UTILITIES
 void	Location::reset(void)
 {

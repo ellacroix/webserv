@@ -3,7 +3,7 @@
 std::string numberToString(size_t nb)
 {
 	std::ostringstream oss;
-	
+
 	oss << nb;
 	return oss.str();
 }
@@ -18,33 +18,93 @@ Response::Response(Client *parent_client)
 
 int	Response::ConstructResponse()
 {	
+	//	FIND VIRTUAL SERVER
 	if (this->request == NULL)
 		this->virtual_server = client->parent_port->_VSList.front();
 	else
 		this->virtual_server = this->findVirtualServer(this->request->_host);
-	std::cout << "Resp::ConstructResponse() - FOUND VIRTUAL SERVER IS :" << std::endl;
-	this->virtual_server->display();
-	if (client->statusCode != 0)
-		constructError();
-	//else Response a du travail a faire pour determiner le code de reponse
-	else
-		constructError(); //Place holder
 
-	return 0;
+	if (client->statusCode != 0)
+	{
+	//	IF ERROR DETECTED IN PARING
+		constructError();
+		return (SUCCESS);
+	}
+	else
+	//	ELSE (PROCESSING CONTINUES)
+	{
+		constructError();
+		/*
+		//	FIND LOCATION
+		this->location = this->findLocation(this->request->_URI);
+		if (this->location == NULL)
+		{
+			this->status_code = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+		//	CHECK limit_except
+		if (this->location->_limitExceptIsSet == true &&
+				std::find(this->location->getLimitExcept().begin(),
+					this->location->getLimitExcept().end(),
+					this->request->_method)
+				!= this->location->getLimitExcept().end())
+		{
+			this->status_code = 405;
+			this->constructError();
+			return (SUCCESS);
+		}
+		//	CHECK return
+		if (this->location->_returnIsSet == true)
+		{
+			this->status_code = this->location->getReturnCode();
+			this->location_header = this->location->getReturnUri();
+			this->constructRedirection();
+			return (SUCCESS);
+		}
+		//	MAKE DIR/FILE PATH
+//		this->path = this->location.getRoot().append(this->request->_URI);
+		this->path = this->request->_URI;
+		this->path.replace(0, this->location->_prefix.length(), this->location->_root);
+		if (this->pathExists() == false)
+		{
+			this->status_code = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+		if (this->permissionIsOK(this->request->_method) == false)
+		{
+			this->status_code = 403;
+			this->constructError();
+			return (SUCCESS);
+		}
+		if (this->isDirectory(this->path) == false)
+		{
+			this->status_code = 200;
+			this->constructSuccess();
+			return (SUCCESS);
+		}
+		
+	*/
+
+		
+
+	}
+	return (SUCCESS);
 }
 
 void	Response::constructError()
 {
- 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-/* 	std::string path = virtual_server->getErrorPage().find(client->statusCode);
-	if (path != virtual_server->getErrorPage().end())
-	{
+	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+	/* 	std::string path = virtual_server->getErrorPage().find(client->statusCode);
+		if (path != virtual_server->getErrorPage().end())
+		{
 		printf("Page defined in config file\n");
 
-		//Does path exists
-		stat(path.c_str());
+	//Does path exists
+	stat(path.c_str());
 
-		
+
 	}  */
 
 	printf("Redacting default page\n");

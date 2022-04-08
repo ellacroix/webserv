@@ -99,6 +99,11 @@ std::vector<std::string> &		VirtualServer::getServerName(void)
 	return (this->_serverName);
 }
 
+std::vector<std::string> &		VirtualServer::getLimitExcept(void)
+{
+	return (this->_limitExcept);
+}
+
 //	UTILITIES
 void	VirtualServer::reset(void)
 {

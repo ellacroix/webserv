@@ -1,0 +1,2 @@
+GET /existe_pas HTTP/1.1
+Host: existe_pas

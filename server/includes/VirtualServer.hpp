@@ -35,13 +35,13 @@ class	VirtualServer {
 
 		//	SETTERS
 		void		setListenPort(int n);
-//		void		setServerName(std::string s);
 		void		setServerName(std::vector<std::string> v);
 		void		setClientMaxBodySize(std::string s);
 		//	GETTERS
 		int								getListenPort(void) const;
 		std::map<int, std::string> &    getErrorPage(void);
 		std::vector<std::string> &		getServerName(void);
+		std::vector<std::string> &		getLimitExcept(void);
 
 		//	UTILITIES
 		void				reset(void);
