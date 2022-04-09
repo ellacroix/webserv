@@ -99,15 +99,39 @@ int	Response::ConstructResponse()
 void	Response::constructAutoIndex()
 {
 	struct dirent *entry;
-	// DIR *dir = opendir(client->request->_URI.append("data/www/").c_str());
-	DIR *dir = opendir(client->request->_URI.c_str());
-	std::cout << "TRY TO OPEN " << client->request->_URI.c_str() << std::endl;
-	// std::cout << client->request->_URI.append("data/www/").c_str() << std::endl;
-	std::cout << "-----------------------------------------------------------\n";
+	// DIR *dir = opendir(client->request->_URI.c_str()); // need to replace with real path but segfault actually
+	DIR *dir = opendir("/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public");
 
-	while ((entry = readdir(dir)) != NULL)
-		std::cout << entry->d_name << std::endl;
-	closedir(dir);
+	if (body.empty())
+	{
+		body.append("<html>\r\n");
+		body.append("<head><title>Index of " + client->request->_URI + "</title></head>\r\n");
+		body.append("<body>\r\n");
+		body.append("<h1>Index of " + client->request->_URI + "</h1><hr><pre><a href=\"../\">../</a>\r\n");
+		while ((entry = readdir(dir)) != NULL)
+		{
+			if (!std::strcmp(entry->d_name,  "."))
+				continue ;
+			body.append("<a href=");
+			body.append(entry->d_name);
+			body.append(">");
+			body.append(entry->d_name);
+			body.append("</a>\r\n");
+		}
+		closedir(dir);
+		body.append("</body>\r\n");
+		body.append("</html>\r\n");
+	}
+
+	raw_response.append("HTTP/1.1 ");
+	raw_response.append(numberToString(client->statusCode));
+	raw_response.append("\r\n");
+
+	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
+	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+	raw_response.append("\r\n");
+
+	raw_response.append(body);
 
 	std::cout << "-----------------------------------------------------------\n";
 }
