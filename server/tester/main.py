@@ -1,15 +1,10 @@
-from telnetlib import Telnet
 import sys
+from telnetlib import Telnet
 
-error = False
-if (len(sys.argv) != 3 and len(sys.argv) != 5):
-    error = True
-elif (len(sys.argv) == 5 and sys.argv[3] != "-nginx"):
-    error = True
-if (error):
-    print("error: Port Not secified.")
-    print("try \" python3 main.py <PORT> <File REQUEST> [OPT] -nginx <PORT>\".")
-    exit (1)
+if (len(sys.argv) != 3 and not (len(sys.argv) == 5 and sys.argv[3] == "-nginx")):
+    print("Error: Wrong arguments. ", end="")
+    print("Try \" python3 main.py <PORT> <File REQUEST> [OPT] -nginx <PORT>\".")
+    exit(1)
 
 def test_webserv(port, request):
     ip="localhost"
@@ -42,6 +37,8 @@ def test_nginx(port):
 print("./webserv ------------------------------------------------------------")
 r_webserv = test_webserv(sys.argv[1], sys.argv[2])
 print(r_webserv)
-print("./nginx ------------------------------------------------------------")
-r_nginx = test_nginx(sys.argv[4])
-print(r_nginx)
+
+if (len(sys.argv) == 5):
+    print("./nginx ------------------------------------------------------------")
+    r_nginx = test_nginx(sys.argv[4])
+    print(r_nginx)
