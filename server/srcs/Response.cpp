@@ -96,30 +96,73 @@ int	Response::ConstructResponse()
 	return (SUCCESS);
 }
 
+std::string fillTag(std::string balise, std::string str)
+{
+	std::string tag;
+	std::string content;
+
+	for (int i = 0; balise[i] && balise[i] != ' '; i++) // need to check all whitespace
+		tag += balise[i];
+	content += "<" + balise + ">" + str + "</" + tag + ">";
+	return (content);
+}
+
+
 void	Response::constructAutoIndex()
 {
-	struct dirent *entry;
-	// DIR *dir = opendir(client->request->_URI.c_str()); // need to replace with real path but segfault actually
-	DIR *dir = opendir("/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public");
+	struct dirent 	*entry;
+	std::string path = "/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public";
+	DIR *dir = opendir(path.c_str()); // need to replace with real path but segfault actually
+	struct stat 	info;
+	std::vector<std::string> dirLst;
+	std::string link;
+	std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 	if (body.empty())
 	{
-		body.append("<html>\r\n");
-		body.append("<head><title>Index of " + client->request->_URI + "</title></head>\r\n");
-		body.append("<body>\r\n");
-		body.append("<h1>Index of " + client->request->_URI + "</h1><hr><pre><a href=\"../\">../</a>\r\n");
+		// std::string test = fillTag("html", fillTag("head", fillTag("title", "Index of " + client->request->_URI)));
+		// printf("TEST______ %s\n", test.c_str());
 		while ((entry = readdir(dir)) != NULL)
 		{
+			std::string file = path + "/" + entry->d_name;
+			stat(file.c_str(), &info);
+    		struct tm * timeinfo = gmtime(&info.st_ctime);
+			printf("INFO %s  ______ %d\n", file.c_str(), timeinfo->tm_hour);
 			if (!std::strcmp(entry->d_name,  "."))
 				continue ;
-			body.append("<a href=");
-			body.append(entry->d_name);
-			body.append(">");
-			body.append(entry->d_name);
-			body.append("</a>\r\n");
+			else if (!std::strcmp(entry->d_name,  ".."))
+				body.append("<h1>Index of " + client->request->_URI + "</h1><hr><pre><a href=\"../\">../</a>\r\n");
+			else
+			{
+				std::string path2 = entry->d_name;
+				if (entry->d_type == DT_DIR) { path2 += "/"; }
+				link = fillTag("a href=\"" + path2 + "\"", path2);
+				for (int i = link.length(); link.length() < 51; i++)
+					link += " ";
+				char buffer[256];
+				strftime(buffer, 26, "%d-%b-%Y %H:%M", timeinfo);
+				link += buffer;
+				for (int i = 0; i < 21; i++)
+					link += " ";
+
+				if (entry->d_type == DT_DIR) { link += "-"; }
+				else
+				{
+					std::stringstream stream;  
+					stream << info.st_size;
+					link += stream.str();
+				}
+				dirLst.push_back(link);
+			}
 		}
+		printf("-----------\n");
+		for (unsigned int i = 0; i < dirLst.size(); i++) {
+			std::cout << dirLst.at(i) << std::endl;
+		}
+		printf("-----------\n");
 		closedir(dir);
-		body.append("</body>\r\n");
+		body.append("</pre><hr></body>\r\n");
 		body.append("</html>\r\n");
 	}
 
