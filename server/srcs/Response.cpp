@@ -107,61 +107,79 @@ std::string fillTag(std::string balise, std::string str)
 	return (content);
 }
 
-
-void	Response::constructAutoIndex()
+std::vector<std::string> getDirectoryContent( std::string pathDir, std::string path)
 {
-	struct dirent 	*entry;
-	std::string path = "/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public";
-	DIR *dir = opendir(path.c_str()); // need to replace with real path but segfault actually
-	struct stat 	info;
 	std::vector<std::string> dirLst;
-	std::string link;
+	struct dirent 	*entry;
+	DIR *dir =		opendir(path.c_str());
+	struct stat 	info;
+    struct tm * 	timeinfo;
+	std::string 	entryLink;
+	std::string fullPath;
+	std::string entryPath;
+	char buffer[256]; // need to reset
+
 	std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-	if (body.empty())
+	while ((entry = readdir(dir)) != NULL)
 	{
-		// std::string test = fillTag("html", fillTag("head", fillTag("title", "Index of " + client->request->_URI)));
-		// printf("TEST______ %s\n", test.c_str());
-		while ((entry = readdir(dir)) != NULL)
+		fullPath = path + "/" + entry->d_name;
+		stat(fullPath.c_str(), &info);
+
+		if (!std::strcmp(entry->d_name,  "."))
+			continue ;
+		else if (!std::strcmp(entry->d_name,  ".."))
 		{
-			std::string file = path + "/" + entry->d_name;
-			stat(file.c_str(), &info);
-    		struct tm * timeinfo = gmtime(&info.st_ctime);
-			printf("INFO %s  ______ %d\n", file.c_str(), timeinfo->tm_hour);
-			if (!std::strcmp(entry->d_name,  "."))
-				continue ;
-			else if (!std::strcmp(entry->d_name,  ".."))
-				body.append("<h1>Index of " + client->request->_URI + "</h1><hr><pre><a href=\"../\">../</a>\r\n");
+			entryLink = fillTag("h1", "Index of " + pathDir);
+			entryLink += "<hr><pre>";
+			entryLink += fillTag("a href=\"../\"", "../");
+			entryLink += "\r\n";
+			dirLst.push_back(entryLink);
+		}
+		else
+		{
+			entryPath = entry->d_name;
+			if (entry->d_type == DT_DIR) { entryPath += "/"; }
+			entryLink = fillTag("a href=\"" + entryPath + "\"", entryPath);
+
+			for (int i = entryLink.length(); entryLink.length() < 51; i++)
+				entryLink += " ";
+
+			timeinfo = gmtime(&info.st_ctime);
+			strftime(buffer, 17, "%d-%b-%Y %H:%M", timeinfo);
+			entryLink += buffer;
+
+			for (int i = 0; i < 21; i++)
+				entryLink += " ";
+
+			if (entry->d_type == DT_DIR) { entryLink += "-"; }
 			else
 			{
-				std::string path2 = entry->d_name;
-				if (entry->d_type == DT_DIR) { path2 += "/"; }
-				link = fillTag("a href=\"" + path2 + "\"", path2);
-				for (int i = link.length(); link.length() < 51; i++)
-					link += " ";
-				char buffer[256];
-				strftime(buffer, 26, "%d-%b-%Y %H:%M", timeinfo);
-				link += buffer;
-				for (int i = 0; i < 21; i++)
-					link += " ";
-
-				if (entry->d_type == DT_DIR) { link += "-"; }
-				else
-				{
-					std::stringstream stream;  
-					stream << info.st_size;
-					link += stream.str();
-				}
-				dirLst.push_back(link);
+				std::stringstream stream;  
+				stream << info.st_size;
+				entryLink += stream.str();
 			}
+			dirLst.push_back(entryLink);
 		}
+	}
+	closedir(dir);
+	return (dirLst);
+}
+
+void	Response::constructAutoIndex()
+{
+	std::string path = "/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public";
+	std::vector<std::string> dirLst;
+
+	if (body.empty())
+	{
+		dirLst = getDirectoryContent(client->request->_URI, path.c_str());  // need to replace with real path but segfault actually
 		printf("-----------\n");
 		for (unsigned int i = 0; i < dirLst.size(); i++) {
 			std::cout << dirLst.at(i) << std::endl;
 		}
 		printf("-----------\n");
-		closedir(dir);
 		body.append("</pre><hr></body>\r\n");
 		body.append("</html>\r\n");
 	}
