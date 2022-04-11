@@ -13,7 +13,7 @@ RUN mkdir /data ; \
 RUN chmod +r /data
 
 COPY /srcs/public /data/www/public/.
-# COPY ./srcs/index.html /data/www/.
+RUN mv /data/www/public/file.tmp /data/www/public/fileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 
 COPY ./srcs/nginx.conf /etc/nginx/.
 COPY .vimrc /etc/.vimrc
