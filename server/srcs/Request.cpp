@@ -39,8 +39,12 @@ unsigned int	Request::parser(void)
 			return (this->_statusCode);
 		}
 	}
-	if (this->_parsingStep == BODY/* && this->_chunked == true && this->_hasBody == true*/)
-		this->_statusCode = this->decodeChunk();
+	this->_statusCode = this->parseBody();
+	if (this->_statusCode >= 400)
+	{
+		std::cout << "parser()\t- RETURNING " << this->_statusCode << std::endl;
+		return (this->_statusCode);
+	}
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
 	return (SUCCESS);
@@ -150,12 +154,15 @@ unsigned int	Request::parseReqLine(void)
 
 unsigned int	Request::parseBody(void)
 {
-	//If the method is POST
-	//	If _body == NULL
-	//		return (411)
+	if (_body.size() > _virtual_server->get_clientMaxBodySize())
+		return (431);
+	
+	if (_method == "POST")
+		if (_hasBody == false)
+			return (411);
 
-	//If body is chunked
-	//	return decodeChunk
+	if (_chunked == true)
+		return (decodeChunk());
 	
 	return (0);
 }
@@ -167,7 +174,7 @@ int				Request::isSupportedHeader(std::string & key)
 
 	len = key.length();
 	for (i = 0 ; i < len ; i++)
-		if (std::islower(key[i]))
+		if (std::isupper(key[i]))
 			key[i] = std::tolower(key[i]);
 	for (i = 0 ; i < N_SUPPORTED_HEADERS ; i++)
 		if (key == Request::_supportedHeaders[i])
@@ -206,4 +213,23 @@ unsigned int	Request::decodeChunk(void)
 
 	this->_body = decodedBody;
 	return 0;
+}
+
+VirtualServer *	Request::findVirtualServer(std::string & s)
+{
+	t_VSListCIt							it;
+	t_VSListCIt							ite;
+	std::vector<std::string>::iterator	serverNameEnd;
+
+	it = this->_client->parent_port->_VSList.begin();
+	ite = this->_client->parent_port->_VSList.end();
+	while (it != ite)
+	{
+		serverNameEnd = (*it)->getServerName().end();
+		if (std::find((*it)->getServerName().begin(),
+					(*it)->getServerName().end(), s) != serverNameEnd)
+			return (*it);
+		it++;
+	}
+	return (this->_client->parent_port->_VSList.front());
 }

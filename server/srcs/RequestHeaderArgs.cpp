@@ -13,6 +13,7 @@ void	Request::setHeaderValue(const unsigned int headerIndex,
 			break;
 		case HOST :
 			this->_host = value;
+			this->_virtual_server = findVirtualServer(_host);
 			break;
 		case CONTENT_LENGTH :
 			this->_contentLength = std::strtol(value.c_str(), &endPtr, 10);

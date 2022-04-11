@@ -83,6 +83,8 @@ class   Request {
 						std::string const & value);
 
 		unsigned int	decodeChunk(void);
+		VirtualServer	*findVirtualServer(std::string & s);
+
 
 };
 

@@ -41,6 +41,7 @@ class	VirtualServer {
 		int								getListenPort(void) const;
 		std::map<int, std::string> &    getErrorPage(void);
 		std::vector<std::string> &		getServerName(void);
+		int								get_clientMaxBodySize(void);
 //		std::vector<std::string> &		getLimitExcept(void);
 
 		//	UTILITIES

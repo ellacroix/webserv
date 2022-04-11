@@ -14,19 +14,21 @@ Response::Response(Client *parent_client)
 	request = parent_client->request;
 	//status_code = parent_client->request->_statusCode;
 	status_code = parent_client->statusCode;
+	if (request != NULL)
+	{
+		virtual_server = parent_client->request->_virtual_server;
+	}
 }
 
 int	Response::ConstructResponse()
 {	
-	//	FIND VIRTUAL SERVER
+ 	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
 	if (this->request == NULL)
 		this->virtual_server = client->parent_port->_VSList.front();
-	else
-		this->virtual_server = this->findVirtualServer(this->request->_host);
 
 	if (client->statusCode != 0)
 	{
-	//	IF ERROR DETECTED IN PARING
+	//	IF ERROR DETECTED IN PARSING
 		constructError();
 		return (SUCCESS);
 	}

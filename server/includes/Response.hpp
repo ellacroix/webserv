@@ -57,7 +57,6 @@ public:
 	std::string	getErrorMessage(int code);
 
 	//	FILE - ResponsePorcessing.cpp
-	VirtualServer *	findVirtualServer(std::string & s);
 	Location *		findLocation(std::string & URI);
 
 };

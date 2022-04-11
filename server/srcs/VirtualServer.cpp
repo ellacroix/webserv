@@ -106,6 +106,12 @@ std::vector<std::string> &		VirtualServer::getLimitExcept(void)
 }
 */
 
+int								VirtualServer::get_clientMaxBodySize(void)
+{
+	return (this->_clientMaxBodySize);
+}
+
+
 //	UTILITIES
 void	VirtualServer::reset(void)
 {
