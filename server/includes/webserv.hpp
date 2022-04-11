@@ -78,6 +78,9 @@ typedef struct	s_thread_info
 
 	int		start(int *epoll_fd, pthread_t *thread_pool);
 
+	//std::map<filename, mutex> fileArborescence;
+
+
 }				t_thread_info;
 
 

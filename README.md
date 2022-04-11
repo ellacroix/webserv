@@ -662,6 +662,7 @@ A recipient that receives whitespace between the start-line and the first header
 # Testing
 - python library to make http requests https://requests.readthedocs.io/en/master/
 - quickly and easily send requests https://www.postman.com/
+- Stress test: tr -dc A-Za-z0-9 </dev/urandom | telnet localhost 8001
 
 # A faire
 - Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...

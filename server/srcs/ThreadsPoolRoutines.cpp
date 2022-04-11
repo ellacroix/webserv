@@ -59,38 +59,34 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: send routine\n");
 
-	int ret = 0;
-	int size = client->response->raw_response.size();
-	int	iter;
-
 	//Sending the reponse to the client
-	iter = 0;
-	while (size > 0)
+	int ret = send(client->stream_socket,
+			client->response->raw_response.c_str(),
+			client->response->raw_response.size(),
+			0);
+	if (ret < 1)
+		printf("Strange error\n");
+	
+	client->response->raw_response.erase(0, ret);
+
+	if (client->response->raw_response.size() == 0)
 	{
-		ret = send(client->stream_socket,
-				client->response->raw_response.c_str() + ret,
-				size,
-				0);
-		if (ret < 1)
-			printf("Strange error\n");
-		size -= ret;
-		iter++;
+		if (client->request)
+			delete client->request;
+		client->request = NULL;
+		delete client->response;
+		client->response = NULL;
+		client->response_ready = false;
+		client->request_buffer.clear();
+
+		//Signal for main to disconnect the client and not monitor it again
+		if (client->statusCode == 408)
+			client->connected = false;
+		else
+			monitorForReading(client, thread_info);
 	}
-	std::cout << "=== SENT IN " << iter << " ITERATIONS" << std::endl;
-
-	if (client->request)
-		delete client->request;
-	client->request = NULL;
-	delete client->response;
-	client->response = NULL;
-	client->response_ready = false;
-	client->request_buffer.clear();
-
-	//Signal for main to disconnect the client and not monitor it again
-	if (client->statusCode == 408)
-		client->connected = false;
 	else
-		monitorForReading(client, thread_info);
+		monitorForWriting(client, thread_info);
 
 	printf("ThreadsPool: send routine DONE\n");
 }

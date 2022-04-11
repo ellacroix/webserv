@@ -35,6 +35,7 @@ public:
 
 	//	HEADERS
 	std::string		location_header;
+	
 
 	//	CONSTRUCTOR / DESTRUCTOR
 	Response() {};
@@ -52,7 +53,6 @@ public:
 	void		constructAutoIndex();
 
 	//	FILE - ResponsePorcessing.cpp
-	VirtualServer *	findVirtualServer(std::string & s);
 	Location *		findLocation(std::string & URI);
 
 };

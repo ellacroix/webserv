@@ -13,7 +13,7 @@ class	VirtualServer {
 		int									_listenPort;
 		std::vector<std::string>			_serverName; // IF MANY NAMES
 //		std::string							_serverName;
-		ssize_t								_clientMaxBodySize;
+		unsigned int						_clientMaxBodySize;
 		std::map<int, std::string>          _errorPage;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
@@ -43,6 +43,7 @@ class	VirtualServer {
 		std::vector<std::string> &			getServerName(void);
 //		std::vector<std::string> &			getLimitExcept(void);
 		std::map<std::string, Location*> &	getLocationMap(void);
+		unsigned int						get_clientMaxBodySize(void);
 
 		//	UTILITIES
 		void				reset(void);

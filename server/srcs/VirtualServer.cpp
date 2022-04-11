@@ -111,6 +111,12 @@ std::map<std::string, Location*> &	VirtualServer::getLocationMap(void)
 	return (this->_locationMap);
 }
 
+unsigned int						VirtualServer::get_clientMaxBodySize(void)
+{
+	return (this->_clientMaxBodySize);
+}
+
+
 //	UTILITIES
 void	VirtualServer::reset(void)
 {

@@ -25,6 +25,7 @@ class Client{
 		pthread_mutex_t		client_mutex;
 		struct timeval		last_activity;
 		int					statusCode;
+		int					bytesSent;
 
 		bool				read_more;
 		bool				response_ready;
