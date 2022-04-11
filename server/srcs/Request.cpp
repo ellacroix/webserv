@@ -154,8 +154,9 @@ unsigned int	Request::parseReqLine(void)
 
 unsigned int	Request::parseBody(void)
 {
+/* 	//De-activated until config manages clientMaxBodySize in VS
 	if (_body.size() > _virtual_server->get_clientMaxBodySize())
-		return (431);
+		return (413); */
 	
 	if (_method == "POST")
 		if (_hasBody == false)
@@ -184,7 +185,7 @@ int				Request::isSupportedHeader(std::string & key)
 
 const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =
 {
-	"transfer-encoding", "host", "content-length"
+	"transfer-encoding", "host", "content-length", "content-type"
 };
 
 

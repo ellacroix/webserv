@@ -12,6 +12,7 @@ Client::Client(int fd, Port *port) :
 
 	response_ready = false;
 	read_more = false;
+	bytesSent = 0;
 }
 
 Client::~Client() {

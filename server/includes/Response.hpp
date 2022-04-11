@@ -45,6 +45,7 @@ public:
 	int				status_code;
 	std::string		location_header;
 	std::string		path;
+	
 
 	//	CONSTRUCTOR / DESTRUCTOR
 	Response() {};

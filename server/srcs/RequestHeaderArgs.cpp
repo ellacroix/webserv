@@ -3,7 +3,6 @@
 void	Request::setHeaderValue(const unsigned int headerIndex,
 		std::string const & value)
 {
-	char	*endPtr;
 
 	switch (headerIndex)
 	{
@@ -16,8 +15,10 @@ void	Request::setHeaderValue(const unsigned int headerIndex,
 			this->_virtual_server = findVirtualServer(_host);
 			break;
 		case CONTENT_LENGTH :
-			this->_contentLength = std::strtol(value.c_str(), &endPtr, 10);
+			this->_contentLength = std::strtol(value.c_str(), NULL, 10);
 			this->_hasBody = true;
+			break;
+		case CONTENT_TYPE :
 			break;
 	}
 }

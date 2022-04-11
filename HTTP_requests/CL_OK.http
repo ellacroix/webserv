@@ -1,7 +1,7 @@
 POST /file HTTP/1.1
 Host: foo.com
-Content-Type: text/plain
-Content-Length: 0
+Content-Type: text/plain, img
+Content-Length: 11
 
 Hello Therefdfg
 
