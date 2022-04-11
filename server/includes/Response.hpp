@@ -50,7 +50,6 @@ public:
 	//	FILE - ResponseProcessing.cpp
 	bool			findIndex(void);
 	void		constructAutoIndex();
-	std::string	getErrorMessage(int code);
 
 	//	FILE - ResponsePorcessing.cpp
 	VirtualServer *	findVirtualServer(std::string & s);

@@ -217,8 +217,4 @@ void	monitorForWriting(Client *client, t_thread_info *thread_info)
 	epoll_ctl(*thread_info->epoll_fd, EPOLL_CTL_MOD, client->stream_socket, &thread_info->event);
 	client->response_ready = true;
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> autoindex

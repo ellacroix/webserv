@@ -10,14 +10,6 @@ std::string numberToString(size_t nb)
 	return oss.str();
 }
 
-std::string numberToString(size_t nb)
-{
-	std::ostringstream oss;
-
-	oss << nb;
-	return oss.str();
-}
-
 Response::Response(Client *parent_client)
 {
 	client = parent_client;
@@ -158,7 +150,7 @@ int	Response::ConstructResponse()
 		}
 		//	CHECK autoindex
 		if (this->location->_autoIndexIsSet == true
-				&& this->location.getAutoIndex() == true)
+				&& this->location->getAutoIndex() == true)
 		{
 			this->constructAutoIndex();
 			this->status_code = 200;
@@ -251,7 +243,6 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 
 void	Response::constructAutoIndex()
 {
-	std::string path = "/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public";
 	std::vector<std::string> dirLst;
 
 	if (body.empty())
@@ -259,7 +250,8 @@ void	Response::constructAutoIndex()
 		body.append("<html>\r\n");
 		body.append(fillTag("head", fillTag("title", "Index of " + client->request->_URI)));
 		body.append("\r\n<body>\r\n");
-		dirLst = getDirectoryContent(client->request->_URI, path.c_str());  // need to replace with real path but segfault actually
+		dirLst = getDirectoryContent(client->request->_URI, this->path.c_str());
+		// need to replace with real path but segfault actually
 		for (unsigned int i = 0; i < dirLst.size(); i++) {
 			body.append(dirLst.at(i)); 
 			body.append("\r\n");
