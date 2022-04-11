@@ -134,7 +134,6 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 			entryLink = fillTag("h1", "Index of " + pathDir);
 			entryLink += "<hr><pre>";
 			entryLink += fillTag("a href=\"../\"", "../");
-			entryLink += "\r\n";
 			dirLst.push_back(entryLink);
 		}
 		else
@@ -143,11 +142,13 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 			if (entry->d_type == DT_DIR) { entryPath += "/"; }
 			entryLink = fillTag("a href=\"" + entryPath + "\"", entryPath);
 
-			for (int i = entryLink.length(); entryLink.length() < 51; i++)
+			// for (int i = entryLink.length(); entryLink.length() < 51; i++)
+			//     entryLink += " ";
+			for (int i = 0; entryLink.length() + i < 109; i++)
 				entryLink += " ";
 
 			timeinfo = gmtime(&info.st_ctime);
-			strftime(buffer, 17, "%d-%b-%Y %H:%M", timeinfo);
+			strftime(buffer, 18, "%d-%b-%Y %H:%M", timeinfo);
 			entryLink += buffer;
 
 			for (int i = 0; i < 21; i++)
@@ -174,12 +175,14 @@ void	Response::constructAutoIndex()
 
 	if (body.empty())
 	{
+		body.append("<html>\r\n");
+		body.append(fillTag("head", fillTag("title", "Index of " + client->request->_URI)));
+		body.append("\r\n<body>\r\n");
 		dirLst = getDirectoryContent(client->request->_URI, path.c_str());  // need to replace with real path but segfault actually
-		printf("-----------\n");
 		for (unsigned int i = 0; i < dirLst.size(); i++) {
-			std::cout << dirLst.at(i) << std::endl;
+			body.append(dirLst.at(i)); 
+			body.append("\r\n");
 		}
-		printf("-----------\n");
 		body.append("</pre><hr></body>\r\n");
 		body.append("</html>\r\n");
 	}
