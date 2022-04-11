@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <ctime>
 #include <errno.h>
 #include <stdlib.h>
 #include <netinet/in.h>
@@ -28,7 +29,6 @@
 #include <cstring>
 #include <sstream>
 #include <deque>
-#include <string>
 #include <algorithm>
 
 //	CUSTOM HEADERS

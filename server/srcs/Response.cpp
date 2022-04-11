@@ -1,4 +1,14 @@
 #include "Response.hpp"
+#include <sys/types.h>
+#include <dirent.h>
+
+std::string numberToString(size_t nb)
+{
+	std::ostringstream oss;
+
+	oss << nb;
+	return oss.str();
+}
 
 std::string numberToString(size_t nb)
 {
@@ -14,12 +24,11 @@ Response::Response(Client *parent_client)
 	request = parent_client->request;
 	//status_code = parent_client->request->_statusCode;
 	status_code = parent_client->statusCode;
-	//	chunked = false;
 }
 
 int	Response::ConstructResponse()
 {	
-	//	FIND server
+	//	FIND VIRTUAL SERVER
 	if (this->request == NULL)
 		this->virtual_server = client->parent_port->_VSList.front();
 	else
@@ -168,26 +177,115 @@ int	Response::ConstructResponse()
 	return (SUCCESS);
 }
 
-void	Response::constructError()
+std::string fillTag(std::string balise, std::string str)
 {
-	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-	/* 	if (virtual_server->getErrorPage().find(client->statusCode) != virtual_server->getErrorPage().end())
-		{
-		printf("Page defined in config file\n");
-		std::string path = virtual_server->getErrorPage().find(client->statusCode)->second;
+	std::string tag;
+	std::string content;
 
-		if (pathExists(path) && isFile(path) && canRead(path))
+	for (int i = 0; balise[i] && balise[i] != ' '; i++) // need to check all whitespace
+		tag += balise[i];
+	content += "<" + balise + ">" + str + "</" + tag + ">";
+	return (content);
+}
+
+std::vector<std::string> getDirectoryContent( std::string pathDir, std::string path)
+{
+	std::vector<std::string> dirLst;
+	struct dirent 	*entry;
+	DIR *dir =		opendir(path.c_str());
+	struct stat 	info;
+    struct tm * 	timeinfo;
+	std::string 	entryLink;
+	std::string fullPath;
+	std::string entryPath;
+	char buffer[256]; // need to reset
+
+	std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+	while ((entry = readdir(dir)) != NULL)
+	{
+		fullPath = path + "/" + entry->d_name;
+		stat(fullPath.c_str(), &info);
+
+		if (!std::strcmp(entry->d_name,  "."))
+			continue ;
+		else if (!std::strcmp(entry->d_name,  ".."))
 		{
-		std::ifstream file(path.c_str() + 1);
-		std::stringstream buffer;
-		buffer << file.rdbuf();
-		body.append(buffer.str());
+			entryLink = fillTag("h1", "Index of " + pathDir);
+			entryLink += "<hr><pre>";
+			entryLink += fillTag("a href=\"../\"", "../");
+			dirLst.push_back(entryLink);
 		}
 		else
-		printf("Page not found\n");
-		} */
+		{
+			entryPath = entry->d_name;
+			if (entry->d_type == DT_DIR) { entryPath += "/"; }
+			entryLink = fillTag("a href=\"" + entryPath + "\"", entryPath);
 
-	//Constructing body
+			// for (int i = entryLink.length(); entryLink.length() < 51; i++)
+			//     entryLink += " ";
+			for (int i = 0; entryLink.length() + i < 109; i++)
+				entryLink += " ";
+
+			timeinfo = gmtime(&info.st_ctime);
+			strftime(buffer, 18, "%d-%b-%Y %H:%M", timeinfo);
+			entryLink += buffer;
+
+			for (int i = 0; i < 21; i++)
+				entryLink += " ";
+
+			if (entry->d_type == DT_DIR) { entryLink += "-"; }
+			else
+			{
+				std::stringstream stream;  
+				stream << info.st_size;
+				entryLink += stream.str();
+			}
+			dirLst.push_back(entryLink);
+		}
+	}
+	closedir(dir);
+	return (dirLst);
+}
+
+void	Response::constructAutoIndex()
+{
+	std::string path = "/mnt/nfs/homes/jboisser/Documents/webserv/nginx_tests/5_server_vote/srcs/public";
+	std::vector<std::string> dirLst;
+
+	if (body.empty())
+	{
+		body.append("<html>\r\n");
+		body.append(fillTag("head", fillTag("title", "Index of " + client->request->_URI)));
+		body.append("\r\n<body>\r\n");
+		dirLst = getDirectoryContent(client->request->_URI, path.c_str());  // need to replace with real path but segfault actually
+		for (unsigned int i = 0; i < dirLst.size(); i++) {
+			body.append(dirLst.at(i)); 
+			body.append("\r\n");
+		}
+		body.append("</pre><hr></body>\r\n");
+		body.append("</html>\r\n");
+	}
+
+	raw_response.append("HTTP/1.1 ");
+	raw_response.append(numberToString(client->statusCode));
+	raw_response.append("\r\n");
+
+	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
+	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+	raw_response.append("\r\n");
+
+	raw_response.append(body);
+
+	std::cout << "-----------------------------------------------------------\n";
+}
+
+
+void	Response::constructError()
+{
+ 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+
 	std::string		body;
 
 	if (body.empty())

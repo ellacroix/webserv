@@ -1,0 +1,151 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BUFFER_SIZE	main.cpp	17;"	d	file:
+Client	Client.cpp	/^Client::Client(int fd, Port *port) :$/;"	f	class:Client
+ConfigParser	ConfigParser.cpp	/^ConfigParser::ConfigParser(ConfigParser const & src)$/;"	f	class:ConfigParser
+ConfigParser	ConfigParser.cpp	/^ConfigParser::ConfigParser(void) :$/;"	f	class:ConfigParser
+ConstructResponse	Response.cpp	/^int	Response::ConstructResponse()$/;"	f	class:Response
+CreateRequest	Client.cpp	/^int	Client::CreateRequest()$/;"	f	class:Client
+CreateResponse	Client.cpp	/^int	Client::CreateResponse()$/;"	f	class:Client
+DisconnectTimeout408	engineUtils.cpp	/^int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)$/;"	f
+IsBodyComplete	ThreadsPoolRoutines.cpp	/^bool	IsBodyComplete(Client *client, size_t length)$/;"	f
+IsChunkComplete	ThreadsPoolRoutines.cpp	/^bool	IsChunkComplete(Client *client)$/;"	f
+Location	Location.cpp	/^Location::Location(Location const & src) :$/;"	f	class:Location
+Location	Location.cpp	/^Location::Location(void) :$/;"	f	class:Location
+MAX_EVENTS	main.cpp	16;"	d	file:
+Port	Port.cpp	/^Port::Port(int port) :$/;"	f	class:Port
+Port	Port.cpp	/^Port::Port(void) :$/;"	f	class:Port
+Request	Request.cpp	/^Request::Request(std::string raw, Client *parent_client) :$/;"	f	class:Request
+Response	Response.cpp	/^Response::Response(Client *parent_client)$/;"	f	class:Response
+VirtualServer	VirtualServer.cpp	/^VirtualServer::VirtualServer(VirtualServer const & src) :$/;"	f	class:VirtualServer
+VirtualServer	VirtualServer.cpp	/^VirtualServer::VirtualServer(void) :$/;"	f	class:VirtualServer
+_contexts	ConfigParser.cpp	/^const char *	ConfigParser::_contexts[N_CONTEXTS] =$/;"	m	class:ConfigParser	file:
+_directives	ConfigParser.cpp	/^const char *	ConfigParser::_directives[N_DIR] =$/;"	m	class:ConfigParser	file:
+_supportedHeaders	Request.cpp	/^const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =$/;"	m	class:Request	file:
+acceptIncomingConnections	engineUtils.cpp	/^int		acceptIncomingConnections(Port *current_port,$/;"	f
+addLocation	VirtualServer.cpp	/^void	VirtualServer::addLocation(Location * newLocation)$/;"	f	class:VirtualServer
+addVS	Port.cpp	/^void	Port::addVS(VirtualServer * newVS)$/;"	f	class:Port
+areValidDomainNames	parsingUtils.cpp	/^bool	areValidDomainNames(std::vector<std::string> & v)$/;"	f
+areValidIndexes	parsingUtils.cpp	/^bool	areValidIndexes(std::vector<std::string> & v)$/;"	f
+canExecute	fileUtils.cpp	/^bool canExecute(std::string path) {$/;"	f
+canRead	fileUtils.cpp	/^bool canRead(std::string path) {$/;"	f
+canWrite	fileUtils.cpp	/^bool canWrite(std::string path) {$/;"	f
+clone	Location.cpp	/^Location *	Location::clone(void) const$/;"	f	class:Location
+clone	VirtualServer.cpp	/^VirtualServer *		VirtualServer::clone(void) const$/;"	f	class:VirtualServer
+constructError	Response.cpp	/^void	Response::constructError()$/;"	f	class:Response
+createAndConstructResponse	ThreadsPoolRoutines.cpp	/^void	createAndConstructResponse(Client *client)$/;"	f
+decodeChunk	Request.cpp	/^unsigned int	Request::decodeChunk(void)$/;"	f	class:Request
+display	Location.cpp	/^void	Location::display(void) const$/;"	f	class:Location
+display	Port.cpp	/^void	Port::display(void) const$/;"	f	class:Port
+display	VirtualServer.cpp	/^void	VirtualServer::display(void) const$/;"	f	class:VirtualServer
+displayContextSwitch	ConfigParser.cpp	/^void	ConfigParser::displayContextSwitch(int newContext) const$/;"	f	class:ConfigParser
+displayLine	ConfigParser.cpp	/^void		ConfigParser::displayLine(std::vector<std::string> v) const$/;"	f	class:ConfigParser
+displayLines	ConfigParser.cpp	/^void	ConfigParser::displayLines(void) const$/;"	f	class:ConfigParser
+displayPortsList	ConfigParser.cpp	/^void	ConfigParser::displayPortsList(void) const$/;"	f	class:ConfigParser
+displayPortsMap	ConfigParser.cpp	/^void	ConfigParser::displayPortsMap(void) const$/;"	f	class:ConfigParser
+findPortInList	ConfigParser.cpp	/^Port *			ConfigParser::findPortInList(int port) const$/;"	f	class:ConfigParser
+findVirtualServer	ResponseProcessing.cpp	/^VirtualServer *	Response::findVirtualServer(std::string & s)$/;"	f	class:Response
+getContext	ConfigParser.cpp	/^int										ConfigParser::getContext(void) const$/;"	f	class:ConfigParser
+getCurLine	ConfigParser.cpp	/^std::string								ConfigParser::getCurLine(void) const$/;"	f	class:ConfigParser
+getDefLocPtr	ConfigParser.cpp	/^Location *		ConfigParser::getDefLocPtr(void) const$/;"	f	class:ConfigParser
+getErrorMessage	Response.cpp	/^std::string	Response::getErrorMessage(int code)$/;"	f	class:Response
+getErrorPage	VirtualServer.cpp	/^std::map<int, std::string> &	VirtualServer::getErrorPage(void)$/;"	f	class:VirtualServer
+getLimitExcept	Location.cpp	/^std::vector<std::string> &		Location::getLimitExcept(void)$/;"	f	class:Location
+getLines	ConfigParser.cpp	/^std::vector<std::vector<std::string> >	ConfigParser::getLines(void) const$/;"	f	class:ConfigParser
+getListenPort	VirtualServer.cpp	/^int								VirtualServer::getListenPort(void) const$/;"	f	class:VirtualServer
+getPortsList	ConfigParser.cpp	/^std::list<Port*> &	ConfigParser::getPortsList(void)$/;"	f	class:ConfigParser
+getPrefix	Location.cpp	/^std::string						Location::getPrefix(void) const$/;"	f	class:Location
+getReturnCode	Location.cpp	/^int								Location::getReturnCode(void) const$/;"	f	class:Location
+getReturnUri	Location.cpp	/^std::string						Location::getReturnUri(void) const$/;"	f	class:Location
+getServerName	VirtualServer.cpp	/^std::vector<std::string> &		VirtualServer::getServerName(void)$/;"	f	class:VirtualServer
+hasContent	ConfigParserFile.cpp	/^bool	ConfigParser::hasContent(void) const$/;"	f	class:ConfigParser
+isComment	ConfigParserFile.cpp	/^bool	ConfigParser::isComment(void) const$/;"	f	class:ConfigParser
+isDirectory	fileUtils.cpp	/^bool isDirectory(std::string path) {$/;"	f
+isFile	fileUtils.cpp	/^bool isFile(std::string path) {$/;"	f
+isNumber	parsingUtils.cpp	/^bool	isNumber(std::string s)$/;"	f
+isRequestComplete	ThreadsPoolRoutines.cpp	/^void	isRequestComplete(Client *client)$/;"	f
+isSupportedHeader	Request.cpp	/^int				Request::isSupportedHeader(std::string & key)$/;"	f	class:Request
+isSupportedHttpErrorCode	parsingUtils.cpp	/^bool	isSupportedHttpErrorCode(std::string s)$/;"	f
+isSupportedHttpMethod	parsingUtils.cpp	/^bool	isSupportedHttpMethod(std::string s)$/;"	f
+isSupportedHttpRedirCode	parsingUtils.cpp	/^bool	isSupportedHttpRedirCode(std::string s)$/;"	f
+isValidAutoindex	parsingUtils.cpp	/^bool	isValidAutoindex(std::string s)$/;"	f
+isValidClientMaxBodySize	parsingUtils.cpp	/^bool	isValidClientMaxBodySize(std::string & s)$/;"	f
+isValidDomainName	parsingUtils.cpp	/^bool	isValidDomainName(std::string s)$/;"	f
+isValidErrorPage	parsingUtils.cpp	/^bool	isValidErrorPage(std::vector<std::string> & v)$/;"	f
+isValidFile	parsingUtils.cpp	/^bool	isValidFile(std::string & s)$/;"	f
+isValidIndex	parsingUtils.cpp	/^bool	isValidIndex(std::string s)$/;"	f
+isValidLimitExcept	parsingUtils.cpp	/^bool	isValidLimitExcept(std::vector<std::string> v)$/;"	f
+isValidPort	parsingUtils.cpp	/^bool	isValidPort(std::string s)$/;"	f
+isValidPrefix	parsingUtils.cpp	/^bool	isValidPrefix(std::string *s)$/;"	f
+isValidReqUri	parsingUtils.cpp	/^bool	isValidReqUri(std::string const & s)$/;"	f
+isValidReturn	parsingUtils.cpp	/^bool	isValidReturn(std::vector<std::string> & v)$/;"	f
+main	main.cpp	/^int main(int argc, char *argv[])$/;"	f
+main	tester_request.cpp	/^int main(int ac, char **av)$/;"	f
+makeListFromMap	ConfigParser.cpp	/^void	ConfigParser::makeListFromMap(void)$/;"	f	class:ConfigParser
+monitorForReading	ThreadsPoolRoutines.cpp	/^void	monitorForReading(Client *client, t_thread_info *thread_info)$/;"	f
+monitorForWriting	ThreadsPoolRoutines.cpp	/^void	monitorForWriting(Client *client, t_thread_info *thread_info)$/;"	f
+noDuplicateErrorPage	ConfigParserFile.cpp	/^bool    ConfigParser::noDuplicateErrorPage(void)$/;"	f	class:ConfigParser
+numberToString	Response.cpp	/^std::string numberToString(size_t nb)$/;"	f
+operator =	ConfigParser.cpp	/^ConfigParser	&ConfigParser::operator=(ConfigParser const & rhs)$/;"	f	class:ConfigParser
+operator =	Location.cpp	/^Location &	Location::operator=(Location const & rhs)$/;"	f	class:Location
+parse	ConfigParserFile.cpp	/^void				ConfigParser::parse(char *arg)$/;"	f	class:ConfigParser
+parseBody	Request.cpp	/^unsigned int	Request::parseBody(void)$/;"	f	class:Request
+parseHeaders	Request.cpp	/^unsigned int	Request::parseHeaders(void)$/;"	f	class:Request
+parseReqLine	Request.cpp	/^unsigned int	Request::parseReqLine(void)$/;"	f	class:Request
+parser	Request.cpp	/^unsigned int	Request::parser(void)$/;"	f	class:Request
+pathExists	fileUtils.cpp	/^bool pathExists(std::string path) {$/;"	f
+recvClientsRequest	engineUtils.cpp	/^void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,$/;"	f
+reset	Location.cpp	/^void	Location::reset(void)$/;"	f	class:Location
+reset	VirtualServer.cpp	/^void	VirtualServer::reset(void)$/;"	f	class:VirtualServer
+resetIsDefBooleans	Location.cpp	/^void	Location::resetIsDefBooleans(void)$/;"	f	class:Location
+sendClientResponse	engineUtils.cpp	/^void	sendClientResponse(t_thread_info *thread_info,$/;"	f
+setAutoindex	Location.cpp	/^void	Location::setAutoindex(bool b)$/;"	f	class:Location
+setClientMaxBodySize	VirtualServer.cpp	/^void    VirtualServer::setClientMaxBodySize(std::string s)$/;"	f	class:VirtualServer
+setDefLocTrueBoolsInCurLoc	ConfigParser.cpp	/^void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)$/;"	f	class:ConfigParser
+setHeaderValue	RequestHeaderArgs.cpp	/^void	Request::setHeaderValue(const unsigned int headerIndex,$/;"	f	class:Request
+setIndex	Location.cpp	/^void	Location::setIndex(std::vector<std::string> v)$/;"	f	class:Location
+setLimitExcept	Location.cpp	/^void	Location::setLimitExcept(std::vector<std::string> v)$/;"	f	class:Location
+setListenPort	VirtualServer.cpp	/^void	VirtualServer::setListenPort(int n)$/;"	f	class:VirtualServer
+setPrefix	Location.cpp	/^void	Location::setPrefix(std::string s)$/;"	f	class:Location
+setReturnCode	Location.cpp	/^void	Location::setReturnCode(int	n)$/;"	f	class:Location
+setReturnUri	Location.cpp	/^void	Location::setReturnUri(std::string s)$/;"	f	class:Location
+setRoot	Location.cpp	/^void	Location::setRoot(std::string s)$/;"	f	class:Location
+setServerName	VirtualServer.cpp	/^void	VirtualServer::setServerName(std::vector<std::string> v)$/;"	f	class:VirtualServer
+splitLineIntoTokens	ConfigParserFile.cpp	/^void				ConfigParser::splitLineIntoTokens(void)$/;"	f	class:ConfigParser
+start	Port.cpp	/^int Port::start(void)$/;"	f	class:Port
+start	ThreadsPool.cpp	/^int		s_thread_info::start(int *epoll_fd, pthread_t *thread_pool)$/;"	f	class:s_thread_info
+startAllPorts	engineUtils.cpp	/^int		startAllPorts(ConfigParser &config, struct epoll_event event,$/;"	f
+startAllSockets	ConfigParser.cpp	/^void	ConfigParser::startAllSockets(void)$/;"	f	class:ConfigParser
+thread_loop	ThreadsPoolRoutines.cpp	/^void	*thread_loop(void* arg)$/;"	f
+thread_recv_routine	ThreadsPoolRoutines.cpp	/^void	thread_recv_routine(Client *client, t_thread_info *thread_info)$/;"	f
+thread_send_routine	ThreadsPoolRoutines.cpp	/^void	thread_send_routine(Client *client, t_thread_info *thread_info)$/;"	f
+validate	ConfigParser.cpp	/^bool				ConfigParser::validate(void) const$/;"	f	class:ConfigParser
+validate	Location.cpp	/^bool	Location::validate(void) const$/;"	f	class:Location
+validate	Port.cpp	/^bool	Port::validate(void) const$/;"	f	class:Port
+validate	VirtualServer.cpp	/^bool				VirtualServer::validate(void) const$/;"	f	class:VirtualServer
+validateArguments	ConfigParserFile.cpp	/^int					ConfigParser::validateArguments(void)$/;"	f	class:ConfigParser
+validateAutoindexArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateAutoindexArgs(void)$/;"	f	class:ConfigParser
+validateClientMaxBodySizeArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateClientMaxBodySizeArgs(void)$/;"	f	class:ConfigParser
+validateClosingBracketArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateClosingBracketArgs(void)$/;"	f	class:ConfigParser
+validateContext	ConfigParserFile.cpp	/^bool        ConfigParser::validateContext(void)$/;"	f	class:ConfigParser
+validateDirective	ConfigParserFile.cpp	/^int					ConfigParser::validateDirective(void)$/;"	f	class:ConfigParser
+validateErrorPageArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateErrorPageArgs(void)$/;"	f	class:ConfigParser
+validateIndexArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateIndexArgs(void)$/;"	f	class:ConfigParser
+validateLimitExceptArgs	ConfigParserDirArgs.cpp	/^int	ConfigParser::validateLimitExceptArgs(void)$/;"	f	class:ConfigParser
+validateListenArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateListenArgs(void)$/;"	f	class:ConfigParser
+validateLocationArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateLocationArgs(void)$/;"	f	class:ConfigParser
+validateOpeningBracketArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateOpeningBracketArgs(void)$/;"	f	class:ConfigParser
+validateReturnArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateReturnArgs(void)$/;"	f	class:ConfigParser
+validateRootArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateRootArgs(void)$/;"	f	class:ConfigParser
+validateServerArgs	ConfigParserDirArgs.cpp	/^int		ConfigParser::validateServerArgs(void)$/;"	f	class:ConfigParser
+validateServerNameArgs	ConfigParserDirArgs.cpp	/^int ConfigParser::validateServerNameArgs(void)$/;"	f	class:ConfigParser
+valueIsValid	RequestHeaderArgs.cpp	/^bool	Request::valueIsValid(const unsigned int headerIndex,$/;"	f	class:Request
+~Client	Client.cpp	/^Client::~Client() {$/;"	f	class:Client
+~ConfigParser	ConfigParser.cpp	/^ConfigParser::~ConfigParser(void)$/;"	f	class:ConfigParser
+~Location	Location.cpp	/^Location::~Location(void)$/;"	f	class:Location
+~Port	Port.cpp	/^Port::~Port(void)$/;"	f	class:Port
+~VirtualServer	VirtualServer.cpp	/^VirtualServer::~VirtualServer(void)$/;"	f	class:VirtualServer
