@@ -17,6 +17,7 @@ bool	isValidPrefix(std::string *s)
 	size_t	len;
 	size_t	i;
 
+	//	ADD LEADING '/' IF MISSING
 	if ((*s)[0] != '/')
 		(*s).insert(0, "/");
 	len = (*s).length();
@@ -29,6 +30,9 @@ bool	isValidPrefix(std::string *s)
 				&& (*s)[i + 1] == '/')
 			return (false);
 	}
+	//	ADD TRAILING '/' IF MISSING
+	if ((*s)[len - 1] != '/')
+		s->push_back('/');
 	return (true);
 }
 

@@ -152,6 +152,11 @@ std::string						Location::getPrefix(void) const
 	return (this->_prefix);
 }
 
+std::string						Location::getRoot(void) const
+{
+	return (this->_root);
+}
+
 int								Location::getReturnCode(void) const
 {
 	return (this->_returnCode);
@@ -165,6 +170,11 @@ std::string						Location::getReturnUri(void) const
 std::vector<std::string> &		Location::getLimitExcept(void)
 {
 	return (this->_limitExcept);
+}
+
+std::vector<std::string> &		Location::getIndex(void)
+{
+	return (this->_index);
 }
 
 bool							Location::getAutoIndex(void) const

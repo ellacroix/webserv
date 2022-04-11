@@ -24,12 +24,16 @@ public:
 	VirtualServer	*virtual_server;
 	Location		*location;
 
+	std::string		path;
 	//	RESPONSE DATA
 	std::string		raw_response;
 	std::string		body;
 	int				status_code;
-	std::string		location_header;
-	std::string		path;
+	std::ifstream	request_file;
+	size_t			file_len;
+	bool			chunked;
+
+	//	HEADERS
 
 	//	CONSTRUCTOR / DESTRUCTOR
 	Response() {};
@@ -39,11 +43,13 @@ public:
 	//	RESPONSE PROCESSING
 	int			ConstructResponse();
 	void		constructError();
+	void		constructSuccess(void);
 	std::string	getErrorMessage(int code);
 
-	//	FILE - ResponsePorcessing.cpp
+	//	FILE - ResponseProcessing.cpp
 	VirtualServer *	findVirtualServer(std::string & s);
 	Location *		findLocation(std::string & URI);
+	bool			findIndex(void);
 
 };
 

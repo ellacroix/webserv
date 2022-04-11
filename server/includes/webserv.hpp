@@ -51,14 +51,19 @@
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 
 class	ConfigParser ;
-class	Port ;
-typedef	std::list<Port*>::iterator					t_portListIt;
-class	Client ;
-typedef	std::map<int, Client*>::iterator			t_clientMapIt;
-class	VirtualServer ;
-typedef std::list<VirtualServer*>::iterator			t_VSListIt;
-typedef std::list<VirtualServer*>::const_iterator	t_VSListCIt;
 
+class	Port ;
+typedef	std::list<Port*>::iterator						t_portListIt;
+
+class	Client ;
+typedef	std::map<int, Client*>::iterator				t_clientMapIt;
+
+class	VirtualServer ;
+typedef std::list<VirtualServer*>::iterator				t_VSListIt;
+typedef std::list<VirtualServer*>::const_iterator		t_VSListCIt;
+
+class	Location;
+typedef	std::map<std::string, Location*>::iterator		t_locMapIt;
 
 typedef struct	s_thread_info
 {

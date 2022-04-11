@@ -61,8 +61,10 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 
 	int ret = 0;
 	int size = client->response->raw_response.size();
+	int	iter;
 
 	//Sending the reponse to the client
+	iter = 0;
 	while (size > 0)
 	{
 		ret = send(client->stream_socket,
@@ -72,7 +74,9 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 		if (ret < 1)
 			printf("Strange error\n");
 		size -= ret;
+		iter++;
 	}
+	std::cout << "=== SENT IN " << iter << " ITERATIONS" << std::endl;
 
 	if (client->request)
 		delete client->request;

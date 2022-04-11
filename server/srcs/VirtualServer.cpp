@@ -106,6 +106,11 @@ std::vector<std::string> &		VirtualServer::getLimitExcept(void)
 }
 */
 
+std::map<std::string, Location*> &	VirtualServer::getLocationMap(void)
+{
+	return (this->_locationMap);
+}
+
 //	UTILITIES
 void	VirtualServer::reset(void)
 {

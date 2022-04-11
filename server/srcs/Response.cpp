@@ -14,6 +14,7 @@ Response::Response(Client *parent_client)
 	request = parent_client->request;
 	//status_code = parent_client->request->_statusCode;
 	status_code = parent_client->statusCode;
+	//	chunked = false;
 }
 
 int	Response::ConstructResponse()
@@ -30,16 +31,17 @@ int	Response::ConstructResponse()
 		return (SUCCESS);
 	}
 	//	ELSE (PROCESSING CONTINUES)
-	constructError();
-	/*
+	//	constructError();
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
 	if (this->location == NULL)
 	{
-		this->status_code = 404;
+		this->client->statusCode = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
+	std::cout << "=== FOUND LOCATION = "
+		<< this->location->getPrefix() << std::endl;
 	//	CHECK limit_except
 	if (this->location->_limitExceptIsSet == true &&
 			std::find(this->location->getLimitExcept().begin(),
@@ -47,71 +49,122 @@ int	Response::ConstructResponse()
 				this->request->_method)
 			!= this->location->getLimitExcept().end())
 	{
-		this->status_code = 405;
+		this->client->statusCode = 405;
 		this->constructError();
 		return (SUCCESS);
 	}
+	/*
 	//	CHECK return
 	if (this->location->_returnIsSet == true)
 	{
-		this->status_code = this->location->getReturnCode();
-		this->location_header = this->location->getReturnUri();
-		this->constructRedirection();
-		return (SUCCESS);
+	this->client->statusCode = this->location->getReturnCode();
+	this->location_header = this->location->getReturnUri();
+	this->constructRedirection();
+	return (SUCCESS);
 	}
+	*/
 	//	MAKE DIR/FILE PATH	- ROOT VERSION
 	//this->path = this->location.getRoot().append(this->request->_URI);
 	//						- ALIAS VERSION
 	this->path = this->request->_URI;
-	this->path.replace(0, this->location->_prefix.length(), this->location->_root);
-	if (this->pathExists() == false)
+	this->path.replace(0, this->location->getPrefix().length(),
+			this->location->getRoot());
+	std::cout << "=== TESTING FILE = " << this->path << std::endl;
+	if (pathExists(this->path) == false)
 	{
-		this->status_code = 404;
+		std::cout << std::boolalpha;
+		std::cout << "=== PATH DOESN'T EXIST" << std::endl;
+		std::cout << "=== pathExists(this->path) == "
+			<< pathExists(this->path) << std::endl;
+		this->client->statusCode = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
 	//	CHECK PERMISSIONS FOR METHOD
-	if (this->permissionIsOK(this->request->_method) == false)
+	//if (this->permissionIsOK(this->request->_method) == false)
+	if (this->request->_method == "GET")
 	{
-		this->status_code = 403;
-		this->constructError();
-		return (SUCCESS);
-	}
-	//	CHECK path IS FILE OR DIRECTORY
-	if (this->isDirectory(this->path) == false)
-	{
-		this->status_code = 200;
-		this->constructSuccess();
-		return (SUCCESS);
-	}
-	//	CHECK index
-	if (this->location->_indexIsSet == true)
-	{
-		// findIndex() WILL REPLACE path BY A NEW PATH AND RETURN TRUE
-		// IF FOUND
-		if (this->findIndex() == true)
+		if (canRead(this->path) == false)
 		{
-			this->status_code == 200;
-			this->constructSuccess();
+			this->client->statusCode = 403;
+			this->constructError();
 			return (SUCCESS);
 		}
 	}
-	//	CHECK autoindex
-	if (this->location->_autoIndexIsSet == true
-			&& this->location.getAutoIndex() == true)
+	else if (this->request->_method == "POST"
+			|| this->request->_method == "DELETE")
 	{
-		this->makeAutoIndex();
-		this->status_code = 200;
-		this->constructSuccess();
-		return (SUCCESS);
+		if (canWrite(this->path) == false)
+		{
+			this->client->statusCode = 403;
+			this->constructError();
+			return (SUCCESS);
+		}
 	}
-	else
+	if (this->path[this->path.length() -1] != '/')	//REQUEST A FILE
 	{
-		this->status_code = 404;
-		this->constructError();
-		return (SUCCESS);
+		std::cout << "=== REQUESTING A FILE" << std::endl;
+		if (isDirectory(this->path) == false)
+		{
+			std::cout << "=== PAGE IS FOUND" << std::endl;
+			this->status_code = 200;
+			this->constructSuccess();
+			return (SUCCESS);
+		}
+		else 
+		{
+			std::cout << "=== PAGE NOT FOUND" << std::endl;
+			this->client->statusCode = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
 	}
-	*/
+	else											//REQUEST A DIR
+	{
+		std::cout << "=== REQUESTING A DIRECTORY" << std::endl;
+		//	CHECK index
+		if (this->location->_indexIsSet == true)
+		{
+			std::cout << "=== CHECKING INDEXES" << std::endl;
+			// findIndex() WILL REPLACE path BY A NEW PATH AND RETURN TRUE
+			// IF FOUND
+			if (this->findIndex() == true)
+			{
+				std::cout << "=== FOUND INDEX" << std::endl;
+				if (canRead(this->path) == true)
+				{
+					this->status_code = 200;
+					this->constructSuccess();
+					return (SUCCESS);
+				}
+				else
+				{
+					this->client->statusCode = 403;
+					this->constructError();
+					return (SUCCESS);
+				}
+			}
+			else
+				std::cout << "=== NO INDEX FOUND" << std::endl;
+		}
+		//	CHECK autoindex
+		if (this->location->_autoIndexIsSet == true
+				&& this->location.getAutoIndex() == true)
+		{
+			this->constructAutoIndex();
+			this->status_code = 200;
+			this->constructSuccess();
+			return (SUCCESS);
+		}
+		else
+		{
+			this->client->statusCode = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
+	this->client->statusCode = 404;
+	this->constructError();
 	return (SUCCESS);
 }
 
@@ -135,6 +188,8 @@ void	Response::constructError()
 		} */
 
 	//Constructing body
+	std::string		body;
+
 	if (body.empty())
 	{
 		printf("Redacting default page\n");
