@@ -9,7 +9,7 @@ void            Response::constructSuccess(void)
     this->request_file.open(this->path.c_str());
     if (this->request_file.good() == false)
     {
-        this->client->statusCode = 403;
+        this->client->status_code = 403;
         this->constructError();
         return ;
     }
@@ -21,8 +21,8 @@ void            Response::constructSuccess(void)
 
 	//	STATUS LINE
     this->raw_response.append("HTTP/1.1 ");
-	this->raw_response.append(numberToString(this->client->statusCode));
-	this->raw_response.append(getErrorMessage(this->client->statusCode) + "\r\n");
+	this->raw_response.append(numberToString(this->client->status_code));
+	this->raw_response.append(getErrorMessage(this->client->status_code) + "\r\n");
 	//	HEADERS
     this->raw_response.append("Content-Length: ");
     this->raw_response.append(numberToString(this->file_len) + "\r\n");

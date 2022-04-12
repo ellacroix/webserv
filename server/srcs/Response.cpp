@@ -187,7 +187,7 @@ void	Response::constructAutoIndex()
 
 void	Response::constructError()
 {
- 	//if we don't find _statusCode in a std::map<code, File>, we send the default error
+ 	//if we don't find _status_code in a std::map<code, File>, we send the default error
 	if (body.empty())
 	{
 		printf("Redacting default page\n");
