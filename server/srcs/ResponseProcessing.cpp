@@ -33,7 +33,7 @@ void			Response::constructSuccess(void)
 	this->request_file.open(this->path.c_str());
 	if (this->request_file.good() == false)
 	{
-		this->status_code = 403;
+		this->client->statusCode = 403;
 		this->constructError();
 		return ;
 	}
@@ -42,7 +42,7 @@ void			Response::constructSuccess(void)
 	this->file_len = this->request_file.tellg();
 	this->request_file.seekg (0, this->request_file.beg);
 
-	this->raw_response.append("HTTP/1.1 OK Success\r\n");
+	this->raw_response.append("HTTP/1.1 200 OK\r\n");
 	this->chunked = false;
 	this->raw_response.append("Content-Length: ");
 	this->raw_response.append(std::to_string(this->file_len));
@@ -76,4 +76,103 @@ bool	Response::findIndex(void)
 		it++;
 	}
 	return (false);
+}
+
+int		Response::methodGET(void)
+{
+	std::cout << "=== TESTING FILE = " << this->path << std::endl;
+	if (pathExists(this->path) == false)
+	{
+		std::cout << std::boolalpha;
+		std::cout << "=== PATH DOESN'T EXIST" << std::endl;
+		std::cout << "=== pathExists(this->path) == "
+			<< pathExists(this->path) << std::endl;
+		this->client->statusCode = 404;
+		this->constructError();
+		return (SUCCESS);
+	}
+	//	CHECK PERMISSIONS FOR METHOD
+	//if (this->permissionIsOK(this->request->_method) == false)
+	if (this->request->_method == "GET")
+	{
+		if (canRead(this->path) == false)
+		{
+			this->client->statusCode = 403;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
+	else if (this->request->_method == "POST"
+			|| this->request->_method == "DELETE")
+	{
+		if (canWrite(this->path) == false)
+		{
+			this->client->statusCode = 403;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
+	if (this->path[this->path.length() -1] != '/')	//REQUEST A FILE
+	{
+		std::cout << "=== REQUESTING A FILE" << std::endl;
+		if (isDirectory(this->path) == false)
+		{
+			std::cout << "=== PAGE IS FOUND" << std::endl;
+			this->status_code = 200;
+			//this->client->statusCode = 200;
+			this->constructSuccess();
+			return (SUCCESS);
+		}
+		else 
+		{
+			std::cout << "=== PAGE NOT FOUND" << std::endl;
+			this->client->statusCode = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
+	else											//REQUEST A DIR
+	{
+		std::cout << "=== REQUESTING A DIRECTORY" << std::endl;
+		//	CHECK index
+		if (this->location->_indexIsSet == true)
+		{
+			std::cout << "=== CHECKING INDEXES" << std::endl;
+			// findIndex() WILL REPLACE path BY A NEW PATH AND RETURN TRUE
+			// IF FOUND
+			if (this->findIndex() == true)
+			{
+				std::cout << "=== FOUND INDEX" << std::endl;
+				if (canRead(this->path) == true)
+				{
+					this->status_code = 200;
+					this->constructSuccess();
+					return (SUCCESS);
+				}
+				else
+				{
+					this->client->statusCode = 403;
+					this->constructError();
+					return (SUCCESS);
+				}
+			}
+			else
+				std::cout << "=== NO INDEX FOUND" << std::endl;
+		}
+		//	CHECK autoindex
+		if (this->location->_autoIndexIsSet == true
+				&& this->location->getAutoIndex() == true)
+		{
+			this->constructAutoIndex();
+			this->status_code = 200;
+			this->constructSuccess();
+			return (SUCCESS);
+		}
+		else
+		{
+			this->client->statusCode = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
 }

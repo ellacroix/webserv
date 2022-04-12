@@ -127,7 +127,7 @@ void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
 int		DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
-void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigParser *config);
+void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info);
 
 //	fileUtils.cpp
 bool pathExists(std::string path);

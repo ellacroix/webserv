@@ -49,8 +49,9 @@ public:
 	std::string	getErrorMessage(int code);
 
 	//	FILE - ResponseProcessing.cpp
-	bool			findIndex(void);
+	bool		findIndex(void);
 	void		constructAutoIndex();
+	int			methodGET(void);
 
 	//	FILE - ResponsePorcessing.cpp
 	Location *		findLocation(std::string & URI);

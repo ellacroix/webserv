@@ -46,6 +46,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		{
 			client->statusCode = client->request->parser();
 			createAndConstructResponse(client);
+
 			monitorForWriting(client, thread_info);
 			return ;
 		}

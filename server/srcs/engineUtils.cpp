@@ -171,10 +171,8 @@ int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 	return 0;
 }
 
-void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigParser *config)
+void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info)
 {
-	(void)config;
-	
 	Client	*killer_client = new Client();
 	
 	for (int i = 0; i < THREADS; i++)

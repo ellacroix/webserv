@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 {
 	signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
+	signal(SIGPIPE, SIG_IGN);
 	
 	if (argc != 2)
 		return (-1);
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	cleanShutDown(thread_pool, thread_info, &config);
+	cleanShutDown(thread_pool, thread_info);
 	
 	printf("End of server\n");
 	return (SUCCESS);
