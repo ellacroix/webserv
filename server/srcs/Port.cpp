@@ -35,7 +35,18 @@ Port::~Port(void)
 		}
 		it++;
 	}
-	return ;
+
+	std::map<int, Client*>::iterator	it_c;
+	std::map<int, Client*>::iterator	ite_c;
+
+	it_c = this->_clientsMap.begin();
+	ite_c = this->_clientsMap.end();
+	while (it_c != ite_c)
+	{
+		Client *current_client = it_c->second;
+		delete current_client;
+		it_c++;
+	}
 
 	if (opened == true)
 		close(this->listen_socket);

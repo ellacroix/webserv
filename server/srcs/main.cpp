@@ -13,14 +13,23 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-
 #include "webserv.hpp"
 
 #define MAX_EVENTS 20
 #define BUFFER_SIZE 50000
 
+bool RUNNING = true;
+
+static void shutdownWebserv(int sig_int) {
+  (void)sig_int;
+  RUNNING = false;
+}
+
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, shutdownWebserv);
+    signal(SIGQUIT, shutdownWebserv);
+	
 	if (argc != 2)
 		return (-1);
 	ConfigParser	config;
@@ -41,7 +50,7 @@ int main(int argc, char *argv[])
 	//START LISTENING ON PORTS
 	if (startAllPorts(config, event, epoll_fd) != SUCCESS)
 		return (FAILURE);
-	while (1)
+	while (RUNNING)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
@@ -89,6 +98,9 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
+	cleanShutDown(thread_pool, thread_info, &config);
 	
+	printf("End of server\n");
 	return (SUCCESS);
 }

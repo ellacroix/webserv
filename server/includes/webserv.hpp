@@ -18,6 +18,7 @@
 #include <sys/epoll.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 //	CPP
 #include <vector>
@@ -43,7 +44,7 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
-# define THREADS 2
+# define THREADS 3
 # define TIMEOUT 50
 # define K 1000
 # define M 1000000
@@ -125,7 +126,8 @@ void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
-int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
+int		DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
+void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigParser *config);
 
 //	fileUtils.cpp
 bool pathExists(std::string path);

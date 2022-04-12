@@ -170,3 +170,33 @@ int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 	}
 	return 0;
 }
+
+void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigParser *config)
+{
+	Client	*killer_client = new Client();
+	
+	for (int i = 0; i < THREADS; i++)
+	{
+		pthread_mutex_lock(&thread_info->queue_mutex);
+		thread_info->queue->push_back(killer_client);
+		pthread_cond_signal(&thread_info->condition_var);
+		pthread_mutex_unlock(&thread_info->queue_mutex);
+	}
+
+	for (int i = 0; i < THREADS; i++)
+		pthread_join(thread_pool[i], NULL);
+
+ 	pthread_cond_destroy(&thread_info->condition_var);
+	pthread_mutex_destroy(&thread_info->epoll_fd_mutex);
+	pthread_mutex_destroy(&thread_info->queue_mutex);
+	delete killer_client;
+
+ 	for (t_portListIt it_p = config->getPortsList().begin(), next_it_p = it_p ;
+		it_p != config->getPortsList().end() ;
+		it_p++)
+	{
+		Port *current_port = *it_p;
+		next_it_p++;
+		delete current_port;
+	}
+}

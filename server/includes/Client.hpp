@@ -25,15 +25,15 @@ class Client{
 		pthread_mutex_t		client_mutex;
 		struct timeval		last_activity;
 		int					statusCode;
-		int					bytesSent;
 
 		bool				read_more;
 		bool				response_ready;
+		bool				suicide;
 
 		Request				*request;
 		Response			*response;
 
-		Client() {};
+		Client();
 		Client(int fd, Port *port);
 		~Client();
 

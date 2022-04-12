@@ -12,7 +12,16 @@ Client::Client(int fd, Port *port) :
 
 	response_ready = false;
 	read_more = false;
-	bytesSent = 0;
+	suicide = false;
+}
+
+Client::Client()
+{
+	stream_socket = -1;
+	request = NULL;
+	response = NULL;
+	pthread_mutex_init(&client_mutex, NULL);
+	suicide = true;
 }
 
 Client::~Client() {
@@ -21,7 +30,8 @@ Client::~Client() {
 		delete request;
 	pthread_mutex_destroy(&client_mutex);
 	printf("Closing socket\n");
-	close(stream_socket);
+	if (stream_socket != -1)
+		close(stream_socket);
 }
 
 int	Client::CreateRequest()

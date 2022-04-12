@@ -116,7 +116,12 @@ void	*thread_loop(void* arg)
 
 		//Determine which routine to do on the client
 		pthread_mutex_lock(&currentClient->client_mutex);
-		if (currentClient->response_ready == true)
+		if (currentClient->suicide == true)
+		{
+			pthread_mutex_unlock(&currentClient->client_mutex);
+			return (0);
+		}
+		else if (currentClient->response_ready == true)
 			thread_send_routine(currentClient, thread_info);
 		else
 			thread_recv_routine(currentClient, thread_info);
@@ -214,3 +219,9 @@ void	monitorForWriting(Client *client, t_thread_info *thread_info)
 	client->response_ready = true;
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
+
+/* void	cleanupRoutine(void* arg)
+{
+	t_thread_info *thread_info = (t_thread_info*)arg;
+
+} */

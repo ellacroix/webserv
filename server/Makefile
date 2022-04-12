@@ -62,8 +62,11 @@ run			:	${NAME}
 
 sanitize	:	${OBJS}
 			${CXX} ${SANITIZE_FLAGS} ${OBJS} -o ${NAME}
+			./webserv confs/nginx.conf
 
 valgrind	:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+
+leaks
 
 .PHONY		:	all re clean fclean
