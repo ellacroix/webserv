@@ -15,8 +15,10 @@ SRCS			=	Client.cpp \
 					RequestHeaderArgs.cpp \
 					Response.cpp \
 					ResponseProcessing.cpp \
+					ResponseConstruction.cpp \
 					engineUtils.cpp \
-					fileUtils.cpp
+					fileUtils.cpp \
+					extensions.cpp
 
 HEADERS			=	includes/Client.hpp \
 					includes/Port.hpp \
@@ -34,8 +36,8 @@ OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
 CXX				=	c++
 
-#CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98
-CXXFLAGS		= -pthread -Wall -Wextra -Werror
+CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98
+#CXXFLAGS		= -pthread -Wall -Wextra -Werror
 
 SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
 

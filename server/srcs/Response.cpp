@@ -2,14 +2,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-std::string numberToString(size_t nb)
-{
-	std::ostringstream oss;
-
-	oss << nb;
-	return oss.str();
-}
-
 Response::Response(Client *parent_client)
 {
 	client = parent_client;
@@ -196,9 +188,6 @@ void	Response::constructAutoIndex()
 void	Response::constructError()
 {
  	//if we don't find _statusCode in a std::map<code, File>, we send the default error
-
-	std::string		body;
-
 	if (body.empty())
 	{
 		printf("Redacting default page\n");

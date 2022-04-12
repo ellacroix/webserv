@@ -116,6 +116,9 @@ bool			isSupportedHttpMethod(std::string s);
 bool			isValidLimitExcept(std::vector<std::string> v);
 bool			isValidReqUri(std::string const & s);
 bool			areValidDomainNames(std::vector<std::string> & v);
+std::string		numberToString(size_t n);
+std::string		findUriExtension(std::string uri);
+
 
 //	engineUtils.cpp
 int		startAllPorts(ConfigParser & config, struct epoll_event,
@@ -136,6 +139,5 @@ bool isFile(std::string path);
 bool canRead(std::string path);
 bool canWrite(std::string path);
 bool canExecute(std::string path);
-
 
 #endif

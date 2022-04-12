@@ -14,6 +14,7 @@ class VirtualServer ;
 class Response {
 
 private:
+	static const std::pair<std::string, std::string>document_type[104];
 
 protected:
 
@@ -32,6 +33,7 @@ public:
 	std::ifstream	request_file;
 	size_t			file_len;
 	bool			chunked;
+	bool			is_file;
 
 	//	HEADERS
 	std::string		location_header;
@@ -45,16 +47,17 @@ public:
 	//	RESPONSE PROCESSING
 	int			ConstructResponse();
 	void		constructError();
-	void		constructSuccess(void);
 	std::string	getErrorMessage(int code);
 
 	//	FILE - ResponseProcessing.cpp
-	bool		findIndex(void);
-	void		constructAutoIndex();
-	int			methodGET(void);
-
-	//	FILE - ResponsePorcessing.cpp
+	bool			findIndex(void);
+	std::string		findContentType(void);
+	void			constructAutoIndex();
+	int				methodGET(void);
 	Location *		findLocation(std::string & URI);
+
+	//	FILE - ResponseConstruction.cpp
+	void		constructSuccess(void);
 
 };
 

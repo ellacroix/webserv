@@ -26,34 +26,6 @@ Location *		Response::findLocation(std::string & uri)
 	return (bestMatchLoc);
 }
 
-void			Response::constructSuccess(void)
-{
-	std::string	line;
-
-	this->request_file.open(this->path.c_str());
-	if (this->request_file.good() == false)
-	{
-		this->client->statusCode = 403;
-		this->constructError();
-		return ;
-	}
-
-	this->request_file.seekg (0, this->request_file.end);
-	this->file_len = this->request_file.tellg();
-	this->request_file.seekg (0, this->request_file.beg);
-
-	this->raw_response.append("HTTP/1.1 200 OK\r\n");
-	this->chunked = false;
-	this->raw_response.append("Content-Length: ");
-	this->raw_response.append(std::to_string(this->file_len));
-	this->raw_response.append("\r\n");
-	this->raw_response.append("Content-Type: text/html; charset=utf-8\r\n");
-	this->raw_response.append("\r\n");
-	while (std::getline(this->request_file, line))
-		this->raw_response.append(line + '\n');
-	this->request_file.close();
-}
-
 bool	Response::findIndex(void)
 {
 	std::vector<std::string>::iterator	it;
@@ -68,9 +40,9 @@ bool	Response::findIndex(void)
 				&& isFile(this->path + *it) == 1)
 		{
 			this->path.append(*it);
-			std::cout << "=== FOUND INDEX "
-				<< (*it) << " NEW PATH = "
-				<< this->path << std::endl;
+//			std::cout << "=== FOUND INDEX "
+//				<< (*it) << " NEW PATH = "
+//				<< this->path << std::endl;
 			return (true);
 		}
 		it++;
@@ -78,9 +50,32 @@ bool	Response::findIndex(void)
 	return (false);
 }
 
+std::string	Response::findContentType(void)
+{
+	std::string	extension;
+	const std::pair<std::string, std::string>	*pair_arr;
+
+	extension = findUriExtension(this->request->_URI);
+
+	if (extension.empty() == true)
+		return ("application/octet-stream");
+	pair_arr = &Response::document_type[0];
+	while (pair_arr->first != "END")
+	{
+		if (pair_arr->first == extension)
+		{
+			std::cout << "=== FOUND CONTENT-TYPE = " << pair_arr->second << std::endl;
+			return (pair_arr->second);
+		}
+		pair_arr++;
+	}
+	return ("application/octet-stream");
+
+}
+
 int		Response::methodGET(void)
 {
-	std::cout << "=== TESTING FILE = " << this->path << std::endl;
+	std::cout << "=== TESTING FILE/DIR = " << this->path << std::endl;
 	if (pathExists(this->path) == false)
 	{
 		std::cout << std::boolalpha;
@@ -91,41 +86,26 @@ int		Response::methodGET(void)
 		this->constructError();
 		return (SUCCESS);
 	}
-	//	CHECK PERMISSIONS FOR METHOD
-	//if (this->permissionIsOK(this->request->_method) == false)
-	if (this->request->_method == "GET")
+	if (canRead(this->path) == false)
 	{
-		if (canRead(this->path) == false)
-		{
-			this->client->statusCode = 403;
-			this->constructError();
-			return (SUCCESS);
-		}
+		this->client->statusCode = 403;
+		this->constructError();
+		return (SUCCESS);
 	}
-	else if (this->request->_method == "POST"
-			|| this->request->_method == "DELETE")
-	{
-		if (canWrite(this->path) == false)
-		{
-			this->client->statusCode = 403;
-			this->constructError();
-			return (SUCCESS);
-		}
-	}
-	if (this->path[this->path.length() -1] != '/')	//REQUEST A FILE
+	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
 	{
 		std::cout << "=== REQUESTING A FILE" << std::endl;
 		if (isDirectory(this->path) == false)
 		{
-			std::cout << "=== PAGE IS FOUND" << std::endl;
-			this->status_code = 200;
-			//this->client->statusCode = 200;
+			this->is_file = true;
+			std::cout << "=== FILE IS FOUND" << std::endl;
+			this->client->statusCode = 200;
 			this->constructSuccess();
 			return (SUCCESS);
 		}
 		else 
 		{
-			std::cout << "=== PAGE NOT FOUND" << std::endl;
+			std::cout << "=== FILE NOT FOUND" << std::endl;
 			this->client->statusCode = 404;
 			this->constructError();
 			return (SUCCESS);
@@ -145,7 +125,7 @@ int		Response::methodGET(void)
 				std::cout << "=== FOUND INDEX" << std::endl;
 				if (canRead(this->path) == true)
 				{
-					this->status_code = 200;
+					this->client->statusCode = 200;
 					this->constructSuccess();
 					return (SUCCESS);
 				}
@@ -163,9 +143,9 @@ int		Response::methodGET(void)
 		if (this->location->_autoIndexIsSet == true
 				&& this->location->getAutoIndex() == true)
 		{
+			std::cout << "=== CONSTRUCTING AUTOINDEX" << std::endl;
+			this->client->statusCode = 200;
 			this->constructAutoIndex();
-			this->status_code = 200;
-			this->constructSuccess();
 			return (SUCCESS);
 		}
 		else

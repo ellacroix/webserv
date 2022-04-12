@@ -261,3 +261,33 @@ bool	isValidReqUri(std::string const & s)
 			&& s.find("//") == std::string::npos);
 	//Manage absoluteURI ? GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1
 }
+
+std::string	findUriExtension(std::string uri)
+{
+	std::string										extension;
+	std::string										file;
+	size_t											last_pt;
+	size_t											last_slash;
+
+	last_slash = uri.find_last_of("/");
+	file = uri.substr(last_slash + 1, uri.length() - last_slash);
+	std::cout << "=== FILE ONLY = " << file << std::endl;
+
+	last_pt = file.find_last_of(".");
+	if (last_pt == std::string::npos)
+	{
+		std::cout << "=== EXTENSION ONLY = EMPTY" << std::endl;
+		return (extension);
+	}
+	extension = file.substr(last_pt + 1, file.length() - last_pt);
+	std::cout << "=== EXTENSION ONLY = " << extension << std::endl;
+	return (extension);
+}
+
+std::string numberToString(size_t nb)
+{
+    std::ostringstream oss;
+
+    oss << nb;
+    return oss.str();
+}
