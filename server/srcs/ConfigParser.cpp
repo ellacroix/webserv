@@ -22,8 +22,8 @@ ConfigParser::~ConfigParser(void)
 	this->_curVS->reset();
 	this->_curLoc = NULL;
 	this->_curVS = NULL;
-	it = this->_portsList.begin();
-	ite = this->_portsList.end();
+	it = this->_ports_list.begin();
+	ite = this->_ports_list.end();
 	while (it != ite)
 	{
 		if (*it != NULL)
@@ -60,7 +60,7 @@ std::vector<std::vector<std::string> >	ConfigParser::getLines(void) const
 
 std::string								ConfigParser::getCurLine(void) const
 {
-	return (this->_curLine);
+	return (this->_cur_line);
 }
 
 void		ConfigParser::displayLine(std::vector<std::string> v) const
@@ -92,23 +92,23 @@ void	ConfigParser::displayLines(void) const
 	}
 }
 
-void	ConfigParser::displayContextSwitch(int newContext) const
+void	ConfigParser::displayContextSwitch(int new_context) const
 {
 	std::cout << "switching context : "
 		<< ConfigParser::_contexts[this->_context]
 		<< " to " 
-		<< ConfigParser::_contexts[newContext]
+		<< ConfigParser::_contexts[new_context]
 		<< std::endl;
 }
 
-void	ConfigParser::displayPortsList(void) const
+void	ConfigParser::displayports_list(void) const
 {
 	std::list<Port*>::const_iterator	it;
 	std::list<Port*>::const_iterator	ite;
 	int									i;
 
-	it = this->_portsList.begin();
-	ite = this->_portsList.end();
+	it = this->_ports_list.begin();
+	ite = this->_ports_list.end();
 	i = 0;
 	while (it != ite)
 	{
@@ -146,7 +146,7 @@ void	ConfigParser::makeListFromMap(void)
 	ite = this->_portsMap.end();
 	while (it != ite)
 	{
-		this->_portsList.push_back(&(it->second));
+		this->_ports_list.push_back(&(it->second));
 		it++;
 	}
 	this->_portsMap = std::map<int, Port>();
@@ -159,8 +159,8 @@ void	ConfigParser::startAllSockets(void)
 	std::list<Port*>::iterator	ite;
 
 	FD_ZERO(&master_reading_set);
-	it = this->_portsList.begin();
-	ite = this->_portsList.end();
+	it = this->_ports_list.begin();
+	ite = this->_ports_list.end();
 	while (it != ite)
 	{
 		(*it)->start();
@@ -169,9 +169,9 @@ void	ConfigParser::startAllSockets(void)
 	}
 }
 
-std::list<Port*> &	ConfigParser::getPortsList(void)
+std::list<Port*> &	ConfigParser::getports_list(void)
 {
-	return (this->_portsList);
+	return (this->_ports_list);
 }
 
 bool				ConfigParser::validate(void) const
@@ -179,10 +179,10 @@ bool				ConfigParser::validate(void) const
 	std::list<Port*>::const_iterator	it;
 	std::list<Port*>::const_iterator	ite;
 
-	if (this->_portsList.empty() == true)
+	if (this->_ports_list.empty() == true)
 		return (false);
-	it = this->_portsList.begin();
-	ite = this->_portsList.end();
+	it = this->_ports_list.begin();
+	ite = this->_ports_list.end();
 	while (it != ite)
 	{
 		if ((*it)->validate() == false)
@@ -200,8 +200,8 @@ Port *			ConfigParser::findPortInList(int port) const
 	std::list<Port*>::const_iterator	cit;
 	std::list<Port*>::const_iterator	cite;
 
-	cit = this->_portsList.begin();
-	cite = this->_portsList.end();
+	cit = this->_ports_list.begin();
+	cite = this->_ports_list.end();
 	while (cit != cite)
 	{
 		if ((*cit)->port_number == port)
@@ -220,8 +220,8 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 {
 	if (this->_defLocPtr->_rootIsSet == true)
 		this->_curLoc->_rootIsSet = true;
-//	if (this->_defLocPtr->_errorPageIsSet == true)
-//		this->_curLoc->_errorPageIsSet = true;
+//	if (this->_defLocPtr->_error_page_is_set == true)
+//		this->_curLoc->_error_page_is_set = true;
 	if (this->_defLocPtr->_autoIndexIsSet == true)
 		this->_curLoc->_autoIndexIsSet = true;
 	if (this->_defLocPtr->_indexIsSet == true)
@@ -230,8 +230,8 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 		this->_curLoc->_returnIsSet = true;
 	if (this->_defLocPtr->_limitExceptIsSet == true)
 		this->_curLoc->_limitExceptIsSet = true;
-//	if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
-//		this->_curLoc->_clientMaxBodySizeIsSet = true;
+//	if (this->_defLocPtr->_client_max_body_size_is_set == true)
+//		this->_curLoc->_client_max_body_size_is_set = true;
 }
 
 const char *	ConfigParser::_directives[N_DIR] =

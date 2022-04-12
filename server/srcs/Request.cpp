@@ -1,23 +1,23 @@
 #include "Request.hpp"
 
 Request::Request(std::string raw, Client *parent_client) :
-	_statusCode(0),
+	_status_code(0),
 	_chunked(false),
-	_parsingStep(REQUEST_LINE),
-	_hasBody(false),
+	_parsing_step(REQUEST_LINE),
+	_has_body(false),
 	_i(0),
-	_nextLineI(0),
-	_doubleCrlfPos(raw.length()),
+	_next_lineI(0),
+	_double_CRLF_pos(raw.length()),
 	_headers(raw),
-	_contentLength(-1),
-	_bodyLength(-1),
+	_content_length(-1),
+	_body_length(-1),
 	_client(parent_client),
 	_virtual_server(NULL)
 {
 	size_t i;
 
 	for (i = 0 ; i < N_SUPPORTED_HEADERS ; i++)
-		this->_headerAlrdySet[i] = false;
+		this->_header_alrdy_set[i] = false;
 	return ;
 }
 
@@ -26,24 +26,24 @@ unsigned int	Request::parser(void)
 {
 	printf("parser()\t- working on:\n\"%s\"\n", this->_headers.c_str());
 
-	std::cout << "parser()\t- _doubleCrlfPos = " << this->_doubleCrlfPos << std::endl;
-	while (this->_i < this->_doubleCrlfPos)
+	std::cout << "parser()\t- _double_CRLF_pos = " << this->_double_CRLF_pos << std::endl;
+	while (this->_i < this->_double_CRLF_pos)
 	{
-		if (this->_parsingStep == REQUEST_LINE)
-			this->_statusCode = this->parseReqLine();
-		else if (this->_parsingStep == HEADERS)
-			this->_statusCode = this->parseHeaders();
-		if (this->_statusCode >= 400)
+		if (this->_parsing_step == REQUEST_LINE)
+			this->_status_code = this->parseReqLine();
+		else if (this->_parsing_step == HEADERS)
+			this->_status_code = this->parseHeaders();
+		if (this->_status_code >= 400)
 		{
-			std::cout << "parser()\t- RETURNING " << this->_statusCode << std::endl;
-			return (this->_statusCode);
+			std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
+			return (this->_status_code);
 		}
 	}
-	this->_statusCode = this->parseBody();
-	if (this->_statusCode >= 400)
+	this->_status_code = this->parseBody();
+	if (this->_status_code >= 400)
 	{
-		std::cout << "parser()\t- RETURNING " << this->_statusCode << std::endl;
-		return (this->_statusCode);
+		std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
+		return (this->_status_code);
 	}
 	std::cout << "parser()\t- EXITED LOOP" << std::endl;
 	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
@@ -58,12 +58,12 @@ unsigned int	Request::parseHeaders(void)
 	size_t			lastPrintValChar;
 	std::string		key;
 	std::string		value;
-	int				headerIndex;
+	int				header_index;
 
-	this->_nextLineI = this->_headers.find("\r\n", _i);
-	if (this->_nextLineI == std::string::npos)
+	this->_next_lineI = this->_headers.find("\r\n", _i);
+	if (this->_next_lineI == std::string::npos)
 		return (400);
-	headerLine = this->_headers.substr(_i, _nextLineI - _i);
+	headerLine = this->_headers.substr(_i, _next_lineI - _i);
 	std::cout << "parseHeaders()\t- line\t= \"" << headerLine << "\"" << std::endl;
 	// FIND ':'
 	colonPos = headerLine.find(":");
@@ -84,23 +84,23 @@ unsigned int	Request::parseHeaders(void)
 	std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl
 		<< "\t\t- value\t= \"" << value << "\"" << std::endl;
 	// CHECK IF HEADER IS SUPPORTED
-	headerIndex = this->isSupportedHeader(key);
-	if (headerIndex != NOT_SUPPORTED_HEADER
-			&& headerIndex >= HOST
-			&& this->_headerAlrdySet[headerIndex] == true)
+	header_index = this->isSupportedHeader(key);
+	if (header_index != NOT_SUPPORTED_HEADER
+			&& header_index >= HOST
+			&& this->_header_alrdy_set[header_index] == true)
 		return (400);
-	if (headerIndex != NOT_SUPPORTED_HEADER)
+	if (header_index != NOT_SUPPORTED_HEADER)
 	{
 		//	CHECK VALUE
-		if (this->valueIsValid(headerIndex, value) == false)
+		if (this->valueIsValid(header_index, value) == false)
 			return (400);
-		this->setHeaderValue(headerIndex, value);
-		this->_headerAlrdySet[headerIndex] = true;
+		this->setHeaderValue(header_index, value);
+		this->_header_alrdy_set[header_index] = true;
 	}
 
 	// UPDATE CURSORS
-	this->_nextLineI += 2;
-	this->_i = this->_nextLineI;
+	this->_next_lineI += 2;
+	this->_i = this->_next_lineI;
 	return (SUCCESS);
 }
 
@@ -110,13 +110,13 @@ unsigned int	Request::parseReqLine(void)
 	char		*tok;
 	char		*c_str;
 
-	this->_nextLineI = this->_headers.find("\r\n");
-	if (this->_nextLineI == std::string::npos)
+	this->_next_lineI = this->_headers.find("\r\n");
+	if (this->_next_lineI == std::string::npos)
 	{
 		//		std::cout << "parseReqLine()\t- NO \"\\r\\n\"" << std::endl;
 		return (400);
 	}
-	reqLine = this->_headers.substr(_i, _nextLineI);
+	reqLine = this->_headers.substr(_i, _next_lineI);
 	std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
 
 	c_str = const_cast<char*>(reqLine.c_str());
@@ -145,9 +145,9 @@ unsigned int	Request::parseReqLine(void)
 	if (tok == NULL || std::string(tok) != "HTTP/1.1")
 		return (505);
 
-	this->_nextLineI += 2;
-	this->_i = this->_nextLineI;
-	this->_parsingStep = HEADERS;
+	this->_next_lineI += 2;
+	this->_i = this->_next_lineI;
+	this->_parsing_step = HEADERS;
 	std::cout << "\t\t- IS VALID" << std::endl;
 	return (SUCCESS);
 }
@@ -155,11 +155,11 @@ unsigned int	Request::parseReqLine(void)
 unsigned int	Request::parseBody(void)
 {
 /* 	//De-activated until config manages clientMaxBodySize in VS
-	if (_body.size() > _virtual_server->get_clientMaxBodySize())
+	if (_body.size() > _virtual_server->getClientMaxBodySize())
 		return (413); */
 	
 	if (_method == "POST")
-		if (_hasBody == false)
+		if (_has_body == false)
 			return (411);
 
 	if (_chunked == true)
@@ -178,12 +178,12 @@ int				Request::isSupportedHeader(std::string & key)
 		if (std::isupper(key[i]))
 			key[i] = std::tolower(key[i]);
 	for (i = 0 ; i < N_SUPPORTED_HEADERS ; i++)
-		if (key == Request::_supportedHeaders[i])
+		if (key == Request::_supported_headers[i])
 			return (i);
 	return (NOT_SUPPORTED_HEADER);
 }
 
-const char *	Request::_supportedHeaders[N_SUPPORTED_HEADERS] =
+const char *	Request::_supported_headers[N_SUPPORTED_HEADERS] =
 {
 	"transfer-encoding", "host", "content-length", "content-type"
 };
@@ -218,12 +218,12 @@ unsigned int	Request::decodeChunk(void)
 
 VirtualServer *	Request::findVirtualServer(std::string & s)
 {
-	t_VSListCIt							it;
-	t_VSListCIt							ite;
+	t_VS_listCIt							it;
+	t_VS_listCIt							ite;
 	std::vector<std::string>::iterator	serverNameEnd;
 
-	it = this->_client->parent_port->_VSList.begin();
-	ite = this->_client->parent_port->_VSList.end();
+	it = this->_client->parent_port->_VS_list.begin();
+	ite = this->_client->parent_port->_VS_list.end();
 	while (it != ite)
 	{
 		serverNameEnd = (*it)->getServerName().end();
@@ -232,5 +232,5 @@ VirtualServer *	Request::findVirtualServer(std::string & s)
 			return (*it);
 		it++;
 	}
-	return (this->_client->parent_port->_VSList.front());
+	return (this->_client->parent_port->_VS_list.front());
 }

@@ -60,8 +60,8 @@ class	Client ;
 typedef	std::map<int, Client*>::iterator				t_clientMapIt;
 
 class	VirtualServer ;
-typedef std::list<VirtualServer*>::iterator				t_VSListIt;
-typedef std::list<VirtualServer*>::const_iterator		t_VSListCIt;
+typedef std::list<VirtualServer*>::iterator				t_VS_listIt;
+typedef std::list<VirtualServer*>::const_iterator		t_VS_listCIt;
 
 class	Location;
 typedef	std::map<std::string, Location*>::iterator		t_locMapIt;
@@ -78,20 +78,16 @@ typedef struct	s_thread_info
 	struct epoll_event	event;
 
 	int		start(int *epoll_fd, pthread_t *thread_pool);
-
-	//std::map<filename, mutex> fileArborescence;
-
-
 }				t_thread_info;
 
 
 //	ThreadsPoolRoutines.cpp
-void	*thread_loop(void* arg);
-void	thread_recv_routine(Client *client, t_thread_info *thread_info);
-void	thread_send_routine(Client *client, t_thread_info *thread_info);
+void	*threadLoop(void* arg);
+void	threadRecvRoutine(Client *client, t_thread_info *thread_info);
+void	threadSendRoutine(Client *client, t_thread_info *thread_info);
 void	isRequestComplete(Client *client);
-bool	IsChunkComplete(Client *client);
-bool	IsBodyComplete(Client *client, size_t length);
+bool	isChunkComplete(Client *client);
+bool	isBodyComplete(Client *client, size_t length);
 void	createAndConstructResponse(Client *client);
 void	monitorForReading(Client *client, t_thread_info *thread_info);
 void	monitorForWriting(Client *client, t_thread_info *thread_info);
@@ -126,7 +122,7 @@ void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		t_clientMapIt it_c);
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
-int		DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info);
+int		disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info);
 void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info);
 
 //	fileUtils.cpp

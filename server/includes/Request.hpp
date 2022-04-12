@@ -6,7 +6,7 @@
 # include "Client.hpp"
 # include "VirtualServer.hpp"
 
-enum    e_parsingSteps
+enum    e_parsing_steps
 {
 	REQ_ERROR = -1,
 	REQUEST_LINE,
@@ -18,7 +18,7 @@ enum    e_parsingSteps
 # define N_SUPPORTED_HEADERS 4
 
 
-enum	e_supportedHeaders
+enum	e_supported_headers
 {
 	NOT_SUPPORTED_HEADER = -1,
 	TRANSFER_ENCODING,
@@ -33,34 +33,34 @@ class VirtualServer ;
 
 class   Request {
 	private:
-		static const char *	_supportedHeaders[N_SUPPORTED_HEADERS];
+		static const char *	_supported_headers[N_SUPPORTED_HEADERS];
 
 	public:
 		//  HEADERS PARSING
-		unsigned int		_statusCode;
+		unsigned int		_status_code;
 		bool				_chunked;
-		int					_parsingStep;
-		std::string			_curLine;
-		bool				_hasBody;
+		int					_parsing_step;
+		std::string			_cur_line;
+		bool				_has_body;
 		//	PARSING CURSORS
 		size_t				_i;
-		size_t				_nextLineI;
-		size_t				_doubleCrlfPos;
+		size_t				_next_lineI;
+		size_t				_double_CRLF_pos;
 
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
-//		std::string			_queryString;
+//		std::string			_query_string;
 
 		//  HEADERS
 		std::string			_headers;
-		ssize_t				_contentLength;
+		ssize_t				_content_length;
 		std::string			_host;
-		std::string			_transferEncoding;
-		bool				_headerAlrdySet[N_SUPPORTED_HEADERS];
+		std::string			_transfer_encoding;
+		bool				_header_alrdy_set[N_SUPPORTED_HEADERS];
 		//  BODY
 		std::string			_body;
-		ssize_t				_bodyLength;
+		ssize_t				_body_length;
 
 		//	CLASSES REQ DEPENDS ON
 		Client				*_client;
@@ -78,9 +78,9 @@ class   Request {
 		unsigned int	parseBody(void);
 		int				isSupportedHeader(std::string & key);
 		//		RequestHeaderArgs.cpp
-		void			setHeaderValue(const unsigned int headerIndex,
+		void			setHeaderValue(const unsigned int header_index,
 						std::string const & value);
-		bool			valueIsValid(const unsigned int headerIndex,
+		bool			valueIsValid(const unsigned int header_index,
 						std::string const & value);
 
 		unsigned int	decodeChunk(void);

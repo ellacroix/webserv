@@ -7,14 +7,14 @@
 ALRDY_SET_ERROR	ConfigParser.hpp	/^	ALRDY_SET_ERROR,$/;"	e	enum:arguments
 ARG_ERROR	ConfigParser.hpp	/^	ARG_ERROR,$/;"	e	enum:arguments
 AUTOINDEX	ConfigParser.hpp	/^	AUTOINDEX,$/;"	e	enum:directives
-BODY	Request.hpp	/^	BODY,$/;"	e	enum:e_parsingSteps
+BODY	Request.hpp	/^	BODY,$/;"	e	enum:e_parsing_steps
 BODY_SIZE	ConfigParser.hpp	/^	BODY_SIZE,$/;"	e	enum:arguments
 CLIENT_HPP	Client.hpp	2;"	d
 CLIENT_MAX_BODY_SIZE	ConfigParser.hpp	/^	CLIENT_MAX_BODY_SIZE,$/;"	e	enum:directives
 CLOSING_BRACKET	ConfigParser.hpp	/^	CLOSING_BRACKET,$/;"	e	enum:directives
-COMPLETE	Request.hpp	/^	COMPLETE$/;"	e	enum:e_parsingSteps
+COMPLETE	Request.hpp	/^	COMPLETE$/;"	e	enum:e_parsing_steps
 CONFIG_PARSER_HPP	ConfigParser.hpp	2;"	d
-CONTENT_LENGTH	Request.hpp	/^	CONTENT_LENGTH$/;"	e	enum:e_supportedHeaders
+CONTENT_LENGTH	Request.hpp	/^	CONTENT_LENGTH$/;"	e	enum:e_supported_headers
 Client	Client.hpp	/^		Client() {};$/;"	f	class:Client
 Client	Client.hpp	/^class Client{$/;"	c
 ConfigParser	ConfigParser.hpp	/^class	ConfigParser {$/;"	c
@@ -24,8 +24,8 @@ ERROR_PAGE	ConfigParser.hpp	/^	ERROR_PAGE,$/;"	e	enum:directives
 FAILURE	webserv.hpp	44;"	d
 FILE_EXTENSION	ConfigParser.hpp	/^	FILE_EXTENSION$/;"	e	enum:arguments
 FILE_NAME	ConfigParser.hpp	/^	FILE_NAME,$/;"	e	enum:arguments
-HEADERS	Request.hpp	/^	HEADERS,$/;"	e	enum:e_parsingSteps
-HOST	Request.hpp	/^	HOST,	$/;"	e	enum:e_supportedHeaders
+HEADERS	Request.hpp	/^	HEADERS,$/;"	e	enum:e_parsing_steps
+HOST	Request.hpp	/^	HOST,	$/;"	e	enum:e_supported_headers
 HTTP_CODE	ConfigParser.hpp	/^	HTTP_CODE,$/;"	e	enum:arguments
 INDEX	ConfigParser.hpp	/^	INDEX,$/;"	e	enum:directives
 IP	ConfigParser.hpp	/^	IP,$/;"	e	enum:arguments
@@ -39,7 +39,7 @@ LOC_BLCK_ERROR	ConfigParser.hpp	/^	LOC_BLCK_ERROR,$/;"	e	enum:arguments
 Location	Location.hpp	/^class	Location$/;"	c
 M	webserv.hpp	49;"	d
 MAIN_CONTEXT	ConfigParser.hpp	/^	MAIN_CONTEXT = 0,$/;"	e	enum:contexts
-NOT_SUPPORTED_HEADER	Request.hpp	/^	NOT_SUPPORTED_HEADER = -1,$/;"	e	enum:e_supportedHeaders
+NOT_SUPPORTED_HEADER	Request.hpp	/^	NOT_SUPPORTED_HEADER = -1,$/;"	e	enum:e_supported_headers
 N_CONTEXTS	ConfigParser.hpp	10;"	d
 N_DIR	ConfigParser.hpp	9;"	d
 N_SUPPORTED_HEADERS	Request.hpp	18;"	d
@@ -51,8 +51,8 @@ PORT_HPP	Port.hpp	2;"	d
 Port	Port.hpp	/^class	Port {$/;"	c
 RECV_BUFFER_SIZE	webserv.hpp	45;"	d
 REQUEST_HPP	Request.hpp	2;"	d
-REQUEST_LINE	Request.hpp	/^	REQUEST_LINE,$/;"	e	enum:e_parsingSteps
-REQ_ERROR	Request.hpp	/^	REQ_ERROR = -1,$/;"	e	enum:e_parsingSteps
+REQUEST_LINE	Request.hpp	/^	REQUEST_LINE,$/;"	e	enum:e_parsing_steps
+REQ_ERROR	Request.hpp	/^	REQ_ERROR = -1,$/;"	e	enum:e_parsing_steps
 RESPONSE_HPP	Response.hpp	2;"	d
 RETURN	ConfigParser.hpp	/^	RETURN,	\/\/ PASS return DIRECTIVE AS LOCATION CONTEXT ONLY ?$/;"	e	enum:directives
 ROOT	ConfigParser.hpp	/^	ROOT,$/;"	e	enum:directives
@@ -69,38 +69,38 @@ SERV_BLCK_ERROR	ConfigParser.hpp	/^	SERV_BLCK_ERROR = -4,$/;"	e	enum:arguments
 SUCCESS	webserv.hpp	43;"	d
 THREADS	webserv.hpp	46;"	d
 TIMEOUT	webserv.hpp	47;"	d
-TRANSFER_ENCODING	Request.hpp	/^	TRANSFER_ENCODING,$/;"	e	enum:e_supportedHeaders
+TRANSFER_ENCODING	Request.hpp	/^	TRANSFER_ENCODING,$/;"	e	enum:e_supported_headers
 URI	ConfigParser.hpp	/^	URI,$/;"	e	enum:arguments
 VIRTUAL_SERVER_HPP	VirtualServer.hpp	2;"	d
 VirtualServer	VirtualServer.hpp	/^class	VirtualServer {$/;"	c
 WEBSERV_HPP	webserv.hpp	2;"	d
 _URI	Request.hpp	/^		std::string			_URI;$/;"	m	class:Request
-_VSList	Port.hpp	/^		std::list<VirtualServer*>		_VSList;$/;"	m	class:Port
+_VS_list	Port.hpp	/^		std::list<VirtualServer*>		_VS_list;$/;"	m	class:Port
 _autoIndex	Location.hpp	/^		bool								_autoIndex;$/;"	m	class:Location
 _autoIndexIsSet	Location.hpp	/^		bool								_autoIndexIsSet;$/;"	m	class:Location
 _body	Request.hpp	/^		std::string			_body;$/;"	m	class:Request
-_bodyLength	Request.hpp	/^		ssize_t				_bodyLength;$/;"	m	class:Request
+_body_length	Request.hpp	/^		ssize_t				_body_length;$/;"	m	class:Request
 _chunked	Request.hpp	/^		bool				_chunked;$/;"	m	class:Request
 _client	Request.hpp	/^		Client				*_client;$/;"	m	class:Request
-_clientMaxBodySize	VirtualServer.hpp	/^		ssize_t								_clientMaxBodySize;$/;"	m	class:VirtualServer
-_clientMaxBodySizeIsSet	VirtualServer.hpp	/^		bool		_clientMaxBodySizeIsSet;$/;"	m	class:VirtualServer
-_clientsMap	Port.hpp	/^		std::map<int, Client*>			_clientsMap;$/;"	m	class:Port
-_contentLength	Request.hpp	/^		ssize_t				_contentLength;$/;"	m	class:Request
+_client_max_body_size	VirtualServer.hpp	/^		ssize_t								_client_max_body_size;$/;"	m	class:VirtualServer
+_client_max_body_size_is_set	VirtualServer.hpp	/^		bool		_client_max_body_size_is_set;$/;"	m	class:VirtualServer
+_clients_map	Port.hpp	/^		std::map<int, Client*>			_clients_map;$/;"	m	class:Port
+_content_length	Request.hpp	/^		ssize_t				_content_length;$/;"	m	class:Request
 _context	ConfigParser.hpp	/^		int											_context;$/;"	m	class:ConfigParser
 _contexts	ConfigParser.hpp	/^		static const char *							_contexts[N_CONTEXTS];$/;"	m	class:ConfigParser
-_curLine	ConfigParser.hpp	/^		std::string									_curLine;$/;"	m	class:ConfigParser
-_curLine	Request.hpp	/^		std::string			_curLine;$/;"	m	class:Request
+_cur_line	ConfigParser.hpp	/^		std::string									_cur_line;$/;"	m	class:ConfigParser
+_cur_line	Request.hpp	/^		std::string			_cur_line;$/;"	m	class:Request
 _curLoc	ConfigParser.hpp	/^		Location									*_curLoc;$/;"	m	class:ConfigParser
 _curVS	ConfigParser.hpp	/^		VirtualServer								*_curVS;$/;"	m	class:ConfigParser
 _defLoc	ConfigParser.hpp	/^		Location									_defLoc;$/;"	m	class:ConfigParser
 _defLocPtr	ConfigParser.hpp	/^		Location									*_defLocPtr;$/;"	m	class:ConfigParser
 _dir	ConfigParser.hpp	/^		int											_dir;$/;"	m	class:ConfigParser
 _directives	ConfigParser.hpp	/^		static const char *							_directives[N_DIR];$/;"	m	class:ConfigParser
-_doubleCrlfPos	Request.hpp	/^		size_t				_doubleCrlfPos;$/;"	m	class:Request
-_errorPage	VirtualServer.hpp	/^		std::map<int, std::string>          _errorPage;$/;"	m	class:VirtualServer
-_errorPageIsSet	VirtualServer.hpp	/^		bool		_errorPageIsSet;$/;"	m	class:VirtualServer
-_hasBody	Request.hpp	/^		bool				_hasBody;$/;"	m	class:Request
-_headerAlrdySet	Request.hpp	/^		bool				_headerAlrdySet[N_SUPPORTED_HEADERS];$/;"	m	class:Request
+_double_CRLF_pos	Request.hpp	/^		size_t				_double_CRLF_pos;$/;"	m	class:Request
+_error_page	VirtualServer.hpp	/^		std::map<int, std::string>          _error_page;$/;"	m	class:VirtualServer
+_error_page_is_set	VirtualServer.hpp	/^		bool		_error_page_is_set;$/;"	m	class:VirtualServer
+_has_body	Request.hpp	/^		bool				_has_body;$/;"	m	class:Request
+_header_alrdy_set	Request.hpp	/^		bool				_header_alrdy_set[N_SUPPORTED_HEADERS];$/;"	m	class:Request
 _headers	Request.hpp	/^		std::string			_headers;$/;"	m	class:Request
 _host	Request.hpp	/^		std::string			_host;$/;"	m	class:Request
 _i	Request.hpp	/^		size_t				_i;$/;"	m	class:Request
@@ -112,14 +112,14 @@ _limitExceptIsSet	Location.hpp	/^		bool								_limitExceptIsSet;$/;"	m	class:Lo
 _line	ConfigParser.hpp	/^		std::vector<std::string>					_line;$/;"	m	class:ConfigParser
 _lineN	ConfigParser.hpp	/^		int											_lineN;$/;"	m	class:ConfigParser
 _lines	ConfigParser.hpp	/^		std::vector<std:: vector<std::string > >	_lines;$/;"	m	class:ConfigParser
-_listenPort	VirtualServer.hpp	/^		int									_listenPort;$/;"	m	class:VirtualServer
-_listenPortIsSet	VirtualServer.hpp	/^		bool		_listenPortIsSet;$/;"	m	class:VirtualServer
-_locationIsSet	VirtualServer.hpp	/^		bool		_locationIsSet;$/;"	m	class:VirtualServer
-_locationMap	VirtualServer.hpp	/^		std::map<std::string, Location*>	_locationMap;$/;"	m	class:VirtualServer
+_listen_port	VirtualServer.hpp	/^		int									_listen_port;$/;"	m	class:VirtualServer
+_listen_port_is_set	VirtualServer.hpp	/^		bool		_listen_port_is_set;$/;"	m	class:VirtualServer
+_location_is_set	VirtualServer.hpp	/^		bool		_location_is_set;$/;"	m	class:VirtualServer
+_location_map	VirtualServer.hpp	/^		std::map<std::string, Location*>	_location_map;$/;"	m	class:VirtualServer
 _method	Request.hpp	/^		std::string			_method;$/;"	m	class:Request
-_nextLineI	Request.hpp	/^		size_t				_nextLineI;$/;"	m	class:Request
-_parsingStep	Request.hpp	/^		int					_parsingStep;$/;"	m	class:Request
-_portsList	ConfigParser.hpp	/^		std::list<Port*>							_portsList;$/;"	m	class:ConfigParser
+_next_lineI	Request.hpp	/^		size_t				_next_lineI;$/;"	m	class:Request
+_parsing_step	Request.hpp	/^		int					_parsing_step;$/;"	m	class:Request
+_ports_list	ConfigParser.hpp	/^		std::list<Port*>							_ports_list;$/;"	m	class:ConfigParser
 _portsMap	ConfigParser.hpp	/^		std::map<int, Port>							_portsMap;$/;"	m	class:ConfigParser
 _prefix	Location.hpp	/^		std::string							_prefix;$/;"	m	class:Location
 _returnCode	Location.hpp	/^		int									_returnCode;$/;"	m	class:Location
@@ -127,13 +127,13 @@ _returnIsSet	Location.hpp	/^		bool								_returnIsSet;$/;"	m	class:Location
 _returnUri	Location.hpp	/^		std::string							_returnUri;$/;"	m	class:Location
 _root	Location.hpp	/^		std::string							_root;$/;"	m	class:Location
 _rootIsSet	Location.hpp	/^		bool								_rootIsSet;$/;"	m	class:Location
-_serverName	VirtualServer.hpp	/^		std::vector<std::string>			_serverName; \/\/ IF MANY NAMES$/;"	m	class:VirtualServer
-_serverNameIsSet	VirtualServer.hpp	/^		bool		_serverNameIsSet;$/;"	m	class:VirtualServer
-_statusCode	Request.hpp	/^		unsigned int		_statusCode;$/;"	m	class:Request
-_supportedHeaders	Request.hpp	/^		static const char *	_supportedHeaders[N_SUPPORTED_HEADERS];$/;"	m	class:Request
+_server_name	VirtualServer.hpp	/^		std::vector<std::string>			_server_name; \/\/ IF MANY NAMES$/;"	m	class:VirtualServer
+_server_name_is_set	VirtualServer.hpp	/^		bool		_server_name_is_set;$/;"	m	class:VirtualServer
+_status_code	Request.hpp	/^		unsigned int		_status_code;$/;"	m	class:Request
+_supported_headers	Request.hpp	/^		static const char *	_supported_headers[N_SUPPORTED_HEADERS];$/;"	m	class:Request
 _tmpLoc	ConfigParser.hpp	/^		Location									_tmpLoc;$/;"	m	class:ConfigParser
 _tmpVS	ConfigParser.hpp	/^		VirtualServer								_tmpVS;$/;"	m	class:ConfigParser
-_transferEncoding	Request.hpp	/^		std::string			_transferEncoding;$/;"	m	class:Request
+_transfer_encoding	Request.hpp	/^		std::string			_transfer_encoding;$/;"	m	class:Request
 _virtual_server	Request.hpp	/^		VirtualServer       *_virtual_server;$/;"	m	class:Request
 addr_len	Port.hpp	/^		int 				addr_len;$/;"	m	class:Port
 arguments	ConfigParser.hpp	/^enum	arguments$/;"	g
@@ -144,8 +144,8 @@ condition_var	webserv.hpp	/^	pthread_cond_t		condition_var;$/;"	m	struct:s_threa
 connected	Client.hpp	/^		bool				connected;$/;"	m	class:Client
 contexts	ConfigParser.hpp	/^enum	contexts$/;"	g
 directives	ConfigParser.hpp	/^enum	directives$/;"	g
-e_parsingSteps	Request.hpp	/^enum    e_parsingSteps$/;"	g
-e_supportedHeaders	Request.hpp	/^enum	e_supportedHeaders$/;"	g
+e_parsing_steps	Request.hpp	/^enum    e_parsing_steps$/;"	g
+e_supported_headers	Request.hpp	/^enum	e_supported_headers$/;"	g
 epoll_fd	webserv.hpp	/^	int					*epoll_fd;$/;"	m	struct:s_thread_info
 epoll_fd_mutex	webserv.hpp	/^	pthread_mutex_t		epoll_fd_mutex;$/;"	m	struct:s_thread_info
 event	webserv.hpp	/^	struct epoll_event	event;$/;"	m	struct:s_thread_info	typeref:struct:s_thread_info::epoll_event
@@ -172,11 +172,11 @@ response_ready	Client.hpp	/^		bool				response_ready;$/;"	m	class:Client
 ret	Port.hpp	/^		int					ret, on;$/;"	m	class:Port
 s_thread_info	webserv.hpp	/^typedef struct	s_thread_info$/;"	s
 server_address	Port.hpp	/^		struct sockaddr_in	server_address;$/;"	m	class:Port	typeref:struct:Port::sockaddr_in
-statusCode	Client.hpp	/^		int					statusCode;$/;"	m	class:Client
+status_code	Client.hpp	/^		int					status_code;$/;"	m	class:Client
 status_code	Response.hpp	/^	int				status_code;$/;"	m	class:Response
 stream_socket	Client.hpp	/^		int					stream_socket;$/;"	m	class:Client
-t_VSListCIt	webserv.hpp	/^typedef std::list<VirtualServer*>::const_iterator	t_VSListCIt;$/;"	t
-t_VSListIt	webserv.hpp	/^typedef std::list<VirtualServer*>::iterator			t_VSListIt;$/;"	t
+t_VS_listCIt	webserv.hpp	/^typedef std::list<VirtualServer*>::const_iterator	t_VS_listCIt;$/;"	t
+t_VS_listIt	webserv.hpp	/^typedef std::list<VirtualServer*>::iterator			t_VS_listIt;$/;"	t
 t_clientMapIt	webserv.hpp	/^typedef	std::map<int, Client*>::iterator			t_clientMapIt;$/;"	t
 t_portListIt	webserv.hpp	/^typedef	std::list<Port*>::iterator					t_portListIt;$/;"	t
 t_thread_info	webserv.hpp	/^}				t_thread_info;$/;"	t	typeref:struct:s_thread_info

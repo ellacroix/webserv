@@ -4,7 +4,6 @@
 
 Port::Port(void) :
 	on(1),
-	kill_port(false),
 	opened(false)
 {
 	return ;
@@ -12,7 +11,6 @@ Port::Port(void) :
 
 Port::Port(int port) :
 	on(1),
-	kill_port(false),
 	opened(false)
 {
 	port_number = port;
@@ -24,8 +22,8 @@ Port::~Port(void)
 	std::list<VirtualServer*>::iterator	it;
 	std::list<VirtualServer*>::iterator	ite;
 
-	it = this->_VSList.begin();
-	ite = this->_VSList.end();
+	it = this->_VS_list.begin();
+	ite = this->_VS_list.end();
 	while (it != ite)
 	{
 		if (*it != NULL)
@@ -39,8 +37,8 @@ Port::~Port(void)
 	std::map<int, Client*>::iterator	it_c;
 	std::map<int, Client*>::iterator	ite_c;
 
-	it_c = this->_clientsMap.begin();
-	ite_c = this->_clientsMap.end();
+	it_c = this->_clients_map.begin();
+	ite_c = this->_clients_map.end();
 	while (it_c != ite_c)
 	{
 		Client *current_client = it_c->second;
@@ -105,7 +103,7 @@ int Port::start(void)
 //	UTILITIES
 void	Port::addVS(VirtualServer * newVS)
 {
-	this->_VSList.push_back(newVS);
+	this->_VS_list.push_back(newVS);
 	this->port_number = newVS->getListenPort();
 }
 
@@ -114,8 +112,8 @@ void	Port::display(void) const
 	std::list<VirtualServer*>::const_iterator	it;
 	std::list<VirtualServer*>::const_iterator	ite;
 
-	it = this->_VSList.begin();
-	ite = this->_VSList.end();
+	it = this->_VS_list.begin();
+	ite = this->_VS_list.end();
 	while (it != ite)
 	{
 		(*it)->display();
@@ -125,7 +123,7 @@ void	Port::display(void) const
 
 bool	Port::validate(void) const
 {
-	if (this->_VSList.empty() == true)
+	if (this->_VS_list.empty() == true)
 	{
 		std::cerr << "webserv - ERROR - a Port has no VirtualServer configured."
 			<< std::endl;

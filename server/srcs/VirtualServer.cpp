@@ -2,13 +2,13 @@
 
 //	CONSTRUCTORS / DESTRUCTOR
 VirtualServer::VirtualServer(void) :
-	_listenPort(-1),
-	_clientMaxBodySize(0),
-	_serverNameIsSet(false),
-	_listenPortIsSet(false),
-	_clientMaxBodySizeIsSet(false),
-	_errorPageIsSet(false),
-	_locationIsSet(false)
+	_listen_port(-1),
+	_client_max_body_size(0),
+	_server_name_is_set(false),
+	_listen_port_is_set(false),
+	_client_max_body_size_is_set(false),
+	_error_page_is_set(false),
+	_location_is_set(false)
 {
 	return ;
 }
@@ -18,8 +18,8 @@ VirtualServer::~VirtualServer(void)
 	std::map<std::string, Location*>::iterator	it;
 	std::map<std::string, Location*>::iterator	ite;
 
-	it = this->_locationMap.begin();
-	ite = this->_locationMap.end();
+	it = this->_location_map.begin();
+	ite = this->_location_map.end();
 	while (it != ite)
 	{
 		if (it->second != NULL)
@@ -33,16 +33,16 @@ VirtualServer::~VirtualServer(void)
 }
 
 VirtualServer::VirtualServer(VirtualServer const & src) :
-	_listenPort(src._listenPort),
-	_serverName(src._serverName),
-	_clientMaxBodySize(src._clientMaxBodySize),
-	_errorPage(src._errorPage),
-	_locationMap(src._locationMap),
-	_serverNameIsSet(src._serverNameIsSet),
-	_listenPortIsSet(src._listenPortIsSet),
-	_clientMaxBodySizeIsSet(src._clientMaxBodySizeIsSet),
-	_errorPageIsSet(src._errorPageIsSet),
-	_locationIsSet(src._locationIsSet)
+	_listen_port(src._listen_port),
+	_server_name(src._server_name),
+	_client_max_body_size(src._client_max_body_size),
+	_error_page(src._error_page),
+	_location_map(src._location_map),
+	_server_name_is_set(src._server_name_is_set),
+	_listen_port_is_set(src._listen_port_is_set),
+	_client_max_body_size_is_set(src._client_max_body_size_is_set),
+	_error_page_is_set(src._error_page_is_set),
+	_location_is_set(src._location_is_set)
 {
 	return ;
 }
@@ -50,12 +50,12 @@ VirtualServer::VirtualServer(VirtualServer const & src) :
 //	SETTERS
 void	VirtualServer::setListenPort(int n)
 {
-	this->_listenPort = n;
+	this->_listen_port = n;
 }
 
 //void	VirtualServer::setServerName(std::string s)
 //{
-//	this->_serverName = s;
+//	this->_server_name = s;
 //}
 
 void	VirtualServer::setServerName(std::vector<std::string> v)
@@ -67,7 +67,7 @@ void	VirtualServer::setServerName(std::vector<std::string> v)
 	size = v.size();
 	while (i < size)
 	{
-		this->_serverName.push_back(v[i]);
+		this->_server_name.push_back(v[i]);
 		i++;
 	}
 }
@@ -76,27 +76,27 @@ void    VirtualServer::setClientMaxBodySize(std::string s)
 {
     char    *endPtr;
 
-    this->_clientMaxBodySize = std::strtoul(s.c_str(), &endPtr, 10);
+    this->_client_max_body_size = std::strtoul(s.c_str(), &endPtr, 10);
     if (*endPtr == 'k')
-        this->_clientMaxBodySize *= K;
+        this->_client_max_body_size *= K;
     if (*endPtr == 'm')
-        this->_clientMaxBodySize *= M;
+        this->_client_max_body_size *= M;
 }
 
 //	GETTERS
 int								VirtualServer::getListenPort(void) const
 {
-	return (this->_listenPort);
+	return (this->_listen_port);
 }
 
 std::map<int, std::string> &	VirtualServer::getErrorPage(void)
 {
-	return (this->_errorPage);
+	return (this->_error_page);
 }
 
 std::vector<std::string> &		VirtualServer::getServerName(void)
 {
-	return (this->_serverName);
+	return (this->_server_name);
 }
 
 /*
@@ -108,29 +108,29 @@ std::vector<std::string> &		VirtualServer::getLimitExcept(void)
 
 std::map<std::string, Location*> &	VirtualServer::getLocationMap(void)
 {
-	return (this->_locationMap);
+	return (this->_location_map);
 }
 
-unsigned int						VirtualServer::get_clientMaxBodySize(void)
+unsigned int						VirtualServer::getClientMaxBodySize(void)
 {
-	return (this->_clientMaxBodySize);
+	return (this->_client_max_body_size);
 }
 
 
 //	UTILITIES
 void	VirtualServer::reset(void)
 {
-	this->_listenPort = -1;
-	this->_serverName = std::vector<std::string>();
-	this->_clientMaxBodySize = 0;
-	this->_errorPage = std::map<int, std::string>();
+	this->_listen_port = -1;
+	this->_server_name = std::vector<std::string>();
+	this->_client_max_body_size = 0;
+	this->_error_page = std::map<int, std::string>();
 
-	this->_locationMap = std::map<std::string, Location*>();
+	this->_location_map = std::map<std::string, Location*>();
 
-	this->_serverNameIsSet = false;
-	this->_listenPortIsSet = false;
-	this->_clientMaxBodySizeIsSet = false;
-	this->_locationIsSet = false;
+	this->_server_name_is_set = false;
+	this->_listen_port_is_set = false;
+	this->_client_max_body_size_is_set = false;
+	this->_location_is_set = false;
 }
 
 void	VirtualServer::display(void) const
@@ -143,35 +143,35 @@ void	VirtualServer::display(void) const
 	std::vector<std::string>::const_iterator			v_ite;
 	size_t												i;
 
-	std::cout << "\t_listenPort\t\t=\t" << this->_listenPort << std::endl;
-//	std::cout << "\t_serverName\t\t=\t\"" << this->_serverName << "\"" << std::endl;
+	std::cout << "\t_listen_port\t\t=\t" << this->_listen_port << std::endl;
+//	std::cout << "\t_server_name\t\t=\t\"" << this->_server_name << "\"" << std::endl;
 
-	if (this->_serverName.empty() == true)
-		std::cout << "\t_serverName[  ]\t\t=\tempty" << std::endl;
+	if (this->_server_name.empty() == true)
+		std::cout << "\t_server_name[  ]\t\t=\tempty" << std::endl;
 	else
 	{
-		v_it = this->_serverName.begin();
-		v_ite = this->_serverName.end();
+		v_it = this->_server_name.begin();
+		v_ite = this->_server_name.end();
 		i = 0;
 		while (v_it != v_ite)
 		{
-			std::cout << "\t_serverName[" << i << "]\t\t=\t\""
-				<< this->_serverName[i] << "\"" << std::endl;
+			std::cout << "\t_server_name[" << i << "]\t\t=\t\""
+				<< this->_server_name[i] << "\"" << std::endl;
 			i++;
 			v_it++;
 		}
 	}
-	std::cout << "\t_clientMaxBodySize\t=\t"
-		<< this->_clientMaxBodySize << std::endl;
-    if (this->_errorPage.empty() == true)
-        std::cout << "\t_errorPage[ ]\t\t=\tempty" << std::endl;
+	std::cout << "\t_client_max_body_size\t=\t"
+		<< this->_client_max_body_size << std::endl;
+    if (this->_error_page.empty() == true)
+        std::cout << "\t_error_page[ ]\t\t=\tempty" << std::endl;
     else
     {
-        map_it = this->_errorPage.begin();
-        map_ite = this->_errorPage.end();
+        map_it = this->_error_page.begin();
+        map_ite = this->_error_page.end();
         while (map_it != map_ite)
         {
-            std::cout << "\t_errorPage[" << (*map_it).first << "]\t\t=\t\""
+            std::cout << "\t_error_page[" << (*map_it).first << "]\t\t=\t\""
                 << (*map_it).second << "\"" << std::endl;
             map_it++;
         }
@@ -179,28 +179,28 @@ void	VirtualServer::display(void) const
 
 
 	std::cout << std::boolalpha;
-	std::cout << "\t_serverNameIsSet\t=\t" << this->_serverNameIsSet << std::endl;
-	std::cout << "\t_listenPortIsSet\t=\t" << this->_listenPortIsSet << std::endl;
-	std::cout << "\t_locationIsSet\t\t=\t" << this->_locationIsSet << std::endl;
+	std::cout << "\t_server_name_is_set\t=\t" << this->_server_name_is_set << std::endl;
+	std::cout << "\t_listen_port_is_set\t=\t" << this->_listen_port_is_set << std::endl;
+	std::cout << "\t_location_is_set\t\t=\t" << this->_location_is_set << std::endl;
 
-	if (this->_locationMap.empty() == true)
-		std::cout << "\t_locationMap\t\t=\tempty" << std::endl;
+	if (this->_location_map.empty() == true)
+		std::cout << "\t_location_map\t\t=\tempty" << std::endl;
 	else
 	{
-		it = this->_locationMap.begin();
-		ite = this->_locationMap.end();
+		it = this->_location_map.begin();
+		ite = this->_location_map.end();
 		while (it != ite)
 		{
-			std::cout << "\t_locationMap[" << it->first << "] :" << std::endl;
+			std::cout << "\t_location_map[" << it->first << "] :" << std::endl;
 			it->second->display();
 			it++;
 		}
 	}
 }
 
-void	VirtualServer::addLocation(Location * newLocation)
+void	VirtualServer::addLocation(Location * new_location)
 {
-	this->_locationMap[newLocation->getPrefix()] = newLocation;
+	this->_location_map[new_location->getPrefix()] = new_location;
 }
 
 VirtualServer *		VirtualServer::clone(void) const
@@ -213,6 +213,6 @@ VirtualServer *		VirtualServer::clone(void) const
 
 bool				VirtualServer::validate(void) const
 {
-	return (this->_listenPortIsSet == true
-			&& this->_locationMap.empty() == false);
+	return (this->_listen_port_is_set == true
+			&& this->_location_map.empty() == false);
 }

@@ -1,7 +1,7 @@
 #include "webserv.hpp"
 #include "Client.hpp"
 
-void	thread_recv_routine(Client *client, t_thread_info *thread_info)
+void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: recv routine \n");
 
@@ -15,7 +15,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 
 	if (client->request_buffer.size() > SERVER_MAX_HEADERS_SIZE)
 	{
-		client->statusCode = 431;
+		client->status_code = 431;
 		createAndConstructResponse(client);
 		monitorForWriting(client, thread_info);
 		return ;
@@ -27,7 +27,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	{
 		printf("Received all headers\n");
 		if (!client->request)
-			client->CreateRequest();
+			client->createRequest();
 
 		//We analyze the headers to see if we are expecting a body, and if it is complete
 		isRequestComplete(client);
@@ -35,7 +35,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		//We check if the body size is not too big
 		if (client->request->_body.size() > SERVER_MAX_BODY_SIZE)
 		{
-			client->statusCode = 413;
+			client->status_code = 413;
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
 			return ;
@@ -44,7 +44,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 		//The request is complete, we can parse it
 		if (client->read_more == false)
 		{
-			client->statusCode = client->request->parser();
+			client->status_code = client->request->parser();
 			createAndConstructResponse(client);
 
 			monitorForWriting(client, thread_info);
@@ -56,7 +56,7 @@ void	thread_recv_routine(Client *client, t_thread_info *thread_info)
 	monitorForReading(client, thread_info);
 }
 
-void	thread_send_routine(Client *client, t_thread_info *thread_info)
+void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 {	
 	printf("ThreadsPool: send routine\n");
 
@@ -81,7 +81,7 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 		client->request_buffer.clear();
 
 		//Signal for main to disconnect the client and not monitor it again
-		if (client->statusCode == 408)
+		if (client->status_code == 408)
 			client->connected = false;
 		else
 			monitorForReading(client, thread_info);
@@ -92,7 +92,7 @@ void	thread_send_routine(Client *client, t_thread_info *thread_info)
 	printf("ThreadsPool: send routine DONE\n");
 }
 
-void	*thread_loop(void* arg)
+void	*threadLoop(void* arg)
 {
 	t_thread_info *thread_info = (t_thread_info*)arg;
 	Client *currentClient;
@@ -123,9 +123,9 @@ void	*thread_loop(void* arg)
 			return (0);
 		}
 		else if (currentClient->response_ready == true)
-			thread_send_routine(currentClient, thread_info);
+			threadSendRoutine(currentClient, thread_info);
 		else
-			thread_recv_routine(currentClient, thread_info);
+			threadRecvRoutine(currentClient, thread_info);
 		pthread_mutex_unlock(&currentClient->client_mutex);
 	}
 }
@@ -139,7 +139,7 @@ void	isRequestComplete(Client *client)
 		TE_line = TE_line.substr(0, TE_line.find("\r\n"));
 		if (TE_line.find("chunked") != std::string::npos)
 		{
-			if (IsChunkComplete(client) == false)
+			if (isChunkComplete(client) == false)
 				client->read_more = true;
 			else
 				client->read_more = false;
@@ -150,14 +150,14 @@ void	isRequestComplete(Client *client)
 		std::string CL_line = client->request->_headers.substr(start);
 		CL_line = CL_line.substr(CL_line.find(":") + 1, CL_line.find("\r\n") + 2);
 		size_t length = strtol(CL_line.c_str(), NULL, 10);
-		if (IsBodyComplete(client, length) == false)
+		if (isBodyComplete(client, length) == false)
 			client->read_more = true;
 		else
 			client->read_more = false;
 		}
 }
 
-bool	IsChunkComplete(Client *client)
+bool	isChunkComplete(Client *client)
 {
 	size_t			bodyStart = client->request_buffer.find("\r\n\r\n") + 4;
 	size_t			bodyEnd = client->request_buffer.find("\r\n0\r\n", bodyStart);
@@ -178,7 +178,7 @@ bool	IsChunkComplete(Client *client)
 		return false;
 }
 
-bool	IsBodyComplete(Client *client, size_t length)
+bool	isBodyComplete(Client *client, size_t length)
 {
 	size_t		bodyStart = client->request_buffer.find("\r\n\r\n") + 4;
 
@@ -193,7 +193,7 @@ bool	IsBodyComplete(Client *client, size_t length)
 
 void	createAndConstructResponse(Client *client)
 {
-	client->CreateResponse();
+	client->createResponse();
 	client->response->ConstructResponse();
 }
 

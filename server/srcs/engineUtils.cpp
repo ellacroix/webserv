@@ -8,8 +8,8 @@ int		startAllPorts(ConfigParser &config, struct epoll_event event,
 {
 	std::list<Port*>::iterator  it;
 	std::list<Port*>::iterator  ite;
-	it = config.getPortsList().begin();
-	ite = config.getPortsList().end();
+	it = config.getports_list().begin();
+	ite = config.getports_list().end();
 	while (it != ite)
 	{
 		(*it)->start();
@@ -36,7 +36,6 @@ int		acceptIncomingConnections(Port *current_port,
 			if (errno != EWOULDBLOCK)
 			{
 				perror("accept() failed");
-				current_port->kill_port = true;
 			}
 			break;
 		}
@@ -58,7 +57,7 @@ int		acceptIncomingConnections(Port *current_port,
 		printf("MainProcess: Accepted new connection on port:%d\n",
 				current_port->port_number);
 		Client *newClient = new Client(connection, current_port);
-		current_port->_clientsMap[connection] = newClient;
+		current_port->_clients_map[connection] = newClient;
 
 		// Monitor this new connection for reading.
 		event.data.fd = connection;
@@ -92,7 +91,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	{
 		//Client disconnected itself
 		current_client->connected = false;
-		current_port->_clientsMap.erase(current_client->stream_socket);
+		current_port->_clients_map.erase(current_client->stream_socket);
 		pthread_mutex_unlock(&current_client->client_mutex);
 		delete current_client;
 	}
@@ -127,17 +126,17 @@ void	sendClientResponse(t_thread_info *thread_info,
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
 
-int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
+int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info)
 {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 
 	printf("MainProcess: Checking for timeouts\n");
-	for (std::list<Port*>::iterator it_p = PortsList.begin(); it_p != PortsList.end(); it_p++)
+	for (std::list<Port*>::iterator it_p = ports_list.begin(); it_p != ports_list.end(); it_p++)
 	{
 		Port *current_port = *it_p;
 
-		for (std::map<int, Client*>::iterator it_c = current_port->_clientsMap.begin(), next_it_c = it_c; it_c != current_port->_clientsMap.end(); it_c = next_it_c)
+		for (std::map<int, Client*>::iterator it_c = current_port->_clients_map.begin(), next_it_c = it_c; it_c != current_port->_clients_map.end(); it_c = next_it_c)
 		{
 			Client *current_client = it_c->second;
 			next_it_c++;
@@ -149,7 +148,7 @@ int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 			if (current_client->connected == false)
 			{
 				printf("CLIENT %d GOT HIS 408, WE DISCONNECT HIM\n", current_client->stream_socket);
-				current_port->_clientsMap.erase(current_client->stream_socket);
+				current_port->_clients_map.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
 				continue;
@@ -158,9 +157,9 @@ int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 			else if (result > TIMEOUT && current_client->response_ready == false)
 			{
 				printf("CLIENT %d EXCEEDED TIMEOUT CONSTRUCTING RESPONSE\n", current_client->stream_socket);
-				current_client->statusCode = 408;
+				current_client->status_code = 408;
 				current_client->response_ready = true;
-				current_client->CreateResponse();
+				current_client->createResponse();
 				current_client->response->ConstructResponse();
 
 				monitorForWriting(current_client, thread_info);

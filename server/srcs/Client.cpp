@@ -34,7 +34,7 @@ Client::~Client() {
 		close(stream_socket);
 }
 
-int	Client::CreateRequest()
+int	Client::createRequest()
 {
 	std::string request_headers = request_buffer.substr(0, request_buffer.find("\r\n\r\n") + 2);
 
@@ -47,7 +47,7 @@ int	Client::CreateRequest()
 	return 0;
 }
 
-int	Client::CreateResponse()
+int	Client::createResponse()
 {
 	Response *resp = new Response(this);
 

@@ -33,7 +33,7 @@ void			Response::constructSuccess(void)
 	this->request_file.open(this->path.c_str());
 	if (this->request_file.good() == false)
 	{
-		this->client->statusCode = 403;
+		this->client->status_code = 403;
 		this->constructError();
 		return ;
 	}
@@ -87,7 +87,7 @@ int		Response::methodGET(void)
 		std::cout << "=== PATH DOESN'T EXIST" << std::endl;
 		std::cout << "=== pathExists(this->path) == "
 			<< pathExists(this->path) << std::endl;
-		this->client->statusCode = 404;
+		this->client->status_code = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
@@ -97,7 +97,7 @@ int		Response::methodGET(void)
 	{
 		if (canRead(this->path) == false)
 		{
-			this->client->statusCode = 403;
+			this->client->status_code = 403;
 			this->constructError();
 			return (SUCCESS);
 		}
@@ -107,7 +107,7 @@ int		Response::methodGET(void)
 	{
 		if (canWrite(this->path) == false)
 		{
-			this->client->statusCode = 403;
+			this->client->status_code = 403;
 			this->constructError();
 			return (SUCCESS);
 		}
@@ -119,14 +119,14 @@ int		Response::methodGET(void)
 		{
 			std::cout << "=== PAGE IS FOUND" << std::endl;
 			this->status_code = 200;
-			//this->client->statusCode = 200;
+			//this->client->status_code = 200;
 			this->constructSuccess();
 			return (SUCCESS);
 		}
 		else 
 		{
 			std::cout << "=== PAGE NOT FOUND" << std::endl;
-			this->client->statusCode = 404;
+			this->client->status_code = 404;
 			this->constructError();
 			return (SUCCESS);
 		}
@@ -151,7 +151,7 @@ int		Response::methodGET(void)
 				}
 				else
 				{
-					this->client->statusCode = 403;
+					this->client->status_code = 403;
 					this->constructError();
 					return (SUCCESS);
 				}
@@ -170,7 +170,7 @@ int		Response::methodGET(void)
 		}
 		else
 		{
-			this->client->statusCode = 404;
+			this->client->status_code = 404;
 			this->constructError();
 			return (SUCCESS);
 		}
