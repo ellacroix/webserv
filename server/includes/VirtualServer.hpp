@@ -10,14 +10,13 @@ class	VirtualServer {
 
 	private:
 		//	VIRTUAL SERVER PARAMS
-		int									_listenPort;
-		std::vector<std::string>			_serverName; // IF MANY NAMES
-//		std::string							_serverName;
-		unsigned int						_clientMaxBodySize;
-		std::map<int, std::string>          _errorPage;
+		int									_listen_port;
+		std::vector<std::string>			_server_name; // IF MANY NAMES
+		unsigned int						_client_max_body_size;
+		std::map<int, std::string>          _error_page;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
-		std::map<std::string, Location*>	_locationMap;
+		std::map<std::string, Location*>	_location_map;
 
 	public:
 
@@ -27,11 +26,11 @@ class	VirtualServer {
 		VirtualServer &		operator=(VirtualServer const & rhs);
 
 		//	ALREADY SET BOOLEANS
-		bool		_serverNameIsSet;
-		bool		_listenPortIsSet;
-		bool		_clientMaxBodySizeIsSet;
-		bool		_errorPageIsSet;
-		bool		_locationIsSet;
+		bool		_server_name_is_set;
+		bool		_listen_port_is_set;
+		bool		_client_max_body_size_is_set;
+		bool		_error_page_is_set;
+		bool		_location_is_set;
 
 		//	SETTERS
 		void		setListenPort(int n);
@@ -43,13 +42,13 @@ class	VirtualServer {
 		std::vector<std::string> &			getServerName(void);
 //		std::vector<std::string> &			getLimitExcept(void);
 		std::map<std::string, Location*> &	getLocationMap(void);
-		unsigned int						get_clientMaxBodySize(void);
+		unsigned int						getClientMaxBodySize(void);
 
 		//	UTILITIES
 		void				reset(void);
 		void				display(void) const ;
 		VirtualServer *		clone(void) const ;
-		void				addLocation(Location * newLocation);
+		void				addLocation(Location * new_location);
 		bool				validate(void) const;
 };
 

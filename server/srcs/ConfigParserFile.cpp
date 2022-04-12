@@ -13,7 +13,7 @@ void				ConfigParser::parse(char *arg)
 		exit(1);
 	}
 	this->_dir = DIR_ERROR;
-	while (std::getline(this->_ifs, this->_curLine))
+	while (std::getline(this->_ifs, this->_cur_line))
 	{
 		this->_lineN++;
 		if (this->hasContent() == true && this->isComment() == false)
@@ -67,7 +67,7 @@ void				ConfigParser::parse(char *arg)
 		}
 	}
 //	this->displayPortsMap();
-	this->displayPortsList();
+	this->displayports_list();
 	if (this->validate() == false)
 	{
 		std::cerr << "webserv\t- ERROR - there is no Port to be listened to."
@@ -83,7 +83,7 @@ void				ConfigParser::splitLineIntoTokens(void)
 	char				*c_str;
 
 	this->_line.clear();
-	c_str = const_cast<char *>(this->_curLine.c_str());
+	c_str = const_cast<char *>(this->_cur_line.c_str());
 	tok = std::strtok(c_str, " \t");
 	while (tok != NULL)
 	{
@@ -193,12 +193,12 @@ bool	ConfigParser::hasContent(void) const
 {
 	size_t	i;
 
-	if (this->_curLine.empty() == true)
+	if (this->_cur_line.empty() == true)
 		return (false);
 	i = 0;
-	while (this->_curLine[i])
+	while (this->_cur_line[i])
 	{
-		if (isspace(this->_curLine[i]) == false)
+		if (isspace(this->_cur_line[i]) == false)
 			return (true);
 		i++;
 	}
@@ -210,9 +210,9 @@ bool	ConfigParser::isComment(void) const
 	size_t	i;
 
 	i = 0;
-	while (std::isspace(this->_curLine[i]))
+	while (std::isspace(this->_cur_line[i]))
 		i++;
-	if (_curLine[i] == '#')
+	if (_cur_line[i] == '#')
 		return (true);
 	return (false);
 }

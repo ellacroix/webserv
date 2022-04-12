@@ -14,18 +14,16 @@ class	Port {
 
 	public:
 		// UNDERLYING DATA STRUCTURES	=>	Map OF Clients
-		std::map<int, Client*>			_clientsMap;
+		std::map<int, Client*>			_clients_map;
 		//								=>	List OF VirtualServers
-		std::list<VirtualServer*>		_VSList;
+		std::list<VirtualServer*>		_VS_list;
 		int					port_number;
 
 		//	CONNECTION PARAMS
 		int					listen_socket;
 		struct sockaddr_in	server_address;
 		int 				addr_len;
-		int					max_sd;
 		int					ret, on;
-		bool				kill_port;
 		bool				opened;
 
 		Port(void);
@@ -34,7 +32,6 @@ class	Port {
 
 		//	CONNECTION FUNCTIONS
 		int		start(void);					// listen()
-		void	disconnectClient(int socket);
 
 		//	UTILITIES
 		void	addVS(VirtualServer * newVS);

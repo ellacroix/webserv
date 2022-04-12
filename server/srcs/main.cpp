@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
 	//START LISTENING ON PORTS
 	if (startAllPorts(config, event, epoll_fd) != SUCCESS)
 		return (FAILURE);
+	
+	int current_connections = 0;
 	while (RUNNING)
 	{
 		printf("\nMainProcess: Waiting on epoll_wait()\n");
@@ -64,15 +66,15 @@ int main(int argc, char *argv[])
 		}
 		if (new_events == 0)
 			printf("MainProcess: epoll_wait() timed out. Checking clients timeout.\n");
-		DisconnectTimeout408(config.getPortsList(), thread_info);
+		disconnectTimeout408(config.getports_list(), thread_info, &current_connections);
 
 		//LOOP TO CHECK ALL ACTIVATED FD
 		for (int i = 0; i < new_events; i++)
 		{
 			int event_fd = events[i].data.fd;
 
-			for (t_portListIt it_p = config.getPortsList().begin() ;
-					it_p != config.getPortsList().end() ;
+			for (t_portListIt it_p = config.getports_list().begin() ;
+					it_p != config.getports_list().end() ;
 					it_p++)
 			{
 				Port *current_port = *it_p;
@@ -82,19 +84,19 @@ int main(int argc, char *argv[])
 				if (current_port->listen_socket == event_fd)
 				{
 					acceptIncomingConnections(current_port,
-							event, epoll_fd, thread_info);
+							event, epoll_fd, thread_info, &current_connections);
 					continue;
 				}
 				//Check if find() found the event_fd in this clients map,
 				//meaning there is work to do in it.
 				t_clientMapIt	it_c;
-				it_c = current_port->_clientsMap.find(event_fd);
-				if (it_c != current_port->_clientsMap.end())
+				it_c = current_port->_clients_map.find(event_fd);
+				if (it_c != current_port->_clients_map.end())
 				{
 					if (events[i].events & EPOLLOUT)
 						sendClientResponse(thread_info, it_c);
 					else
-						recvClientsRequest(current_port, thread_info, it_c);
+						recvClientsRequest(current_port, thread_info, it_c, &current_connections);
 				}
 			}
 		}

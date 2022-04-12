@@ -26,6 +26,34 @@ Location *		Response::findLocation(std::string & uri)
 	return (bestMatchLoc);
 }
 
+void			Response::constructSuccess(void)
+{
+	std::string	line;
+
+	this->request_file.open(this->path.c_str());
+	if (this->request_file.good() == false)
+	{
+		this->client->status_code = 403;
+		this->constructError();
+		return ;
+	}
+
+	this->request_file.seekg (0, this->request_file.end);
+	this->file_len = this->request_file.tellg();
+	this->request_file.seekg (0, this->request_file.beg);
+
+	this->raw_response.append("HTTP/1.1 200 OK\r\n");
+	this->chunked = false;
+	this->raw_response.append("Content-Length: ");
+	this->raw_response.append(std::to_string(this->file_len));
+	this->raw_response.append("\r\n");
+	this->raw_response.append("Content-Type: text/html; charset=utf-8\r\n");
+	this->raw_response.append("\r\n");
+	while (std::getline(this->request_file, line))
+		this->raw_response.append(line + '\n');
+	this->request_file.close();
+}
+
 bool	Response::findIndex(void)
 {
 	std::vector<std::string>::iterator	it;
@@ -82,7 +110,7 @@ int		Response::methodGET(void)
 		std::cout << "=== PATH DOESN'T EXIST" << std::endl;
 		std::cout << "=== pathExists(this->path) == "
 			<< pathExists(this->path) << std::endl;
-		this->client->statusCode = 404;
+		this->client->status_code = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
@@ -131,7 +159,7 @@ int		Response::methodGET(void)
 				}
 				else
 				{
-					this->client->statusCode = 403;
+					this->client->status_code = 403;
 					this->constructError();
 					return (SUCCESS);
 				}
@@ -150,7 +178,7 @@ int		Response::methodGET(void)
 		}
 		else
 		{
-			this->client->statusCode = 404;
+			this->client->status_code = 404;
 			this->constructError();
 			return (SUCCESS);
 		}

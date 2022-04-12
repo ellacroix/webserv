@@ -24,7 +24,7 @@ class Client{
 		std::string			request_buffer;
 		pthread_mutex_t		client_mutex;
 		struct timeval		last_activity;
-		int					statusCode;
+		int					status_code;
 
 		bool				read_more;
 		bool				response_ready;
@@ -37,8 +37,8 @@ class Client{
 		Client(int fd, Port *port);
 		~Client();
 
-		int					CreateRequest();
-		int					CreateResponse();
+		int					createRequest();
+		int					createResponse();
 
 };
 

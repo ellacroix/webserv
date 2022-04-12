@@ -66,7 +66,7 @@ class	ConfigParser {
 		int											_context;
 		std::vector<std:: vector<std::string > >	_lines;
 		std::vector<std::string>					_line;
-		std::string									_curLine;
+		std::string									_cur_line;
 		int											_dir;
 		int											_lineN;
 		std::ifstream								_ifs;
@@ -88,7 +88,7 @@ class	ConfigParser {
 		Location									*_defLocPtr;
 
 		//	UNDERLYING DATA STRUCTURE => List OF Ports
-		std::list<Port*>							_portsList;
+		std::list<Port*>							_ports_list;
 		std::map<int, Port>							_portsMap;
 
 		ConfigParser	&operator=(ConfigParser const & rhs);
@@ -104,12 +104,12 @@ class	ConfigParser {
 		std::string								getCurLine(void) const;
 		void				displayLine(std::vector<std::string> v) const;
 		void				displayLines(void) const;
-		void				displayContextSwitch(int newContext) const;
+		void				displayContextSwitch(int new_context) const;
 		void				displayPortsMap(void) const;
-		void				displayPortsList(void) const;
+		void				displayports_list(void) const;
 		void				makeListFromMap(void);
 		void				startAllSockets(void);
-		std::list<Port*> &	getPortsList(void);
+		std::list<Port*> &	getports_list(void);
 		bool				validate(void) const;	
 		Port *				findPortInList(int port) const;
 		Location *			getDefLocPtr(void) const;

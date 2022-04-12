@@ -22,7 +22,7 @@ int ConfigParser::validateLocationArgs(void)
 		*(this->_curLoc) = *(this->_defLocPtr);
 		this->_curLoc->resetIsDefBooleans();
 		this->_curLoc->setPrefix(this->_line[1]);
-		this->_curVS->_locationIsSet = true;
+		this->_curVS->_location_is_set = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -33,10 +33,10 @@ int ConfigParser::validateListenArgs(void)
 	if (this->_line.size() == 2
 			&& isNumber(_line[1])
 			&& isValidPort(_line[1])
-			&& this->_curVS->_listenPortIsSet == false)
+			&& this->_curVS->_listen_port_is_set == false)
 	{
 		this->_curVS->setListenPort(std::atoi(_line[1].c_str()));
-		this->_curVS->_listenPortIsSet = true;
+		this->_curVS->_listen_port_is_set = true;
 		return (true);
 	}
 	//	TWO MORE POTENTIAL PATTERNS 
@@ -49,18 +49,18 @@ int ConfigParser::validateServerNameArgs(void)
 {
 	//	if (this->_line.size() == 2
 	//			&& isValidDomainName(this->_line[1])
-	//			&& this->_curVS->_serverNameIsSet == false)
+	//			&& this->_curVS->_server_name_is_set == false)
 	//	{
 	//		this->_curVS->setServerName(this->_line[1]);
-	//		this->_curVS->_serverNameIsSet = true;
+	//		this->_curVS->_server_name_is_set = true;
 	//		return (true);
 	//	}
 	if (this->_line.size() >= 2
 			&& areValidDomainNames(this->_line)
-			&& this->_curVS->_serverNameIsSet == false)
+			&& this->_curVS->_server_name_is_set == false)
 	{
 		this->_curVS->setServerName(this->_line);
-		this->_curVS->_serverNameIsSet = true;
+		this->_curVS->_server_name_is_set = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -72,15 +72,15 @@ int ConfigParser::validateClientMaxBodySizeArgs(void)
 			&& isValidClientMaxBodySize(this->_line[1]))
 	{
 		/*
-		if (this->_defLocPtr->_clientMaxBodySizeIsSet == true)
+		if (this->_defLocPtr->_client_max_body_size_is_set == true)
 			return (ALRDY_SET_ERROR);
 		this->_defLocPtr->setClientMaxBodySize(this->_line[1]);
-		this->_defLocPtr->_clientMaxBodySizeIsSet = true;
+		this->_defLocPtr->_client_max_body_size_is_set = true;
 		*/
-		if (this->_curVS->_clientMaxBodySizeIsSet == true)
+		if (this->_curVS->_client_max_body_size_is_set == true)
 			return (ALRDY_SET_ERROR);
 		this->_curVS->setClientMaxBodySize(this->_line[1]);
-		this->_curVS->_clientMaxBodySizeIsSet = true;
+		this->_curVS->_client_max_body_size_is_set = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -120,10 +120,10 @@ int ConfigParser::validateErrorPageArgs(void)
 	{
 		/*
 		if (this->_context == LOCATION_CONTEXT)
-			this->_curLoc->_errorPageIsSet = true;
+			this->_curLoc->_error_page_is_set = true;
 		else if (this->_context == SERVER_CONTEXT)
 		*/
-		this->_curVS->_errorPageIsSet = true;
+		this->_curVS->_error_page_is_set = true;
 		return (true);
 	}
 	return (ARG_ERROR);
@@ -256,7 +256,7 @@ int ConfigParser::validateClosingBracketArgs(void)
 		if (port == NULL)
 		{
 			port = new Port();
-			this->_portsList.push_back(port);
+			this->_ports_list.push_back(port);
 		}
 		port->addVS(this->_curVS->clone());
 		return (true);

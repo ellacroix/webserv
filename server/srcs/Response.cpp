@@ -6,8 +6,8 @@ Response::Response(Client *parent_client)
 {
 	client = parent_client;
 	request = parent_client->request;
-	//status_code = parent_client->request->_statusCode;
-	status_code = parent_client->statusCode;
+	//status_code = parent_client->request->_status_code;
+	status_code = parent_client->status_code;
 	if (request != NULL)
 	{
 		virtual_server = parent_client->request->_virtual_server;
@@ -18,9 +18,9 @@ int	Response::ConstructResponse()
 {	
  	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
 	if (this->request == NULL)
-		this->virtual_server = client->parent_port->_VSList.front();
+		this->virtual_server = client->parent_port->_VS_list.front();
 
-	if (client->statusCode != 0)
+	if (client->status_code != 0)
 	{
 	//	IF ERROR DETECTED IN PARSING
 		constructError();
@@ -32,7 +32,7 @@ int	Response::ConstructResponse()
 	this->location = this->findLocation(this->request->_URI);
 	if (this->location == NULL)
 	{
-		this->client->statusCode = 404;
+		this->client->status_code = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
@@ -45,7 +45,7 @@ int	Response::ConstructResponse()
 				this->request->_method)
 			!= this->location->getLimitExcept().end())
 	{
-		this->client->statusCode = 405;
+		this->client->status_code = 405;
 		this->constructError();
 		return (SUCCESS);
 	}
@@ -53,7 +53,7 @@ int	Response::ConstructResponse()
 	//	CHECK return
 	if (this->location->_returnIsSet == true)
 	{
-	this->client->statusCode = this->location->getReturnCode();
+	this->client->status_code = this->location->getReturnCode();
 	this->location_header = this->location->getReturnUri();
 	this->constructRedirection();
 	return (SUCCESS);
@@ -75,7 +75,7 @@ int	Response::ConstructResponse()
 	*/
 
 
-	this->client->statusCode = 404;
+	this->client->status_code = 404;
 	this->constructError();
 	return (SUCCESS);
 }
@@ -172,7 +172,7 @@ void	Response::constructAutoIndex()
 	}
 
 	raw_response.append("HTTP/1.1 ");
-	raw_response.append(numberToString(client->statusCode));
+	raw_response.append(numberToString(client->status_code));
 	raw_response.append("\r\n");
 
 	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
@@ -192,17 +192,17 @@ void	Response::constructError()
 	{
 		printf("Redacting default page\n");
 		body.append("<html>\r\n");
-		body.append("<head><title>" + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</title></head>\r\n");
+		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
 		body.append("<body>\r\n");
-		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->statusCode) + getErrorMessage(client->statusCode) + "</h1></center>\r\n");
+		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h1></center>\r\n");
 		body.append("</body>\r\n");
 		body.append("</html>\r\n");
 	}
 
 	//Status line
 	raw_response.append("HTTP/1.1 ");
-	raw_response.append(numberToString(client->statusCode));
-	raw_response.append(getErrorMessage(client->statusCode));
+	raw_response.append(numberToString(client->status_code));
+	raw_response.append(getErrorMessage(client->status_code));
 	//Additional Info ??
 	raw_response.append("\r\n");
 
