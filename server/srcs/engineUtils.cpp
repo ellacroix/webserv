@@ -173,6 +173,8 @@ int	DisconnectTimeout408(std::list<Port*> PortsList, t_thread_info *thread_info)
 
 void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigParser *config)
 {
+	(void)config;
+	
 	Client	*killer_client = new Client();
 	
 	for (int i = 0; i < THREADS; i++)
@@ -191,12 +193,6 @@ void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info, ConfigPar
 	pthread_mutex_destroy(&thread_info->queue_mutex);
 	delete killer_client;
 
- 	for (t_portListIt it_p = config->getPortsList().begin(), next_it_p = it_p ;
-		it_p != config->getPortsList().end() ;
-		it_p++)
-	{
-		Port *current_port = *it_p;
-		next_it_p++;
-		delete current_port;
-	}
+	delete thread_info->queue;
+	delete thread_info;
 }

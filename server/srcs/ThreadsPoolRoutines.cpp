@@ -219,9 +219,3 @@ void	monitorForWriting(Client *client, t_thread_info *thread_info)
 	client->response_ready = true;
 	pthread_mutex_unlock(&thread_info->epoll_fd_mutex);
 }
-
-/* void	cleanupRoutine(void* arg)
-{
-	t_thread_info *thread_info = (t_thread_info*)arg;
-
-} */

@@ -67,6 +67,10 @@ sanitize	:	${OBJS}
 valgrind	:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
 
-leaks
+leaks		:	$(NAME)
+			valgrind --suppressions=valgrind_ignore.txt \
+			--leak-check=full --show-leak-kinds=all --track-origins=yes \
+			--log-file=valgrind-out.txt \
+			./webserv confs/nginx.conf
 
 .PHONY		:	all re clean fclean
