@@ -50,6 +50,7 @@
 # define M 1000000
 # define SERVER_MAX_BODY_SIZE 10 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
+# define MAX_CONNECTIONS 150
 
 class	ConfigParser ;
 
@@ -117,12 +118,12 @@ bool			areValidDomainNames(std::vector<std::string> & v);
 int		startAllPorts(ConfigParser & config, struct epoll_event,
 		int epoll_fd);
 int		acceptIncomingConnections(Port *current_port, struct epoll_event &event,
-		int epoll_fd, t_thread_info *thread_info);
+		int epoll_fd, t_thread_info *thread_info, int *current_connections);
 void    recvClientsRequest(Port *current_port, t_thread_info *thread_info,
-		t_clientMapIt it_c);
+		t_clientMapIt it_c, int *current_connections);
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c);
-int		disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info);
+int		disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info, int *current_connections);
 void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info);
 
 //	fileUtils.cpp

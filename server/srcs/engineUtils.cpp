@@ -24,7 +24,8 @@ int		startAllPorts(ConfigParser &config, struct epoll_event event,
 int		acceptIncomingConnections(Port *current_port,
 		struct epoll_event &event,
 		int epoll_fd,
-		t_thread_info *thread_info)
+		t_thread_info *thread_info,
+		int	*current_connections)
 {
 	//Loop to accept all connections on the backlog
 	int connection = 0;
@@ -40,9 +41,13 @@ int		acceptIncomingConnections(Port *current_port,
 			break;
 		}
 
-/* 		current_connections++;
-		if (current_connections == max_connections)
-			close(connection); */
+ 		(*current_connections)++;
+		if (*current_connections > MAX_CONNECTIONS)
+		{
+			(*current_connections)--;
+			close(connection);
+			continue ;
+		}
 
 		//Setting the connection socket to non blocking
 		int rc = fcntl(connection, F_SETFL, O_NONBLOCK);
@@ -70,7 +75,7 @@ int		acceptIncomingConnections(Port *current_port,
 }
 
 void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
-		t_clientMapIt it_c)
+		t_clientMapIt it_c, int *current_connections)
 {	
 	int     connection;
 	Client  *current_client;
@@ -94,6 +99,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		current_port->_clients_map.erase(current_client->stream_socket);
 		pthread_mutex_unlock(&current_client->client_mutex);
 		delete current_client;
+		(*current_connections)--;
 	}
 	else
 	{
@@ -126,7 +132,7 @@ void	sendClientResponse(t_thread_info *thread_info,
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
 
-int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info)
+int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info, int *current_connections)
 {
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
@@ -151,6 +157,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 				current_port->_clients_map.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
+				(*current_connections)--;
 				continue;
 			}
 
