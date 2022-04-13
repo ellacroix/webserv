@@ -10,10 +10,10 @@ class	Location
 		std::string							_root;
 //		std::map<int, std::string>			_error_page;
 		bool								_autoIndex;
-		std::vector<std::string>			_index; // IF MANY INDEXES
-//		std::string							_index; // IF ONE INDEX
-//		int									_limitExcept; // IF BITSHIFTING
-		std::vector<std::string>			_limitExcept; // STRINGS
+		std::vector<std::string>			_index;			// IF MANY INDEXES
+//		std::string							_index;			// IF ONE INDEX
+//		int									_limitExcept;	// IF BITSHIFTING
+		std::vector<std::string>			_limitExcept;	// STRINGS
 		int									_returnCode;
 		std::string							_returnUri;
 //		ssize_t								_client_max_body_size;

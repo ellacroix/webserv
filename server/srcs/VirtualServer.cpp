@@ -7,6 +7,7 @@ VirtualServer::VirtualServer(void) :
 	_server_name_is_set(false),
 	_listen_port_is_set(false),
 	_client_max_body_size_is_set(false),
+	_cgi_is_set(false),
 	_error_page_is_set(false),
 	_location_is_set(false)
 {
@@ -36,11 +37,14 @@ VirtualServer::VirtualServer(VirtualServer const & src) :
 	_listen_port(src._listen_port),
 	_server_name(src._server_name),
 	_client_max_body_size(src._client_max_body_size),
+	_cgi_extension(src._cgi_extension),
+	_cgi_path(src._cgi_path),
 	_error_page(src._error_page),
 	_location_map(src._location_map),
 	_server_name_is_set(src._server_name_is_set),
 	_listen_port_is_set(src._listen_port_is_set),
 	_client_max_body_size_is_set(src._client_max_body_size_is_set),
+	_cgi_is_set(src._cgi_is_set),
 	_error_page_is_set(src._error_page_is_set),
 	_location_is_set(src._location_is_set)
 {
@@ -83,6 +87,16 @@ void    VirtualServer::setClientMaxBodySize(std::string s)
         this->_client_max_body_size *= M;
 }
 
+void    VirtualServer::setCgiExtension(std::string s)
+{
+	this->_cgi_extension = s;
+}
+
+void    VirtualServer::setCgiPath(std::string s)
+{
+	this->_cgi_path = s;
+}
+
 //	GETTERS
 int								VirtualServer::getListenPort(void) const
 {
@@ -116,6 +130,15 @@ unsigned int						VirtualServer::getClientMaxBodySize(void)
 	return (this->_client_max_body_size);
 }
 
+std::string							VirtualServer::getCgiExtension(void)
+{
+	return (this->_cgi_extension);
+}
+
+std::string							VirtualServer::getCgiPath(void)
+{
+	return (this->_cgi_path);
+}
 
 //	UTILITIES
 void	VirtualServer::reset(void)
@@ -123,6 +146,8 @@ void	VirtualServer::reset(void)
 	this->_listen_port = -1;
 	this->_server_name = std::vector<std::string>();
 	this->_client_max_body_size = 0;
+	this->_cgi_extension = "";
+	this->_cgi_path = "";
 	this->_error_page = std::map<int, std::string>();
 
 	this->_location_map = std::map<std::string, Location*>();
@@ -130,6 +155,8 @@ void	VirtualServer::reset(void)
 	this->_server_name_is_set = false;
 	this->_listen_port_is_set = false;
 	this->_client_max_body_size_is_set = false;
+	this->_cgi_is_set = false;
+	this->_error_page_is_set = false;
 	this->_location_is_set = false;
 }
 
@@ -147,7 +174,7 @@ void	VirtualServer::display(void) const
 //	std::cout << "\t_server_name\t\t=\t\"" << this->_server_name << "\"" << std::endl;
 
 	if (this->_server_name.empty() == true)
-		std::cout << "\t_server_name[  ]\t\t=\tempty" << std::endl;
+		std::cout << "\t_server_name[  ]\t=\tempty" << std::endl;
 	else
 	{
 		v_it = this->_server_name.begin();
@@ -163,6 +190,10 @@ void	VirtualServer::display(void) const
 	}
 	std::cout << "\t_client_max_body_size\t=\t"
 		<< this->_client_max_body_size << std::endl;
+	std::cout << "\t_cgi_extention\t\t=\t\""
+		<< this->_cgi_extension << "\"" << std::endl;
+	std::cout << "\t_cgi_path\t\t=\t\""
+		<< this->_cgi_path << "\"" << std::endl;
     if (this->_error_page.empty() == true)
         std::cout << "\t_error_page[ ]\t\t=\tempty" << std::endl;
     else
@@ -181,7 +212,11 @@ void	VirtualServer::display(void) const
 	std::cout << std::boolalpha;
 	std::cout << "\t_server_name_is_set\t=\t" << this->_server_name_is_set << std::endl;
 	std::cout << "\t_listen_port_is_set\t=\t" << this->_listen_port_is_set << std::endl;
-	std::cout << "\t_location_is_set\t\t=\t" << this->_location_is_set << std::endl;
+	std::cout << "\t_cli_mx_bd_sz_is_set\t=\t"
+		<< this->_client_max_body_size_is_set << std::endl;
+	std::cout << "\t_cgi_is_set\t\t=\t" << this->_cgi_is_set << std::endl;
+	std::cout << "\t_error_page_is_set\t=\t" << this->_error_page_is_set << std::endl;
+	std::cout << "\t_location_is_set\t=\t" << this->_location_is_set << std::endl;
 
 	if (this->_location_map.empty() == true)
 		std::cout << "\t_location_map\t\t=\tempty" << std::endl;
