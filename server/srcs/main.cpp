@@ -93,9 +93,10 @@ int main(int argc, char *argv[])
 				it_c = current_port->_clients_map.find(event_fd);
 				if (it_c != current_port->_clients_map.end())
 				{
+					//printf("HERE: %d ---- %d\n", events[i].events & EPOLLOUT, events[i].events & EPOLLIN);
 					if (events[i].events & EPOLLOUT)
 						sendClientResponse(thread_info, it_c);
-					else
+					else if (events[i].events & EPOLLIN)
 						recvClientsRequest(current_port, thread_info, it_c, &current_connections);
 				}
 			}
