@@ -18,7 +18,8 @@ SRCS			=	Client.cpp \
 					ResponseConstruction.cpp \
 					engineUtils.cpp \
 					fileUtils.cpp \
-					extensions.cpp
+					extensions.cpp \
+					Logger.cpp
 
 HEADERS			=	includes/Client.hpp \
 					includes/Port.hpp \
@@ -27,7 +28,8 @@ HEADERS			=	includes/Client.hpp \
 					includes/webserv.hpp \
 					includes/Location.hpp \
 					includes/Request.hpp \
-					includes/Response.hpp
+					includes/Response.hpp \
+					includes/Logger.hpp
 
 INC_FLD			=	includes/
 
@@ -60,6 +62,7 @@ fclean		:	clean
 re			:	fclean all
 
 run			:	${NAME}
+			clear
 			./webserv confs/nginx.conf
 
 sanitize	:	${OBJS}

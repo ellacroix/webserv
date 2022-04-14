@@ -40,3 +40,123 @@ void            Response::constructSuccess(void)
 	delete [] buffer;
     this->request_file.close();
 }
+
+void    Response::constructRedirection()
+{
+    std::string redir_URI = location->getReturnUri() + request->_URI.substr(location->getPrefix().length() - 1);
+    
+    if (body.empty())
+	{
+		printf("Redacting default page\n");
+		body.append("<html>\r\n");
+		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
+		body.append("<body>\r\n");
+		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h1></center>\r\n");
+		body.append("<center><a href=\"" + redir_URI +"\"> TRY HERE </a></center>");
+        body.append("</body>\r\n");
+		body.append("</html>\r\n");
+	}
+
+    //Status line
+	raw_response.append("HTTP/1.1 ");
+	raw_response.append(numberToString(client->status_code));
+	raw_response.append(getErrorMessage(client->status_code));
+	//Additional Info ??
+	raw_response.append("\r\n");
+
+	//Headers
+	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
+	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+	raw_response.append("Content-Location: " + redir_URI + "\r\n");
+	raw_response.append("\r\n");
+
+	//Body
+	raw_response.append(body);
+    
+    return ;
+}
+
+void	Response::constructError()
+{
+ 	//if we don't find _status_code in a std::map<code, File>, we send the default error
+	if (body.empty())
+	{
+		printf("Redacting default page\n");
+		body.append("<html>\r\n");
+		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
+		body.append("<body>\r\n");
+		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h1></center>\r\n");
+		body.append("</body>\r\n");
+		body.append("</html>\r\n");
+	}
+
+	//Status line
+	raw_response.append("HTTP/1.1 ");
+	raw_response.append(numberToString(client->status_code));
+	raw_response.append(getErrorMessage(client->status_code));
+	//Additional Info ??
+	raw_response.append("\r\n");
+
+	//Headers
+	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
+	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+	raw_response.append("\r\n");
+
+	//Body
+	raw_response.append(body);
+}
+
+std::string	Response::getErrorMessage(int code)
+{
+	switch (code)
+	{
+		case 200:
+			return " OK";
+		case 201:
+			return " Created";
+		case 204:
+			return " No Content";
+		case 206:
+			return " Partial Content";
+		case 301:
+			return " Moved Permanently";
+		case 302:
+			return " Moved Temporarily";
+		case 304:
+			return " Not Modified";
+		case 400:
+			return " Bad Request";
+		case 401:
+			return " Unauthorized";
+		case 403:
+			return " Forbidden";
+		case 404:
+			return " Not Found";
+		case 405:
+			return " Method Not Allowed";
+		case 406:
+			return " Not Acceptable";
+		case 408:
+			return " Request Timeout";
+		case 411:
+			return " Length Required";
+		case 413:
+			return " Request Entity Too Large";
+		case 414:
+			return " Request-URI Too Long";
+		case 415:
+			return " Unsupported Media Type";
+		case 417:
+			return " Expectation Failed";
+		case 431:
+			return " Request Header Fields Too Large";
+		case 500:
+			return " Internal Server Error";
+		case 501:
+			return " Not Implemented";
+		case 505:
+			return " HTTP Version Not Supported";			
+		default:
+			return " Should not happen";
+	}
+}

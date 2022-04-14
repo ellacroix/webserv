@@ -19,7 +19,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
-
+#include <sys/types.h>
+#include <sys/syscall.h>
 
 //	CPP
 #include <vector>
@@ -45,7 +46,7 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
-# define THREADS 1	
+# define THREADS 2
 # define TIMEOUT 50
 # define K 1000
 # define M 1000000

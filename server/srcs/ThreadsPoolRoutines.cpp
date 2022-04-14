@@ -1,5 +1,6 @@
 #include "webserv.hpp"
 #include "Client.hpp"
+#include "Logger.hpp"
 
 void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
@@ -98,6 +99,9 @@ void	*threadLoop(void* arg)
 {
 	t_thread_info *thread_info = (t_thread_info*)arg;
 	Client *currentClient;
+
+	pid_t x = syscall(__NR_gettid);
+	Logger	thread_log(numberToString(x));
 
 	printf("ThreadsPool: Thread launched\n");
 

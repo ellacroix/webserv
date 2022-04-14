@@ -18,8 +18,6 @@ void	Request::setHeaderValue(const unsigned int header_index,
 			this->_content_length = std::strtol(value.c_str(), NULL, 10);
 			this->_has_body = true;
 			break;
-		case CONTENT_TYPE :
-			break;
 	}
 }
 

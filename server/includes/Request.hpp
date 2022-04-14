@@ -15,7 +15,7 @@ enum    e_parsing_steps
 	COMPLETE
 };
 
-# define N_SUPPORTED_HEADERS 4
+# define N_SUPPORTED_HEADERS 3
 
 
 enum	e_supported_headers
@@ -24,8 +24,7 @@ enum	e_supported_headers
 	TRANSFER_ENCODING,
 	// HEADERS THAT CAN BE PRESENT ONLY ONCE START AT HOST
 	HOST,	
-	CONTENT_LENGTH,
-	CONTENT_TYPE
+	CONTENT_LENGTH
 };
 
 class Client ;

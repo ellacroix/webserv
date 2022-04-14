@@ -2,6 +2,7 @@
 #include "VirtualServer.hpp"
 #include "Client.hpp"
 #include "ConfigParser.hpp"
+#include "Logger.hpp"
 
 #include <list>
 #include <deque>
@@ -25,8 +26,29 @@ static void shutdownWebserv(int sig_int) {
   RUNNING = false;
 }
 
+void	deleteLogs()
+{
+	struct dirent 	*entry;
+	DIR *dir =		opendir("logs");
+	std::string full_path;
+
+	entry = readdir(dir);
+	entry = readdir(dir);
+	while ((entry = readdir(dir)) != NULL)
+	{
+		full_path = "logs/";
+		full_path += entry->d_name;
+		printf("%s\n", full_path.c_str());
+		unlink(full_path.c_str());
+	}
+}
+
 int main(int argc, char *argv[])
 {
+	deleteLogs();
+	Logger	main_log("Main");
+	main_log.log("Hey");
+	
 	signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
 	signal(SIGPIPE, SIG_IGN);
