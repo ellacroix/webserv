@@ -21,6 +21,13 @@ Request::Request(std::string raw, Client *parent_client) :
 	return ;
 }
 
+bool			Request::isValid(void) const
+{
+	if (this->_host.empty() == true)
+		return (false);
+	return (true);
+}
+
 //	PARSING FUNCTIONS
 unsigned int	Request::parser(void)
 {
@@ -38,6 +45,11 @@ unsigned int	Request::parser(void)
 			std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
 			return (this->_status_code);
 		}
+	}
+	if (this->isValid() == false)		// CHECKS MINIMUM HEADERS
+	{
+		this->_status_code = 400;
+		return (this->_status_code);
 	}
 	this->_status_code = this->parseBody();
 	if (this->_status_code >= 400)
@@ -125,7 +137,7 @@ unsigned int	Request::parseReqLine(void)
 	tok = std::strtok(c_str, " \t");
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
-		return (405);	//Plutot 501 "Not Implemented"
+		return (501);	//Plutot 501 "Not Implemented"
 	this->_method = std::string(tok);
 
 	//	URI

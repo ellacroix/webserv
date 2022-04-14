@@ -11,8 +11,10 @@ class	VirtualServer {
 	private:
 		//	VIRTUAL SERVER PARAMS
 		int									_listen_port;
-		std::vector<std::string>			_server_name; // IF MANY NAMES
+		std::vector<std::string>			_server_name;
 		unsigned int						_client_max_body_size;
+		std::string							_cgi_extension;
+		std::string							_cgi_path;
 		std::map<int, std::string>          _error_page;
 
 		//	UNDERLYING DATA STRUCTURE	=> Map OF Locations
@@ -29,6 +31,7 @@ class	VirtualServer {
 		bool		_server_name_is_set;
 		bool		_listen_port_is_set;
 		bool		_client_max_body_size_is_set;
+		bool		_cgi_is_set;
 		bool		_error_page_is_set;
 		bool		_location_is_set;
 
@@ -36,6 +39,8 @@ class	VirtualServer {
 		void		setListenPort(int n);
 		void		setServerName(std::vector<std::string> v);
 		void		setClientMaxBodySize(std::string s);
+		void		setCgiExtension(std::string s);
+		void		setCgiPath(std::string s);
 		//	GETTERS
 		int									getListenPort(void) const;
 		std::map<int, std::string> &		getErrorPage(void);
@@ -43,6 +48,8 @@ class	VirtualServer {
 //		std::vector<std::string> &			getLimitExcept(void);
 		std::map<std::string, Location*> &	getLocationMap(void);
 		unsigned int						getClientMaxBodySize(void);
+		std::string							getCgiExtension(void);
+		std::string							getCgiPath(void);
 
 		//	UTILITIES
 		void				reset(void);

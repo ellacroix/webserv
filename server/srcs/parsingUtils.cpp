@@ -125,11 +125,13 @@ bool	isSupportedHttpErrorCode(std::string s)
 			|| s == "505");
 }
 
-bool	isValidFile(std::string & s)
+bool	isValidAbsolutePathToFile(std::string & s)
 {
-	if (isValidPrefix(&s) == false)
-		return (false);
-	if (s[s.length() - 1] == '/')
+//	if (isValidPrefix(&s) == false)
+//		return (false);
+	if (s[0] != '/'
+			|| s[s.length() - 1] == '/'
+			|| s.find("//") != std::string::npos)
 		return (false);
 	return (true);
 }
@@ -156,7 +158,7 @@ bool	isValidErrorPage(std::vector<std::string> & v)
 		}
 		i++;
 	}
-	if (isValidFile(v[size - 1]) == false)
+	if (isValidAbsolutePathToFile(v[size - 1]) == false)
 		return (false);
 	return (true);
 }
@@ -203,8 +205,8 @@ bool	isSupportedHttpRedirCode(std::string s)
 
 bool	isValidReturn(std::vector<std::string> & v)
 {
-	if (isSupportedHttpRedirCode(v[1])
-			&& isValidFile(v[2]))
+	if (isSupportedHttpRedirCode(v[1]))
+//			&& isValidAbsolutePathToFile(v[2]))
 		return (true);
 	return (false);
 }
@@ -271,16 +273,16 @@ std::string	findUriExtension(std::string uri)
 
 	last_slash = uri.find_last_of("/");
 	file = uri.substr(last_slash + 1, uri.length() - last_slash);
-	std::cout << "=== FILE ONLY = " << file << std::endl;
+	std::cout << "=== FILE ONLY\t=\t\"" << file << "\"" << std::endl;
 
 	last_pt = file.find_last_of(".");
 	if (last_pt == std::string::npos)
 	{
-		std::cout << "=== EXTENSION ONLY = EMPTY" << std::endl;
+		std::cout << "=== EXT ONLY\t=\tEMPTY" << std::endl;
 		return (extension);
 	}
 	extension = file.substr(last_pt + 1, file.length() - last_pt);
-	std::cout << "=== EXTENSION ONLY = " << extension << std::endl;
+	std::cout << "=== EXT ONLY\t=\t\"" << extension << "\"" << std::endl;
 	return (extension);
 }
 

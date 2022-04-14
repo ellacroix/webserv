@@ -237,7 +237,7 @@ void			ConfigParser::setDefLocTrueBoolsInCurLoc(void)
 const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
-	"error_page",
+	"cgi", "error_page",
 	"root", "autoindex", "index", "return", "limit_except",
 	"location", "{", "}"
 };

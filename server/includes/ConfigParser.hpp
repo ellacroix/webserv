@@ -6,7 +6,7 @@
 # include "VirtualServer.hpp"
 # include "Port.hpp"
 
-# define N_DIR 13
+# define N_DIR 14
 # define N_CONTEXTS 5
 
 enum	contexts
@@ -26,6 +26,7 @@ enum	directives
 	LISTEN,
 	SERVER_NAME,
 	CLIENT_MAX_BODY_SIZE,
+	CGI,
 	ERROR_PAGE,
 	//	VALID IN SERVER AND LOCATION
 	ROOT,
@@ -138,6 +139,7 @@ class	ConfigParser {
 		int			validateLimitExceptArgs(void);
 		int			validateOpeningBracketArgs(void);
 		int			validateClosingBracketArgs(void);
+		int			validateCgiArgs(void);
 		bool		noDuplicateErrorPage(void);
 };
 

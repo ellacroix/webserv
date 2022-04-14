@@ -131,6 +131,9 @@ int					ConfigParser::validateArguments(void)
 		case ROOT :
 			ret = this->validateRootArgs();
 			break ;
+		case CGI :
+			ret = this->validateCgiArgs();
+			break;
 		case ERROR_PAGE :
 			ret = this->validateErrorPageArgs();
 			break ;
