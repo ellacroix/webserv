@@ -202,7 +202,7 @@ void	VirtualServer::display(void) const
         map_ite = this->_error_page.end();
         while (map_it != map_ite)
         {
-            std::cout << "\t_error_page[" << (*map_it).first << "]\t\t=\t\""
+            std::cout << "\t_error_page[" << (*map_it).first << "]\t=\t\""
                 << (*map_it).second << "\"" << std::endl;
             map_it++;
         }

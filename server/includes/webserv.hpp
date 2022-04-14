@@ -102,7 +102,7 @@ bool			isValidPort(std::string s);
 bool			isValidDomainName(std::string s);
 bool			isValidClientMaxBodySize(std::string & s);
 bool			isValidHttpErrorCode(std::string s);
-bool			isValidFile(std::string & s);
+bool			isValidAbstolutePathToFile(std::string & s);
 bool			isValidErrorPage(std::vector<std::string> & v);
 bool			isValidAutoindex(std::string s);
 bool			areValidIndexes(std::vector<std::string> & v);

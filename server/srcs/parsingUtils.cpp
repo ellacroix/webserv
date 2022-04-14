@@ -125,11 +125,12 @@ bool	isSupportedHttpErrorCode(std::string s)
 			|| s == "505");
 }
 
-bool	isValidFile(std::string & s)
+bool	isValidAbsolutePathToFile(std::string & s)
 {
-	if (isValidPrefix(&s) == false)
-		return (false);
-	if (s[s.length() - 1] == '/')
+//	if (isValidPrefix(&s) == false)
+//		return (false);
+	if (s[0] != '/'
+			|| s[s.length() - 1] == '/')
 		return (false);
 	return (true);
 }
@@ -156,7 +157,7 @@ bool	isValidErrorPage(std::vector<std::string> & v)
 		}
 		i++;
 	}
-	if (isValidFile(v[size - 1]) == false)
+	if (isValidAbsolutePathToFile(v[size - 1]) == false)
 		return (false);
 	return (true);
 }
@@ -204,7 +205,7 @@ bool	isSupportedHttpRedirCode(std::string s)
 bool	isValidReturn(std::vector<std::string> & v)
 {
 	if (isSupportedHttpRedirCode(v[1])
-			&& isValidFile(v[2]))
+			&& isValidAbsolutePathToFile(v[2]))
 		return (true);
 	return (false);
 }
