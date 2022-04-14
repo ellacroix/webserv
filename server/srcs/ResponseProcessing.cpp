@@ -40,9 +40,9 @@ bool	Response::findIndex(void)
 				&& isFile(this->path + *it) == 1)
 		{
 			this->path.append(*it);
-//			std::cout << "=== FOUND INDEX "
-//				<< (*it) << " NEW PATH = "
-//				<< this->path << std::endl;
+			std::cout << "=== FOUND INDEX "
+				<< (*it) << " NEW PATH = "
+				<< this->path << std::endl;
 			return (true);
 		}
 		it++;
@@ -55,7 +55,8 @@ std::string	Response::findContentType(void)
 	std::string	extension;
 	const std::pair<std::string, std::string>	*pair_arr;
 
-	extension = findUriExtension(this->request->_URI);
+//	extension = findUriExtension(this->request->_URI);
+	extension = findUriExtension(this->path);
 
 	if (extension.empty() == true)
 		return ("application/octet-stream");

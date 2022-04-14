@@ -75,8 +75,11 @@ int	Response::ConstructResponse()
 	*/
 
 
-	this->client->status_code = 404;
-	this->constructError();
+	else
+	{
+		this->client->status_code = 404;
+		this->constructError();
+	}
 	return (SUCCESS);
 }
 
