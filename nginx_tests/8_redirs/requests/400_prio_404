@@ -1,0 +1,4 @@
+GET /images/existe_pas.png HTTP/1.1
+Host: existe_pas
+Content-length: abc
+

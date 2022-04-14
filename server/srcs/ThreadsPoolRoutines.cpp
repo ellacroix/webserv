@@ -63,15 +63,15 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 	//Sending the reponse to the client
 	int ret = send(client->stream_socket,
 			client->response->raw_response.c_str(),
+//			1,
 			client->response->raw_response.size(),
 			0);
-	if (ret < 1)
+	if (ret < 0)
 		printf("ThreadsPool: Client closed the connection when writing to him\n");
-	
-	client->response->raw_response.erase(0, ret);
-	//usleep(500000);
+	else
+		client->response->raw_response.erase(0, ret);
 
-	if (client->response->raw_response.size() == 0)
+	if (client->response->raw_response.size() == 0 || ret < 0)
 	{
 		if (client->request)
 			delete client->request;
