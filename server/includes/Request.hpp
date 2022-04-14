@@ -85,6 +85,7 @@ class   Request {
 
 		unsigned int	decodeChunk(void);
 		VirtualServer	*findVirtualServer(std::string & s);
+		bool			isValid(void) const;
 
 
 };
