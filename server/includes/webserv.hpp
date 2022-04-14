@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+
 //	CPP
 #include <vector>
 #include <map>
@@ -44,7 +45,7 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
-# define THREADS 3
+# define THREADS 1	
 # define TIMEOUT 50
 # define K 1000
 # define M 1000000

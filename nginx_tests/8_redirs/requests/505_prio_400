@@ -1,0 +1,4 @@
+GET / HTTP/98.2
+Host: existe_pas
+Content-length: abc
+

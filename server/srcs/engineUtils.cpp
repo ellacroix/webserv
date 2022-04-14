@@ -92,7 +92,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	printf("recvClientsReq - ret = %d\n", ret);
 
 	pthread_mutex_lock(&current_client->client_mutex);
-	if (ret == 0)
+	if (ret <= 0)
 	{
 		//Client disconnected itself
 		current_client->connected = false;
