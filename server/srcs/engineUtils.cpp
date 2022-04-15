@@ -14,7 +14,7 @@ int		startAllPorts(ConfigParser &config, struct epoll_event event,
 	{
 		(*it)->start();
 		event.data.fd = (*it)->listen_socket;
-		event.events = EPOLLIN | EPOLLET;
+		event.events = EPOLLIN;
 		epoll_ctl(epoll_fd, EPOLL_CTL_ADD, (*it)->listen_socket, &event);
 		it++;
 	}
@@ -59,8 +59,8 @@ int		acceptIncomingConnections(Port *current_port,
 
 		//Creating a new Client instance to represent the connection
 		//and add it to this port's map.
-		printf("MainProcess: Accepted new connection on port:%d\n",
-				current_port->port_number);
+		printf("MainProcess: Accepted new connection %d on port:%d\n",
+				connection, current_port->port_number);
 		Client *newClient = new Client(connection, current_port);
 		current_port->_clients_map[connection] = newClient;
 

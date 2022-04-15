@@ -36,8 +36,8 @@ int	Response::ConstructResponse()
 		this->constructError();
 		return (SUCCESS);
 	}
-	std::cout << "=== FOUND LOCATION = "
-		<< this->location->getPrefix() << std::endl;
+	//std::cout << "=== FOUND LOCATION = "
+	//	<< this->location->getPrefix() << std::endl;
 
 	//	CHECK limit_except
 	if (this->location->_limitExceptIsSet == true &&
@@ -185,6 +185,6 @@ void	Response::constructAutoIndex()
 
 	raw_response.append(body);
 
-	std::cout << "-----------------------------------------------------------\n";
+	//std::cout << "-----------------------------------------------------------\n";
 }
 

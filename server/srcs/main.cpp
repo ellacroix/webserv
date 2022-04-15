@@ -2,7 +2,6 @@
 #include "VirtualServer.hpp"
 #include "Client.hpp"
 #include "ConfigParser.hpp"
-#include "Logger.hpp"
 
 #include <list>
 #include <deque>
@@ -26,28 +25,10 @@ static void shutdownWebserv(int sig_int) {
   RUNNING = false;
 }
 
-void	deleteLogs()
-{
-	struct dirent 	*entry;
-	DIR *dir =		opendir("logs");
-	std::string full_path;
-
-	entry = readdir(dir);
-	entry = readdir(dir);
-	while ((entry = readdir(dir)) != NULL)
-	{
-		full_path = "logs/";
-		full_path += entry->d_name;
-		printf("%s\n", full_path.c_str());
-		unlink(full_path.c_str());
-	}
-}
-
 int main(int argc, char *argv[])
 {
-	deleteLogs();
-	Logger	main_log("Main");
-	main_log.log("Hey");
+	unlink("log.log");
+	logger("Start");
 	
 	signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
@@ -77,17 +58,18 @@ int main(int argc, char *argv[])
 	int current_connections = 0;
 	while (RUNNING)
 	{
-		printf("\nMainProcess: Waiting on epoll_wait()\n");
+		logger("Waiting on epoll_wait()");
+		//printf("Waiting on epoll_wait()");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
-
-		printf("MainProcess: epoll_wait() activated by %d file descriptors\n",
-				new_events);
+		//printf("epoll_wait() activated by %d file descriptors", new_events);
+		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
 		if (new_events == 0)
-			printf("MainProcess: epoll_wait() timed out. Checking clients timeout.\n");
+			//printf("epoll_wait() timed out. Checking clients timeout.");
+			logger("epoll_wait() timed out. Checking clients timeout.");
 		disconnectTimeout408(config.getports_list(), thread_info, &current_connections);
 
 		//LOOP TO CHECK ALL ACTIVATED FD

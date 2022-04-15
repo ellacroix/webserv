@@ -46,13 +46,17 @@
 # define SUCCESS 0
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
-# define THREADS 1
+# define THREADS 2
 # define TIMEOUT 50
 # define K 1000
 # define M 1000000
 # define SERVER_MAX_BODY_SIZE 10 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 # define MAX_CONNECTIONS 150
+
+# define RED "\033[31m"
+# define RESET "\033[0m"
+
 
 class	ConfigParser ;
 
@@ -79,6 +83,8 @@ typedef struct	s_thread_info
 	pthread_mutex_t		epoll_fd_mutex;
 	int					*epoll_fd;
 	struct epoll_event	event;
+
+	unsigned long		start_time;
 
 	int		start(int *epoll_fd, pthread_t *thread_pool);
 }				t_thread_info;
@@ -115,8 +121,9 @@ bool			isSupportedHttpMethod(std::string s);
 bool			isValidLimitExcept(std::vector<std::string> v);
 bool			isValidReqUri(std::string const & s);
 bool			areValidDomainNames(std::vector<std::string> & v);
-std::string		numberToString(size_t n);
+std::string		numberToString(int n);
 std::string		findUriExtension(std::string uri);
+void	logger(std::string message);
 
 
 //	engineUtils.cpp
