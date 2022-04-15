@@ -1,10 +1,9 @@
 #include "webserv.hpp"
 #include "Client.hpp"
-#include "Logger.hpp"
 
 void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: recv routine \n");
+	logger("recv routine");
 
 	//The request is ignored, we monitor the connection again to read a new request
 	if (client->request_buffer.find("\r\n") == 0)
@@ -26,7 +25,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	size_t end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
 	{
-		printf("Received all headers\n");
+		//printf("Received all headers\n");
 		if (!client->request)
 			client->createRequest();
 
@@ -58,7 +57,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 
 void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: send routine\n");
+	logger("send routine");
 
 	//Sending the reponse to the client
 	int ret = send(client->stream_socket,
@@ -66,14 +65,18 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 //			1,
 			client->response->raw_response.size(),
 			0);
-	if (ret < 0)
-		printf("ThreadsPool: Client closed the connection when writing to him\n");
+	if (ret <= 0)
+	{
+		logger("ThreadsPool: Client closed the connection when writing to him\n");
+		monitorForReading(client, thread_info);
+		return ;
+	}
 	else
 		client->response->raw_response.erase(0, ret);
 
-	if (client->response->raw_response.size() == 0 || ret < 0)
+	if (client->response->raw_response.size() == 0)
 	{
-		printf("ThreadsPool: send routine sent all the response\n");
+		logger("ThreadsPool: send routine sent all the response");
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -83,14 +86,14 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 		client->request_buffer.clear();
 
 		//Signal for main to disconnect the client and not monitor it again
-		if (client->status_code == 408 || ret < 0)
+		if (client->status_code == 408)
 			client->connected = false;
 		else
 			monitorForReading(client, thread_info);
 	}
 	else
 	{
-		printf("ThreadsPool: send routine sent partial response\n");
+		logger("ThreadsPool: send routine sent partial response");
 		monitorForWriting(client, thread_info);
 	}
 }
@@ -100,10 +103,7 @@ void	*threadLoop(void* arg)
 	t_thread_info *thread_info = (t_thread_info*)arg;
 	Client *currentClient;
 
-	pid_t x = syscall(__NR_gettid);
-	Logger	thread_log(numberToString(x));
-
-	printf("ThreadsPool: Thread launched\n");
+	logger("Thread launched");
 
 	while(true)
 	{
@@ -111,17 +111,17 @@ void	*threadLoop(void* arg)
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		if (thread_info->queue->empty() == true)
 		{
-			printf("ThreadsPool: No work in the queue, waiting...\n");
+			logger("No work in the queue, waiting...");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
 			currentClient = thread_info->queue->front();
 		}
 		else
 			currentClient = thread_info->queue->front();
-		//printf("ThreadsPool: Grabbed a task\n");
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 
 		//Determine which routine to do on the client
+		logger("Locking mutex of client" + numberToString(currentClient->stream_socket));
 		pthread_mutex_lock(&currentClient->client_mutex);
 		if (currentClient->suicide == true)
 		{
@@ -133,6 +133,7 @@ void	*threadLoop(void* arg)
 		else
 			threadRecvRoutine(currentClient, thread_info);
 		pthread_mutex_unlock(&currentClient->client_mutex);
+		logger("UnLocking mutex of client" + numberToString(currentClient->stream_socket));
 	}
 }
 
@@ -160,7 +161,7 @@ void	isRequestComplete(Client *client)
 			client->read_more = true;
 		else
 			client->read_more = false;
-		}
+	}
 }
 
 bool	isChunkComplete(Client *client)

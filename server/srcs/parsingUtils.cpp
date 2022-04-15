@@ -273,23 +273,51 @@ std::string	findUriExtension(std::string uri)
 
 	last_slash = uri.find_last_of("/");
 	file = uri.substr(last_slash + 1, uri.length() - last_slash);
-	std::cout << "=== FILE ONLY\t=\t\"" << file << "\"" << std::endl;
+	//std::cout << "=== FILE ONLY\t=\t\"" << file << "\"" << std::endl;
 
 	last_pt = file.find_last_of(".");
 	if (last_pt == std::string::npos)
 	{
-		std::cout << "=== EXT ONLY\t=\tEMPTY" << std::endl;
+		//std::cout << "=== EXT ONLY\t=\tEMPTY" << std::endl;
 		return (extension);
 	}
 	extension = file.substr(last_pt + 1, file.length() - last_pt);
-	std::cout << "=== EXT ONLY\t=\t\"" << extension << "\"" << std::endl;
+	//std::cout << "=== EXT ONLY\t=\t\"" << extension << "\"" << std::endl;
 	return (extension);
 }
 
-std::string numberToString(size_t nb)
+std::string numberToString(int nb)
 {
     std::ostringstream oss;
 
     oss << nb;
     return oss.str();
 }
+
+void	logger(std::string message)
+{
+	static bool 			first = true;
+	static pthread_mutex_t	mutex;
+	static std::ofstream	file;
+	static unsigned long	start_time;
+	static pid_t			main;
+
+	struct timeval	timestamp;
+
+	gettimeofday(&timestamp, NULL);
+
+	if (first == true)
+	{
+		first = false;
+		pthread_mutex_init(&mutex, NULL);
+		file.open("log.log", std::ios::app);
+		start_time = 1000000 * timestamp.tv_sec + timestamp.tv_usec;
+		main = syscall(__NR_gettid);
+	}
+
+	unsigned long	time = 1000000 * timestamp.tv_sec + timestamp.tv_usec - start_time;
+
+	pthread_mutex_lock(&mutex);
+	file << "[" << time << "][" << syscall(__NR_gettid) - main << "] " << message << std::endl;
+	pthread_mutex_unlock(&mutex);
+}	

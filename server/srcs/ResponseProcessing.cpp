@@ -35,14 +35,14 @@ bool	Response::findIndex(void)
 	ite = this->location->getIndex().end();
 	while (it != ite)
 	{
-		std::cout << "=== CHECKING " << this->path + *it << std::endl;
+		//std::cout << "=== CHECKING " << this->path + *it << std::endl;
 		if (pathExists(this->path + *it) == 1
 				&& isFile(this->path + *it) == 1)
 		{
 			this->path.append(*it);
-			std::cout << "=== FOUND INDEX "
-				<< (*it) << " NEW PATH = "
-				<< this->path << std::endl;
+			//std::cout << "=== FOUND INDEX "
+			//	<< (*it) << " NEW PATH = "
+			//	<< this->path << std::endl;
 			return (true);
 		}
 		it++;
@@ -65,7 +65,7 @@ std::string	Response::findContentType(void)
 	{
 		if (pair_arr->first == extension)
 		{
-			std::cout << "=== FOUND CONTENT-TYPE = " << pair_arr->second << std::endl;
+			//std::cout << "=== FOUND CONTENT-TYPE = " << pair_arr->second << std::endl;
 			return (pair_arr->second);
 		}
 		pair_arr++;
@@ -76,13 +76,13 @@ std::string	Response::findContentType(void)
 
 int		Response::methodGET(void)
 {
-	std::cout << "=== TESTING FILE/DIR = " << this->path << std::endl;
+	//std::cout << "=== TESTING FILE/DIR = " << this->path << std::endl;
 	if (pathExists(this->path) == false)
 	{
-		std::cout << std::boolalpha;
-		std::cout << "=== PATH DOESN'T EXIST" << std::endl;
-		std::cout << "=== pathExists(this->path) == "
-			<< pathExists(this->path) << std::endl;
+		//std::cout << std::boolalpha;
+		//std::cout << "=== PATH DOESN'T EXIST" << std::endl;
+		//std::cout << "=== pathExists(this->path) == "
+		//	<< pathExists(this->path) << std::endl;
 		this->client->status_code = 404;
 		this->constructError();
 		return (SUCCESS);
@@ -95,18 +95,18 @@ int		Response::methodGET(void)
 	}
 	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
 	{
-		std::cout << "=== REQUESTING A FILE" << std::endl;
+		//std::cout << "=== REQUESTING A FILE" << std::endl;
 		if (isDirectory(this->path) == false)
 		{
 			this->is_file = true;
-			std::cout << "=== FILE IS FOUND" << std::endl;
+			//std::cout << "=== FILE IS FOUND" << std::endl;
 			this->client->status_code = 200;
 			this->constructSuccess();
 			return (SUCCESS);
 		}
 		else 
 		{
-			std::cout << "=== FILE NOT FOUND" << std::endl;
+			//std::cout << "=== FILE NOT FOUND" << std::endl;
 			this->client->status_code = 404;
 			this->constructError();
 			return (SUCCESS);
@@ -114,16 +114,16 @@ int		Response::methodGET(void)
 	}
 	else											//REQUEST A DIR
 	{
-		std::cout << "=== REQUESTING A DIRECTORY" << std::endl;
+		//std::cout << "=== REQUESTING A DIRECTORY" << std::endl;
 		//	CHECK index
 		if (this->location->_indexIsSet == true)
 		{
-			std::cout << "=== CHECKING INDEXES" << std::endl;
+			//std::cout << "=== CHECKING INDEXES" << std::endl;
 			// findIndex() WILL REPLACE path BY A NEW PATH AND RETURN TRUE
 			// IF FOUND
 			if (this->findIndex() == true)
 			{
-				std::cout << "=== FOUND INDEX" << std::endl;
+				//std::cout << "=== FOUND INDEX" << std::endl;
 				if (canRead(this->path) == true)
 				{
 					this->client->status_code = 200;
@@ -144,7 +144,7 @@ int		Response::methodGET(void)
 		if (this->location->_autoIndexIsSet == true
 				&& this->location->getAutoIndex() == true)
 		{
-			std::cout << "=== CONSTRUCTING AUTOINDEX" << std::endl;
+			//std::cout << "=== CONSTRUCTING AUTOINDEX" << std::endl;
 			this->client->status_code = 200;
 			this->constructAutoIndex();
 			return (SUCCESS);
