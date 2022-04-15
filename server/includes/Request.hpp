@@ -49,7 +49,7 @@ class   Request {
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
-//		std::string			_query_string;
+		std::string			_query_string;
 
 		//  HEADERS
 		std::string			_headers;
@@ -76,6 +76,8 @@ class   Request {
 		unsigned int	parseHeaders(void);
 		unsigned int	parseBody(void);
 		int				isSupportedHeader(std::string & key);
+		void			splitUriAndQueryString(void);
+
 		//		RequestHeaderArgs.cpp
 		void			setHeaderValue(const unsigned int header_index,
 						std::string const & value);

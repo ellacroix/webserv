@@ -137,7 +137,7 @@ unsigned int	Request::parseReqLine(void)
 	tok = std::strtok(c_str, " \t");
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
-		return (501);	//Plutot 501 "Not Implemented"
+		return (501);
 	this->_method = std::string(tok);
 
 	//	URI
@@ -147,6 +147,8 @@ unsigned int	Request::parseReqLine(void)
 	this->_URI = std::string(tok);
 	if (isValidReqUri(this->_URI) == false)
 		return (400);
+	if (this->_URI.find("?") != std::string::npos)
+		this->splitUriAndQueryString();
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 
 	//	HTTP VERSION
@@ -245,4 +247,14 @@ VirtualServer *	Request::findVirtualServer(std::string & s)
 		it++;
 	}
 	return (this->_client->parent_port->_VS_list.front());
+}
+
+void			Request::splitUriAndQueryString(void)
+{
+	size_t	question_mark_pos;
+	
+	question_mark_pos = this->_URI.find("?");
+	this->_query_string = this->_URI.substr(question_mark_pos + 1,
+			this->_URI.length() - question_mark_pos);
+	this->_URI = this->_URI.substr(0, question_mark_pos);
 }
