@@ -67,7 +67,7 @@ void    Response::constructRedirection()
 	//Headers
 	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
 	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
-	raw_response.append("Content-Location: " + redir_URI + "\r\n");
+	raw_response.append("Location: " + redir_URI + "\r\n");
 	raw_response.append("\r\n");
 
 	//Body

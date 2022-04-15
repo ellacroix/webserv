@@ -73,6 +73,7 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->response->raw_response.size() == 0 || ret < 0)
 	{
+		printf("ThreadsPool: send routine sent all the response\n");
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -80,10 +81,9 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 		client->response = NULL;
 		client->response_ready = false;
 		client->request_buffer.clear();
-		printf("ThreadsPool: send routine sent all the response\n");
 
 		//Signal for main to disconnect the client and not monitor it again
-		if (client->status_code == 408)
+		if (client->status_code == 408 || ret < 0)
 			client->connected = false;
 		else
 			monitorForReading(client, thread_info);

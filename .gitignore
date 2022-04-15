@@ -37,3 +37,4 @@ webserv
 # swaps
 .*.swp
 
+*.log

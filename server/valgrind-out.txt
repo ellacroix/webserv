@@ -1,15 +1,74 @@
-==373270== Memcheck, a memory error detector
-==373270== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==373270== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==373270== Command: ./webserv confs/nginx.conf
-==373270== Parent PID: 373268
-==373270== 
-==373270== 
-==373270== HEAP SUMMARY:
-==373270==     in use at exit: 0 bytes in 0 blocks
-==373270==   total heap usage: 270 allocs, 270 frees, 107,764 bytes allocated
-==373270== 
-==373270== All heap blocks were freed -- no leaks are possible
-==373270== 
-==373270== For lists of detected and suppressed errors, rerun with: -s
-==373270== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 4 from 2)
+==151947== Memcheck, a memory error detector
+==151947== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==151947== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==151947== Command: ./webserv confs/nginx.conf
+==151947== Parent PID: 151944
+==151947== 
+==151947== 
+==151947== HEAP SUMMARY:
+==151947==     in use at exit: 792,770,636 bytes in 163 blocks
+==151947==   total heap usage: 5,637 allocs, 5,474 frees, 1,997,708,964 bytes allocated
+==151947== 
+==151947== 4,320 bytes in 54 blocks are indirectly lost in loss record 1 of 5
+==151947==    at 0x483BE63: operator new(unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==151947==    by 0x49A735D: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x49A8285: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x424E66: Response::ConstructResponse() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F9A1: createAndConstructResponse(Client*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F8C9: threadRecvRoutine(Client*, s_thread_info*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4201F3: threadLoop(void*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4BB8608: start_thread (pthread_create.c:477)
+==151947==    by 0x4CF2162: clone (clone.S:95)
+==151947== 
+==151947== 32,816 bytes in 1 blocks are definitely lost in loss record 2 of 5
+==151947==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==151947==    by 0x4CB0F48: __alloc_dir (opendir.c:118)
+==151947==    by 0x4CB0F48: opendir_tail (opendir.c:69)
+==151947==    by 0x4CB0F48: opendir (opendir.c:92)
+==151947==    by 0x40D751: deleteLogs() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x40D89D: main (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947== 
+==151947== 249,552,282 bytes in 17 blocks are possibly lost in loss record 3 of 5
+==151947==    at 0x483BE63: operator new(unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==151947==    by 0x49A735D: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x49A8B52: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_append(char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x4282BD: Response::constructSuccess() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x427B6D: Response::methodGET() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x424FBE: Response::ConstructResponse() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F9A1: createAndConstructResponse(Client*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F8C9: threadRecvRoutine(Client*, s_thread_info*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4201F3: threadLoop(void*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4BB8608: start_thread (pthread_create.c:477)
+==151947==    by 0x4CF2162: clone (clone.S:95)
+==151947== 
+==151947== 543,143,202 bytes in 37 blocks are indirectly lost in loss record 4 of 5
+==151947==    at 0x483BE63: operator new(unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==151947==    by 0x49A735D: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_mutate(unsigned long, unsigned long, char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x49A8B52: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_append(char const*, unsigned long) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==151947==    by 0x4282BD: Response::constructSuccess() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x427B6D: Response::methodGET() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x424FBE: Response::ConstructResponse() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F9A1: createAndConstructResponse(Client*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F8C9: threadRecvRoutine(Client*, s_thread_info*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4201F3: threadLoop(void*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4BB8608: start_thread (pthread_create.c:477)
+==151947==    by 0x4CF2162: clone (clone.S:95)
+==151947== 
+==151947== 543,185,538 (38,016 direct, 543,147,522 indirect) bytes in 54 blocks are definitely lost in loss record 5 of 5
+==151947==    at 0x483BE63: operator new(unsigned long) (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==151947==    by 0x40D38D: Client::createResponse() (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F994: createAndConstructResponse(Client*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x41F8C9: threadRecvRoutine(Client*, s_thread_info*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4201F3: threadLoop(void*) (in /sgoinfre/goinfre/Perso/ellacroi/webserv/server/webserv)
+==151947==    by 0x4BB8608: start_thread (pthread_create.c:477)
+==151947==    by 0x4CF2162: clone (clone.S:95)
+==151947== 
+==151947== LEAK SUMMARY:
+==151947==    definitely lost: 70,832 bytes in 55 blocks
+==151947==    indirectly lost: 543,147,522 bytes in 91 blocks
+==151947==      possibly lost: 249,552,282 bytes in 17 blocks
+==151947==    still reachable: 0 bytes in 0 blocks
+==151947==         suppressed: 0 bytes in 0 blocks
+==151947== 
+==151947== For lists of detected and suppressed errors, rerun with: -s
+==151947== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 88 from 2)
