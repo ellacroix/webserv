@@ -317,7 +317,18 @@ void	logger(std::string message)
 
 	unsigned long	time = 1000000 * timestamp.tv_sec + timestamp.tv_usec - start_time;
 
-	pthread_mutex_lock(&mutex);
-	file << "[" << time << "][" << syscall(__NR_gettid) - main << "] " << message << std::endl;
-	pthread_mutex_unlock(&mutex);
+	pid_t x = syscall(__NR_gettid);
+
+	if (x - main == 0)
+	{
+		pthread_mutex_lock(&mutex);
+		file << "[" << time << "][MAIN]\t\t " << message << std::endl;
+		pthread_mutex_unlock(&mutex);
+	}
+	else
+	{
+		pthread_mutex_lock(&mutex);
+		file << "[" << time << "][" << x - main << "]\t\t\t " << message << std::endl;
+		pthread_mutex_unlock(&mutex);
+	}
 }	

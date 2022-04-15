@@ -56,19 +56,17 @@ int main(int argc, char *argv[])
 		return (FAILURE);
 	
 	int current_connections = 0;
+	logger("\n-------------------------------START SERVER--------------------------");
 	while (RUNNING)
 	{
 		logger("Waiting on epoll_wait()");
-		//printf("Waiting on epoll_wait()");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
-		//printf("epoll_wait() activated by %d file descriptors", new_events);
 		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
 		if (new_events == 0)
-			//printf("epoll_wait() timed out. Checking clients timeout.");
 			logger("epoll_wait() timed out. Checking clients timeout.");
 		disconnectTimeout408(config.getports_list(), thread_info, &current_connections);
 
@@ -106,9 +104,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
-
+	printf("Ending server\n");
 	cleanShutDown(thread_pool, thread_info);
-	
 	printf("End of server\n");
 	return (SUCCESS);
 }

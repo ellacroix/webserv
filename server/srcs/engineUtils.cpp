@@ -59,8 +59,7 @@ int		acceptIncomingConnections(Port *current_port,
 
 		//Creating a new Client instance to represent the connection
 		//and add it to this port's map.
-		printf("MainProcess: Accepted new connection %d on port:%d\n",
-				connection, current_port->port_number);
+		logger("Client " + numberToString(connection) + " accepted connection on port " + numberToString(current_port->port_number));
 		Client *newClient = new Client(connection, current_port);
 		current_port->_clients_map[connection] = newClient;
 
@@ -89,18 +88,17 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	//Receiving all we can from the client
 	bzero(buffer, RECV_BUFFER_SIZE);
 	ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
-	printf("recvClientsReq - ret = %d\n", ret);
-/* 	printf("\033[0;31m");
-	printf("%s\n", buffer);
-	printf("\033[0m"); */
-
+	logger("Client " + numberToString(connection) + " received " + numberToString(ret) + " bytes");
+	//logger("Client " + numberToString(connection) + " locking mutex \t- Received data from the client");
 	pthread_mutex_lock(&current_client->client_mutex);
+	//logger("Client " + numberToString(connection) + " locked mutex \t\t- Received data from the client");
 	if (ret <= 0)
 	{
 		//Client disconnected itself
 		current_client->connected = false;
 		current_port->_clients_map.erase(current_client->stream_socket);
 		pthread_mutex_unlock(&current_client->client_mutex);
+		//logger("Client " + numberToString(connection) + " unlocked mutex \t- Client disconnected by writing 0 bytes");
 		delete current_client;
 		(*current_connections)--;
 	}
@@ -111,9 +109,11 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		thread_info->queue->push_back(current_client);
 		pthread_cond_signal(&thread_info->condition_var);
-		printf("MainProcess: added client %d to the queue for recv routine\n", connection);
+		logger("Client " + numberToString(connection) + " added to the queue for recv routine");
+		//logger("Dequeue size = " + numberToString(thread_info->queue->size()));
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 		pthread_mutex_unlock(&current_client->client_mutex);
+		//logger("Client " + numberToString(connection) + " unlocked mutex \t- Received data to analyze");
 	}
 }
 
@@ -126,13 +126,17 @@ void	sendClientResponse(t_thread_info *thread_info,
 	connection = it_c->first;
 	current_client = it_c->second;
 
+	//logger("Client " + numberToString(connection) + " locking mutex \t- Client ready to be written to");
 	pthread_mutex_lock(&current_client->client_mutex);
+	//logger("Client " + numberToString(connection) + " locked mutex \t\t- Client ready to be written to");
 	pthread_mutex_lock(&thread_info->queue_mutex);
 	thread_info->queue->push_back(current_client);
 	pthread_cond_signal(&thread_info->condition_var);
-	printf("MainProcess: added client %d to the queue for send routine\n", connection);
+	logger("Client " + numberToString(connection) + " added to the queue for send routine");
+	//logger("Dequeue size = " + numberToString(thread_info->queue->size()));
 	pthread_mutex_unlock(&thread_info->queue_mutex);
 	pthread_mutex_unlock(&current_client->client_mutex);
+	//logger("Client " + numberToString(connection) + " unlocked mutex \t- Client ready to be written to");
 }
 
 int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info, int *current_connections)
@@ -140,7 +144,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 
-	printf("MainProcess: Checking for timeouts\n");
+	//logger("Checking for timeouts");
 	for (std::list<Port*>::iterator it_p = ports_list.begin(); it_p != ports_list.end(); it_p++)
 	{
 		Port *current_port = *it_p;
@@ -150,15 +154,18 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 			Client *current_client = it_c->second;
 			next_it_c++;
 
+			//logger("Client " + numberToString(current_client->stream_socket) + " locking mutex \t- Checking timeout");
 			pthread_mutex_lock(&current_client->client_mutex);
+			//logger("Client " + numberToString(current_client->stream_socket) + " locked mutex \t\t- Checking timeout");
 
 			int result = current_time.tv_sec - current_client->last_activity.tv_sec;
 
 			if (current_client->connected == false)
 			{
-				printf("CLIENT %d GOT HIS 408, WE DISCONNECT HIM\n", current_client->stream_socket);
+				logger("Client " + numberToString(current_client->stream_socket) + " disconnected");
 				current_port->_clients_map.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
+				//logger("Client " + numberToString(current_client->stream_socket) + " unlocked mutex \t- Disconnected client");
 				delete current_client;
 				(*current_connections)--;
 				continue;
@@ -166,7 +173,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 
 			else if (result > TIMEOUT && current_client->response_ready == false)
 			{
-				printf("CLIENT %d EXCEEDED TIMEOUT CONSTRUCTING RESPONSE\n", current_client->stream_socket);
+				logger("Client " + numberToString(current_client->stream_socket) + " exceeded timeout");
 				current_client->status_code = 408;
 				current_client->response_ready = true;
 				current_client->createResponse();
@@ -175,6 +182,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 				monitorForWriting(current_client, thread_info);
 			}
 			pthread_mutex_unlock(&current_client->client_mutex);
+			//logger("Client " + numberToString(current_client->stream_socket) + " unlocked mutex \t- Checked timeout");
 		}
 	}
 	return 0;
@@ -184,6 +192,7 @@ void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info)
 {
 	Client	*killer_client = new Client();
 	
+	logger("\n--------------------------------END SERVER---------------------------");
 	for (int i = 0; i < THREADS; i++)
 	{
 		pthread_mutex_lock(&thread_info->queue_mutex);
@@ -193,7 +202,9 @@ void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info)
 	}
 
 	for (int i = 0; i < THREADS; i++)
+	{
 		pthread_join(thread_pool[i], NULL);
+	}
 
  	pthread_cond_destroy(&thread_info->condition_var);
 	pthread_mutex_destroy(&thread_info->epoll_fd_mutex);
