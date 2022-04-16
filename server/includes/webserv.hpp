@@ -50,7 +50,7 @@
 # define TIMEOUT 50
 # define K 1000
 # define M 1000000
-# define SERVER_MAX_BODY_SIZE 10 * M
+# define SERVER_MAX_BODY_SIZE 30 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 # define MAX_CONNECTIONS 150
 

@@ -14,6 +14,8 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		return ;
 	}
 
+	// BUGGY
+	/*
 	if (client->request_buffer.size() > SERVER_MAX_HEADERS_SIZE)
 	{
 		logger("Client " + numberToString(client->stream_socket) + " headers too big");
@@ -22,6 +24,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		monitorForWriting(client, thread_info);
 		return ;
 	}
+	*/
 	
 	//We received the headers, is the request complete ?
 	size_t end = client->request_buffer.find("\r\n\r\n");
@@ -219,7 +222,7 @@ bool	isBodyComplete(Client *client, size_t length)
 void	createAndConstructResponse(Client *client)
 {
 	client->createResponse();
-	client->response->ConstructResponse();
+	client->response->processRequest();
 }
 
 void	monitorForReading(Client *client, t_thread_info *thread_info)

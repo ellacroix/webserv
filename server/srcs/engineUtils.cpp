@@ -177,7 +177,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 				current_client->status_code = 408;
 				current_client->response_ready = true;
 				current_client->createResponse();
-				current_client->response->ConstructResponse();
+				current_client->response->processRequest();
 
 				monitorForWriting(current_client, thread_info);
 			}

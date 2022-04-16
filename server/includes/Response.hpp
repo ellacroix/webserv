@@ -31,6 +31,7 @@ public:
 	std::string		body;
 	int				status_code;
 	std::ifstream	request_file;
+	std::ofstream	post_file;
 	size_t			file_len;
 	bool			chunked;
 	bool			is_file;
@@ -45,7 +46,7 @@ public:
 	Response(Client *parent_client);
 
 	//	RESPONSE PROCESSING
-	int			ConstructResponse();
+	int			processRequest();
 	void		constructError();
 	std::string	getErrorMessage(int code);
 
@@ -54,13 +55,13 @@ public:
 	std::string		findContentType(void);
 	void			constructAutoIndex();
 	int				methodGET(void);
+	int				methodPOST(void);
 	Location *		findLocation(std::string & URI);
 
 	//	FILE - ResponseConstruction.cpp
 	void		constructSuccess(void);
 	void		constructRedirection(void);
-
-
+	int			createFile(void);
 };
 
 #endif

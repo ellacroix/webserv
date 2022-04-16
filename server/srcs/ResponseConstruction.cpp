@@ -160,3 +160,20 @@ std::string	Response::getErrorMessage(int code)
 			return " Should not happen";
 	}
 }
+
+int		Response::createFile(void)
+{
+	std::cout << "=== POST - OPENING " << this->path << std::endl;
+	this->post_file.open(this->path.c_str(),
+			std::ostream::out | std::ostream::trunc);
+	if (this->post_file.good() == false)
+	{
+		this->client->status_code = 403;
+		this->constructError();
+		return 403;
+	}
+	std::cout << "=== POST - OPENED " << this->path << std::endl;
+	this->post_file << this->request->_body;
+	this->post_file.close();
+	return (SUCCESS);
+}

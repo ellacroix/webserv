@@ -14,7 +14,7 @@ Response::Response(Client *parent_client)
 	}
 }
 
-int	Response::ConstructResponse()
+int	Response::processRequest()
 {	
  	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
 	if (this->request == NULL)
@@ -51,9 +51,7 @@ int	Response::ConstructResponse()
 		return (SUCCESS);
 	}
 
-	//	MAKE DIR/FILE PATH	- ROOT VERSION
-	//this->path = this->location.getRoot().append(this->request->_URI);
-	//						- ALIAS VERSION
+	//	MAKE DIR/FILE PATH
 	this->path = this->request->_URI;
 	this->path.replace(0, this->location->getPrefix().length(),
 			this->location->getRoot());
@@ -69,9 +67,9 @@ int	Response::ConstructResponse()
 	
 	if (this->request->_method == "GET")
 		this->methodGET();
+	else if (this->request->_method == "POST")
+		this->methodPOST();
 	/*
-	else if (this->request->method == "POST")
-
 	else if (this->request->method == "DELETE")
 	*/
 

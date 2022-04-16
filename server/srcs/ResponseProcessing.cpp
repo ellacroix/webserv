@@ -55,7 +55,7 @@ std::string	Response::findContentType(void)
 	std::string	extension;
 	const std::pair<std::string, std::string>	*pair_arr;
 
-//	extension = findUriExtension(this->request->_URI);
+	//	extension = findUriExtension(this->request->_URI);
 	extension = findUriExtension(this->path);
 
 	if (extension.empty() == true)
@@ -155,5 +155,81 @@ int		Response::methodGET(void)
 			this->constructError();
 			return (SUCCESS);
 		}
+	}
+}
+
+int		Response::methodPOST(void)
+{
+	std::string	path_to_folder;
+	size_t		last_slash_pos;
+
+	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
+	{
+		std::cout << "=== POST - REQUEST TO FILE" << std::endl;
+		//	FILE ALREADY EXISTS
+		if (pathExists(this->path) == true)
+		{
+			std::cout << "=== POST - PATH EXISTS" << std::endl;
+			if (isFile(this->path) == false)
+			{
+				std::cout << "=== POST - PATH IS A FOLDER\t=> 403" << std::endl;
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+			if (canWrite(this->path) == false)
+			{
+				std::cout << "=== POST - NO WRITE PERMISSION FOR PATH\t=> 403"
+					<< std::endl;
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+		}
+		//	FILE DOESN'T EXIST YET
+		else	
+		{
+			std::cout << "=== POST - PATH DOESN'T EXIST" << std::endl;
+			last_slash_pos = this->path.find_last_of("/");
+			path_to_folder = this->path.substr(0, last_slash_pos);
+			if (pathExists(path_to_folder) == false)
+			{
+				std::cout << "=== POST - CONTAINING FOLDER DOESN'T EXIST\t=> 404"
+					<< std::endl;
+				this->client->status_code = 404;
+				this->constructError();
+				return (SUCCESS);
+			}
+			if (isDirectory(path_to_folder) == false)
+			{
+				std::cout << "=== POST - CONTAINING FOLDER IS A FILE\t=> 404"
+					<< std::endl;
+				this->client->status_code = 404;
+				this->constructError();
+				return (SUCCESS);
+			}
+			if (canWrite(path_to_folder) == false)
+			{
+				std::cout << "=== POST - CANNOT WRITE TO CONTAINING FOLDER\t=> 403"
+					<< std::endl;
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+		}
+		std::cout << "=== POST - CREATING FILE" << std::endl;
+		if (this->createFile() != SUCCESS)
+			return (this->client->status_code);
+		std::cout << "=== POST - CREATED FILE\t=> 201" << std::endl;
+		this->client->status_code = 201;
+		this->constructSuccess();
+		return (SUCCESS);
+	}
+	else											//REQUEST A DIR
+	{
+		std::cout << "=== POST - REQUEST TO FOLDER\t=> 403" << std::endl;
+		this->client->status_code = 403;
+		this->constructError();
+		return (SUCCESS);
 	}
 }

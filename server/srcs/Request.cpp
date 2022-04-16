@@ -215,7 +215,7 @@ unsigned int	Request::decodeChunk(void)
 	{
 		chunkStart = _body.find("\r\n", chunkStart) + 2;
 		chunk = _body.substr(chunkStart, chunkSize);
-		printf("Chunk %lu = %s\n", chunkSize, chunk.c_str());
+//		printf("Chunk %lu = %s\n", chunkSize, chunk.c_str());
 		decodedBody.append(chunk.c_str(), chunkSize);
 		chunkStart += chunkSize + 2;
 		chunkSize = strtol(_body.c_str() + chunkStart, NULL, 16);
