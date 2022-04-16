@@ -59,7 +59,8 @@ public:
 	Location *		findLocation(std::string & URI);
 
 	//	FILE - ResponseConstruction.cpp
-	void		constructSuccess(void);
+	void		construct200Ok(void);
+	void		construct201Created(void);
 	void		constructRedirection(void);
 	int			createFile(void);
 };

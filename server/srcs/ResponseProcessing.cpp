@@ -101,7 +101,7 @@ int		Response::methodGET(void)
 			this->is_file = true;
 			//std::cout << "=== FILE IS FOUND" << std::endl;
 			this->client->status_code = 200;
-			this->constructSuccess();
+			this->construct200Ok();
 			return (SUCCESS);
 		}
 		else 
@@ -127,7 +127,7 @@ int		Response::methodGET(void)
 				if (canRead(this->path) == true)
 				{
 					this->client->status_code = 200;
-					this->constructSuccess();
+					this->construct200Ok();
 					return (SUCCESS);
 				}
 				else
@@ -162,6 +162,8 @@ int		Response::methodPOST(void)
 {
 	std::string	path_to_folder;
 	size_t		last_slash_pos;
+	std::string	def_upload_name;
+	size_t		n;
 
 	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
 	{
@@ -172,14 +174,14 @@ int		Response::methodPOST(void)
 			std::cout << "=== POST - PATH EXISTS" << std::endl;
 			if (isFile(this->path) == false)
 			{
-				std::cout << "=== POST - PATH IS A FOLDER\t=> 403" << std::endl;
+				std::cout << "=== POST - PATH IS NOT A FILE\t=> 403" << std::endl;
 				this->client->status_code = 403;
 				this->constructError();
 				return (SUCCESS);
 			}
 			if (canWrite(this->path) == false)
 			{
-				std::cout << "=== POST - NO WRITE PERMISSION FOR PATH\t=> 403"
+				std::cout << "=== POST - NO WRITE PERMISSION FOR FILE\t=> 403"
 					<< std::endl;
 				this->client->status_code = 403;
 				this->constructError();
@@ -192,6 +194,8 @@ int		Response::methodPOST(void)
 			std::cout << "=== POST - PATH DOESN'T EXIST" << std::endl;
 			last_slash_pos = this->path.find_last_of("/");
 			path_to_folder = this->path.substr(0, last_slash_pos);
+			std::cout << "=== POST - CONTAINING FOLDER : \""
+				<< path_to_folder << "\"" << std::endl;
 			if (pathExists(path_to_folder) == false)
 			{
 				std::cout << "=== POST - CONTAINING FOLDER DOESN'T EXIST\t=> 404"
@@ -222,14 +226,35 @@ int		Response::methodPOST(void)
 			return (this->client->status_code);
 		std::cout << "=== POST - CREATED FILE\t=> 201" << std::endl;
 		this->client->status_code = 201;
-		this->constructSuccess();
+		this->construct201Created();
 		return (SUCCESS);
 	}
 	else											//REQUEST A DIR
 	{
+		
 		std::cout << "=== POST - REQUEST TO FOLDER\t=> 403" << std::endl;
+		/*
 		this->client->status_code = 403;
 		this->constructError();
+		return (SUCCESS);
+		*/
+		// NEED FOLDER WRITE PERM CHECK
+		// OR => 403
+		def_upload_name = "upload_";
+
+		n = 1;
+		while (pathExists(this->path + def_upload_name
+					+ numberToString(n)
+					+ findUriExtension(this->path)))
+			n++;
+		this->path += def_upload_name
+			+ numberToString(n) + findUriExtension(this->path);
+		std::cout << "=== POST - CREATING FILE" << std::endl;
+		if (this->createFile() != SUCCESS)
+			return (this->client->status_code);
+		std::cout << "=== POST - CREATED FILE\t=> 201" << std::endl;
+		this->client->status_code = 201;
+		this->construct201Created();
 		return (SUCCESS);
 	}
 }
