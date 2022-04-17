@@ -15,6 +15,7 @@ SRCS			=	Client.cpp \
 					RequestHeaderArgs.cpp \
 					Response.cpp \
 					ResponseProcessing.cpp \
+					Cgi.cpp \
 					ResponseConstruction.cpp \
 					engineUtils.cpp \
 					fileUtils.cpp \
@@ -36,7 +37,7 @@ OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
 CXX				=	c++
 
-CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98 -g
+CXXFLAGS		= -pthread #-Wall -Wextra -Werror -std=c++98
 #CXXFLAGS		= -pthread -Wall -Wextra -Werror
 
 SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
@@ -68,6 +69,12 @@ sanitize	:	${OBJS}
 
 valgrind	:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+
+ctags		:
+			ctags srcs/*.cpp
+			ctags includes/*.hpp
+
+
 
 leaks		:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt \

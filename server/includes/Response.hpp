@@ -14,7 +14,7 @@ class VirtualServer ;
 class Response {
 
 private:
-	static const std::pair<std::string, std::string>document_type[104];
+	static const std::pair<std::string, std::string>document_type[105];
 
 protected:
 
@@ -59,7 +59,9 @@ public:
 	//	FILE - ResponseConstruction.cpp
 	void		constructSuccess(void);
 
-	std::string		executeCgi(void);
+	//	FILE - Cgi.cpp
+	int			executeCgi(void);
+	bool		isCgi(std::string path);
 
 };
 

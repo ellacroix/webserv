@@ -1,9 +1,10 @@
 #include "Response.hpp"
 
-const std::pair<std::string, std::string> Response::document_type[104] = {
+const std::pair<std::string, std::string> Response::document_type[105] = {
 	std::pair<std::string, std::string>("html", "text/html"),
 	std::pair<std::string, std::string>("htm","text/html"),
 	std::pair<std::string, std::string>("shtml","text/html"),
+	std::pair<std::string, std::string>("php","text/html"),
 	std::pair<std::string, std::string>("css","text/css"),
 	std::pair<std::string, std::string>("xml","text/xml"),
 	std::pair<std::string, std::string>("gif","image/gif"),

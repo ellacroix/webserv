@@ -12,62 +12,6 @@ Response::Response(Client *parent_client)
 	}
 }
 
-std::string Response::executeCgi()
-{
-	std::string	bodyCgi;
-	pid_t		pid;
-	char  		**arg;
-	int			fds[2];
-	char		buffer[1024];
-	int			count;
-
-	if (pipe(fds) == -1)
-	{
-		std::cerr << "error: execve failed" << std::endl; // need to change err msg FREE
-		return ("sortie");
-	}
-
-	arg = new char*[3];
-	arg[0] = new char[client->request->_virtual_server->getCgiPath().length() + 1];
-	arg[0] = strcpy(arg[0], client->request->_virtual_server->getCgiPath().c_str());
-	arg[1] = new char[this->path.length() + 1];
-	arg[1] = strcpy(arg[1], this->path.c_str());
-	arg[2] = NULL;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		delete [] arg[0];
-		delete [] arg[1];
-		std::cerr << "error: fork failed" << std::endl; // need to change err msg
-		return ("sortie");
-	}
-	if (!pid)
-	{
-		close(fds[0]);
-		dup2(fds[1], STDOUT_FILENO);
-		close(fds[1]);
-
-		execve(arg[0], arg, NULL); //need to exit and free if fail
-
-		std::cerr << "error: execve failed" << std::endl;
-		exit(1);
-	}
-	else
-	{
-		close(fds[1]);
-		wait(NULL);
-		while ((count = read(fds[0], buffer, 140)) != 0)
-		{
-			buffer[count] = '\0';
-			bodyCgi.append(buffer);
-		}
-		close(fds[0]);
-	}
-	delete [] arg[0];
-	delete [] arg[1];
-	return (bodyCgi);
-}
 
 int	Response::ConstructResponse()
 {	
@@ -120,9 +64,14 @@ int	Response::ConstructResponse()
 	this->path = this->request->_URI;
 	this->path.replace(0, this->location->getPrefix().length(),
 			this->location->getRoot());
+
+	// EXECUTION CGI
+	if (this->isCgi(this->path))
+	{
+		if (executeCgi() == -1)
+			std::cerr << "error: FAILED cgi execution" << std::endl; // need to manage this case
+	}
 	
-	executeCgi();		// add tmp
-	return (SUCCESS);	// add tmp
 	if (this->request->_method == "GET")
 		this->methodGET();
 	/*
