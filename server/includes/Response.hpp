@@ -59,6 +59,8 @@ public:
 	//	FILE - ResponseConstruction.cpp
 	void		constructSuccess(void);
 
+	std::string		executeCgi(void);
+
 };
 
 #endif

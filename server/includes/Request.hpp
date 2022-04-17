@@ -50,7 +50,7 @@ class   Request {
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
-//		std::string			_query_string;
+		// std::string			_query_string;
 
 		//  HEADERS
 		std::string			_headers;
@@ -86,8 +86,6 @@ class   Request {
 		unsigned int	decodeChunk(void);
 		VirtualServer	*findVirtualServer(std::string & s);
 		bool			isValid(void) const;
-
-
 };
 
 
