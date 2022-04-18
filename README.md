@@ -1,673 +1,680 @@
-# webserv
+# Vegeta [![Build Status](https://secure.travis-ci.org/tsenart/vegeta.svg?branch=master)](http://travis-ci.org/tsenart/vegeta) [![Go Report Card](https://goreportcard.com/badge/github.com/tsenart/vegeta)](https://goreportcard.com/report/github.com/tsenart/vegeta) [![GoDoc](https://godoc.org/github.com/tsenart/vegeta?status.svg)](https://godoc.org/github.com/tsenart/vegeta) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tsenart/vegeta?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Donate](https://img.shields.io/badge/donate-bitcoin-yellow.svg)](#donate)
 
-## Logique
-1. Parsing du fichier de config
-2. Lancement du serveur
-3. Reception des demandes de connection
-4. Etablissement de la connectiom 
-5. Reception des requetes HTTP
-6. Parsing des requetes HTTP
-7. Execution des CGI si necessaire
-8. Parsing de l'output du CGI
-9. Envoi des reponses 
-10. Fermeture de la connection si necessaire, ou retour a l'etape 5
+Vegeta is a versatile HTTP load testing tool built out of a need to drill
+HTTP services with a constant request rate.
+It can be used both as a command line utility and a library.
 
-## Nomenclature
-- CamelCase pour les fonctions
-- snake_case pour les variables
+![Vegeta](http://fc09.deviantart.net/fs49/i/2009/198/c/c/ssj2_vegeta_by_trunks24.jpg)
 
-## Architecture (Voir le dossier app.diagrams.net)
-- Une classe Port, qui contient une std::map<int, Client*>
-- Une classe Virtual_Server
-- Une classe Client, qui contient ses parametres, un pointeur vers son Port, une instance Request, une instance Response
-- Une classe Request, pour stocker la requete HTTP a recevoir
-- Une classe Response, pour stocker la reponse HTTP a renvoyer
+## Install
 
-## Logique multi-thread
-On a une pool de thread qui s'occuperont de toutes les taches de recv() a send().
-Le main process gere juste les connections entrantes et l'ajout de taches pour la thread pool.
+### Pre-compiled executables
 
-## Sujet
-- Your server must never block and the client can be bounced properly if necessary.
-- A request to your server should never hang forever.
-- You must be able to serve a fully static website.
-- You need at least GET, POST, and DELETE methods.
-- Your server must be able to listen to multiple ports (see Configuration file).
-- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (Cas de plusieurs serveurs sur le meme port avec des noms differents).
+Get them [here](http://github.com/tsenart/vegeta/releases).
 
-## Fonctions autorisées
-**[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
-```
-struct pollfd {
-               int   fd;         /* file descriptor */
-               short events;     /* requested events */
-               short revents;    /* returned events */};
+### Homebrew on Mac OS X
+
+You can install Vegeta using the [Homebrew](https://github.com/Homebrew/homebrew/) package manager on Mac OS X:
+
+```shell
+$ brew update && brew install vegeta
 ```
 
-**[int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)](http://manpagesfr.free.fr/man/man2/select.2.html)**
-``` 
-exemple /experiment/select_experiment.c 
+### Source
+
+You need `go` installed and `GOBIN` in your `PATH`. Once that is done, run the
+command:
+
+```shell
+$ go get -u github.com/tsenart/vegeta
 ```
 
-**htons, htonl, ntohs, ntohl**
-Ensure the conversion of short and long numbers between Host and Network, regardless of their endian-ness
+## Versioning
 
-**[epoll](https://man7.org/linux/man-pages/man7/epoll.7.html)**
+Both the library and the CLI are versioned with [SemVer v2.0.0](https://semver.org/spec/v2.0.0.html).
 
+After [v8.0.0](https://github.com/tsenart/vegeta/tree/v8.0.0), the two components
+are versioned separately to better isolate breaking changes to each.
 
+CLI releases are tagged with `cli/vMAJOR.MINOR.PATCH` and published on the [Github releases page](https://github.com/tsenart/vegeta/releases).
+As for the library, new versions are tagged with both `lib/vMAJOR.MINOR.PATCH` and `vMAJOR.MINOR.PATCH`.
+The latter tag is required for compatibility with `go mod`.
 
-## Questions
-- Doit on gerer l'access authentication ?
-- Si le client ferme la connection apres l'envoi de sa requete, doit on lui repondre ? (https://stackoverflow.com/questions/4824451/detect-end-of-http-request-body)
-- Gestion des trailers pas necessaires, car on peut les ignorer ? [IBM](https://www.ibm.com/docs/en/zvse/6.2?topic=SSB27H_6.2.0/dfhe7_use_chunked_tranfercoding.html#:~:text=Note%20that%20the%20HTTP/1.1%20specification%20sets%20requirements%20for%20the%20use%20of%20trailing%20headers%2C%20including%20that%20it%20should%20not%20matter%20if%20the%20recipient%20ignores%20them.)
+## Contributing
 
-## Resources
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
-### Server setup
+## Usage manual
 
-[How to build a simple HTTP server in C](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
+```console
+Usage: vegeta [global flags] <command> [command flags]
 
-[Simple server with C++](https://ncona.com/2019/04/building-a-simple-server-with-cpp/)
+global flags:
+  -cpus int
+    	Number of CPUs to use (defaults to the number of CPUs you have)
+  -profile string
+    	Enable profiling of [cpu, heap]
+  -version
+    	Print version and exit
 
-[C++ Web Programming](https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm)
-
-### HTTP 1.1 (standard to follow) :
-
-[HTTP/1.1 (RFC 2616)](https://www.rfc-editor.org/rfc/rfc2616.html)
-[Minimal version](http://www.cs.cmu.edu/~srini/15-441/F11/responses)
-
-[HTTP/1.1 : Message Syntax and Routing (RFC 7230)](https://www.rfc-editor.org/rfc/rfc7230.html)
-
-[HTTP/1.1 : Semantics and Content (RFC 7231)](https://www.rfc-editor.org/rfc/rfc7231.html)
-
-[HTTP/1.1 : Conditional Requests (RFC 7232)](https://www.rfc-editor.org/rfc/rfc7232.html)
-
-[HTTP/1.1 : Range Requests (RFC 7233)](https://www.rfc-editor.org/rfc/rfc7233.html)
-
-[HTTP/1.1 : Caching (RFC 7234)](https://www.rfc-editor.org/rfc/rfc7234.html)
-
-[HTTP/1.1 : Authentication (RFC 7235)](https://www.rfc-editor.org/rfc/rfc7235.html)
-
-### Other HTTP (legacy / future) :
-
-[HTTP/1.0 (RFC 1945)](https://www.rfc-editor.org/rfc/rfc1945.html)
-
-[HTTP/2 (RFC 7240)](https://www.rfc-editor.org/rfc/rfc7540.html)
-
-[HTTP/2 : Header Compression (RFC 7241)](https://www.rfc-editor.org/rfc/rfc7541.html)
-
-[FTP (RFC 959)](https://www.rfc-editor.org/rfc/rfc959.html)
-
-### HTTP Header Syntax
-
-[HTTP Request Methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods)
-
-[HTTP Status Codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
-
-[HTTP Header Break Style](https://stackoverflow.com/questions/5757290/http-header-line-break-style)
-
-### Select and non-blocking
-
-[Select](https://www.lowtek.com/sockets/select.html)
-
-[Non-blocking I/O](https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm)
-
-### CGI
-
-[CGI : Getting Started](http://www.mnuwer.dbasedeveloper.co.uk/dlearn/web/session01.htm)
-
-[CGI 1.1 Documentation](http://www.wijata.com/cgi/cgispec.html#4.0)
-
-[nice overview](https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf)
-
-[some details](https://www.developpez.net/forums/d151285/php/langage/php-js-quoi-sert-php-cgi-exe-repertoire-php/)
-
-
-### web socket
-- [nice article](https://www.bogotobogo.com/cplusplus/sockets_server_client.php)
-- [Beej's Guide to Network Programming](http://beej.us/guide/bgnet/html/)
-- ["build http server from scratch in C"](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)
-- [Les sockets en C](https://broux.developpez.com/articles/c/sockets/)
-- [select()](http://manpages.ubuntu.com/manpages/xenial/fr/man2/select_tut.2.html)
-- [select()example](https://man.developpez.com/man2/select_tut/)
-- [select()in the details](https://notes.shichao.io/unp/ch6/#readset-writeset-and-exceptset-as-value-result-)
-- [nice schema](https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm)
-- [select() vs threads](https://www.lowtek.com/sockets/select.html)
-- [TCP 3-way handshake schema ; Blocking vs non-blocking socket](https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php)
-- [more socket theory to waste time](https://www.bogotobogo.com/cplusplus/sockets_server_client_3.php)
-- [tuto Jacob Sorber](https://www.youtube.com/watch?v=bdIiTxtMaKA&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17)
-
-### http protocol
-- How the web works http://www.garshol.priv.no/download/text/http-tut.html
-- Request and Response format https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
-
-### http headers in details
-- MIME list https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
-- response status code https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP
-- auth theory https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#Basic_authentication_scheme
-- auth practice https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c
-
-### chunked encoding
-- wiki https://fr.wikipedia.org/wiki/Chunked_transfer_encoding
-- the idea https://www.geeksforgeeks.org/http-headers-transfer-encoding/
-
-### utils
-- https://superuser.com/questions/48505/how-to-find-virtual-memory-size-and-cache-size-of-a-linux-system
-- https://blog.seboss666.info/2015/08/reprenez-le-controle-du-cache-memoire-du-noyau-linux/
+attack command:
+  -body string
+    	Requests body file
+  -cert string
+    	TLS client PEM encoded certificate file
+  -connections int
+    	Max open idle connections per target host (default 10000)
+  -duration duration
+    	Duration of the test [0 = forever]
+  -format string
+    	Targets format [http, json] (default "http")
+  -h2c
+    	Send HTTP/2 requests without TLS encryption
+  -header value
+    	Request header
+  -http2
+    	Send HTTP/2 requests when supported by the server (default true)
+  -insecure
+    	Ignore invalid server TLS certificates
+  -keepalive
+    	Use persistent connections (default true)
+  -key string
+    	TLS client PEM encoded private key file
+  -laddr value
+    	Local IP address (default 0.0.0.0)
+  -lazy
+    	Read targets lazily
+  -max-body value
+    	Maximum number of bytes to capture from response bodies. [-1 = no limit] (default -1)
+  -name string
+    	Attack name
+  -output string
+    	Output file (default "stdout")
+  -rate value
+    	Number of requests per time unit (default 50/1s)
+  -redirects int
+    	Number of redirects to follow. -1 will not follow but marks as success (default 10)
+  -resolvers value
+    	List of addresses (ip:port) to use for DNS resolution. Disables use of local system DNS. (comma separated list)
+  -root-certs value
+    	TLS root certificate files (comma separated list)
+  -targets string
+    	Targets file (default "stdin")
+  -timeout duration
+    	Requests timeout (default 30s)
+  -unix-socket string
+    	Connect over a unix socket. This overrides the host address in target URLs
+  -workers uint
+    	Initial number of workers (default 10)
 
 
-## Discord
-[Reception du header Content-Language](https://discord.com/channels/774300457157918772/785407573000060978/796296015522299935)
 
-# Notes
-- Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP
-- Voir Type Mime pour gerer static site (Content Type)
-- Pour l'optimisation multi-thread, faire une thread pool avec un std::dequeue [video](https://www.youtube.com/watch?v=FMNnusHqjpw&list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&index=6&ab_channel=JacobSorber)
-- Au vu des discussions Discord, le pipelining n'a pas a etre géré, notamment car il est abandonné en HTTP2.0 et par la plupart des navigateurs.
-- Caching: plutot une notion pour les intermediaires, pas a gerer
-- Charset = token, le token specifie quel charset a employer, voir cas de Missing Charset
-- Chunked transfer Coding: OPTIONAL trailer
-- If the Request has no Request-Line(an instant CRLF as first character), ignore the Request
-- See Nagle's algorithm if send/recv takes too much time (https://stackoverflow.com/questions/4428088/reasons-for-a-slow-recv-call)
+encode command:
+  -output string
+    	Output file (default "stdout")
+  -to string
+    	Output encoding [csv, gob, json] (default "json")
 
-# Message
-```
-generic-message =   start-line
-                    *(message-header CRLF)
-                    CRLF
-                    [ message-body ]
+plot command:
+  -output string
+    	Output file (default "stdout")
+  -threshold int
+    	Threshold of data points above which series are downsampled. (default 4000)
+  -title string
+    	Title and header of the resulting HTML page (default "Vegeta Plot")
 
-start-line      =   Request-Line | Status-Line
-```
-- RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server in the form of a request method, URI, and protocol version, followed by a MIME-like message containing request modifiers, client information, and possible body content over a connection with a server.
+report command:
+  -every duration
+    	Report interval
+  -output string
+    	Output file (default "stdout")
+  -type string
+    	Report type to generate [text, json, hist[buckets]] (default "text")
 
-## Headers
-```
-    message-header = field-name ":" [ field-value ]
-    field-name     = token
-    field-value    = *( field-content | LWS )
-    field-content  = <the OCTETs making up the field-value
-                    and consisting of either *TEXT or combinations
-                    of token, separators, and quoted-string>
-```
-- The order in which header fields with differing field names are received is not significant. However, it is "good practice" to send general-header fields first, followed by request-header or response-header fields, and ending with the entity-header fields
-- Multiple message-header fields with the same field-name MAY be present in a message if and only if the entire field-value for that header field is defined as a comma-separated list [i.e., #(values)]. It MUST be possible to combine the multiple header fields into one "field-name: field-value" pair, without changing the semantics of the message, by appending each subsequent field-value to the first, each separated by a comma.
-- General Header Fields: There are a few header fields which have general applicability for both request and response messages, but which do not apply to the entity being transferred. These header fields apply only to the message being transmitted.
-```
-general-header = Cache-Control | Connection | Date | Pragma | Trailer | Transfer-En| Upgrade | Via | Warning          
+examples:
+  echo "GET http://localhost/" | vegeta attack -duration=5s | tee results.bin | vegeta report
+  vegeta report -type=json results.bin > metrics.json
+  cat results.bin | vegeta plot > plot.html
+  cat results.bin | vegeta report -type="hist[0,100ms,200ms,300ms]"
 ```
 
-## Body
-```
-message-body = entity-body | <entity-body encoded as per Transfer-Encoding>
-```
-- Transfer-Encoding MUST be used to indicate any transfer-codings applied by an application to ensure safe and proper transfer of the message.
+#### `-cpus`
 
-## Message Length
-- The transfer-length of a message is the length of the message-body as it appears in the message; that is, after any transfer-codings have been applied.
-- See more details [HERE](https://www.rfc-editor.org/rfc/rfc2616.html#:~:text=When%20a%20message%2Dbody%20is%20included%20with%20a%20message%2C%20the%0A%20%20%20transfer%2Dlength%20of%20that%20body%20is%20determined%20by%20one%20of%20the%20following%0A%20%20%20(in%20order%20of%20precedence)%3A)
-- Messages MUST NOT include both a Content-Length header field and a non-identity transfer-coding. If the message does include a non-identity transfer-coding, the Content-Length MUST be ignored.
+Specifies the number of CPUs to be used internally.
+It defaults to the amount of CPUs available in the system.
 
-# Request
-```
-Request               = Request-Line            
-                        *(( general-header      
-                         | request-header       
-                         | entity-header ) CRLF)
-                        CRLF
-                        [ message-body ]        
-```
-## Start-line
-```
-Request-Line   = Method SP Request-URI SP HTTP-Version CRLF
-```
-### Request-URI
-```
-Request-URI    = "*" | absoluteURI | abs_path | authority
-```
-- "*" optionnel pour nous ? Vu que cela ne s'applique pas pour GET/POST/DELETE ?
-- absoluteURI semble s'appliquer aux proxys, mais a accepter tout de meme
-- authority is only used by the CONNECT method
-- Request-URI can be encoded as "% HEX HEX" and has to be decoded
+#### `-profile`
 
-### The Resource Identified by a Request
-- Si on gere plusieurs host (server names ?) sur un meme port, on doit bien differencier les dossiers auxquels ils ont acces
-- Le host peut etre defini dans l'absoluteURI ou le header host, un invalid host entraine une reponse 400
-## Request Header Fields
-```
-request-header =    Accept | Accept-Charset | Accept-Encoding | Accept-Language 
-                    | Authorization | Expect | From | Host | If-Match | If-Modified-Since 
-                    | If-None-Match | If-Range | If-Unmodified-Since | Max-Forwards 
-                    | Proxy-Authorization | Range | Referer | TE | User-Agent
-```
-- Expect request: "100-continue", Indique que le client attend une reponse 100 avant d'envoyer le body. [VOIR CAS POSSIBLES](https://www.rfc-editor.org/rfc/rfc2616.html#section-8.2.3)
+Specifies which profiler to enable during execution. Both _cpu_ and
+_heap_ profiles are supported. It defaults to none.
 
-## Body
-- The presence of a message-body in a request is signaled by the inclusion of a Content-Length or Transfer-Encoding header field in the request's message-headers.
-- A message-body MUST NOT be included in a request if the specification of the request method (section 5.1.1) does not allow sending an entity-body in requests.
-- A server SHOULD read and forward a message-body on any request; if the request method does not include defined semantics for an entity-body, then the message-body SHOULD be ignored when handling the request.
+#### `-version`
 
-# Response
-```
-Response      = Status-Line             
-                *(( general-header      
-                | response-header      
-                | entity-header ) CRLF)
-                CRLF
-                [ message-body ]        
-```
-- If a request contains a message-body and a Content-Length is not given, the server SHOULD respond with 400 (bad request) if it cannot determine the length of the message, or with 411 (length required) if it wishes to insist on receiving a valid Content-Length.
-## Status-line
-```
-Status-Line = HTTP-Version SP Status-Code SP Reason-Phrase CRLF
-```
-### Status codes to implement
-1xx: Informational - Request received, continuing process
-- ~~101 Switching Protocols~~
+Prints the version and exits.
 
-2xx: [Success - The action was successfully received, understood, and accepted](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2)
-- [200 OK](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.1)
-- [201 Created](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.2)
-- ~~202 Accepted~~
-- ~~203 Non-Authoritative Information~~
-- [204 No Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.5)
-- ~~205 Reset Content~~
-- [206 Partial Content](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.7)
+### `attack` command
 
-3xx: Redirection - Further action must be taken in order to complete the request
-- [?? 300 Multiple Choices ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1)
-- [301 Moved Permanently](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2)
-- [?? 302 Found ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.3)
-- [?? 303 See Other ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.4)
-- [304 Not Modified](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.5)
-- ~~305 Use Proxy~~
-- ~~306 (Unused)~~
-- ~~307 Temporary Redirect~~
+#### `-body`
 
-4xx: Client Error - The request contains bad syntax or cannot be fulfilled
-- [400 Bad Request](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.1)
-- [?? 401 Unauthorized ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.2)
-- ~~402 Payment Required~~
-- [403 Forbidden](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.4)
-- [404 Not Found](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.5)
-- [405 Method Not Allowed](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.6)
-- [406 Not Acceptable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.7)
-- ~~407 Proxy Authentication Required~~
-- [408 Request Timeout](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.9)
-- [?? 409 Conflict ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.10)
-- ~~410 Gone~~
-- [?? 411 Length Required ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.12)
-- [?? 412 Precondition Failed ??](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.13)
-- [413 Request Entity Too Large](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.14)
-- [414 Request-URI Too Long](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.15)
-- [415 Unsupported Media Type](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.16)
-- [416 Requested Range Not Satisfiable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.17)
-- [417 Expectation Failed](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.18)
+Specifies the file whose content will be set as the body of every
+request unless overridden per attack target, see `-targets`.
 
-5xx: Server Error - The server failed to fulfill an apparently valid request
-- [500 Internal Server Error](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.1)
-- [501 Not Implemented](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.2)
-- ~~502 Bad Gateway~~
-- [503 Service Unavailable](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.4): The existence of the 503 status code does not imply that a server must use it when becoming overloaded. Some servers may wish to simply refuse the connection.
-- ~~504 Gateway Timeout~~
-- [505 HTTP Version Not Supported](https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.6)
+#### `-cert`
 
-## Response Header Fields
-```
-response-header =   Accept-Ranges | Age | ETag | Location | Proxy-Authenticate 
-                    | Retry-After | Server | Vary | WWW-Authenticate  
+Specifies the PEM encoded TLS client certificate file to be used with HTTPS requests.
+If `-key` isn't specified, it will be set to the value of this flag.
+
+#### `-connections`
+
+Specifies the maximum number of idle open connections per target host.
+
+#### `-duration`
+
+Specifies the amount of time to issue request to the targets.
+The internal concurrency structure's setup has this value as a variable.
+The actual run time of the test can be longer than specified due to the
+responses delay. Use 0 for an infinite attack.
+
+#### `-format`
+
+Specifies the targets format to decode.
+
+##### `json` format
+
+The JSON format makes integration with programs that produce targets dynamically easier.
+Each target is one JSON object in its own line. The method and url fields are required.
+If present, the body field must be base64 encoded. The generated [JSON Schema](lib/target.schema.json)
+defines the format in detail.
+
+```bash
+jq -ncM '{method: "GET", url: "http://goku", body: "Punch!" | @base64, header: {"Content-Type": ["text/plain"]}}' |
+  vegeta attack -format=json -rate=100 | vegeta encode
 ```
 
-## Body
-- All 1xx (informational), 204 (no content), and 304 (not modified) responses MUST NOT include a message-body. All other responses do include a message-body, although it MAY be of zero length.
+##### `http` format
 
-# Entity
+The http format almost resembles the plain-text HTTP message format defined in
+[RFC 2616](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html) but it
+doesn't support in-line HTTP bodies, only references to files that are loaded and used
+as request bodies (as exemplified below).
 
-## Entity Header Fields
-```
-entity-header  = Allow | Content-Encoding | Content-Language | Content-Length | Content-Location 
-                | Content-MD5 | Content-Range | Content-Type | Expires | Last-Modified 
-```
+Although targets in this format can be produced by other programs, it was originally
+meant to be used by people writing targets by hand for simple use cases.
 
-## Entity Body
-```
-entity-body := Content-Encoding( Content-Type( data ) )
-```
-- Content-Type specifies the media type of the underlying data. Any HTTP/1.1 message containing an entity-body SHOULD include a Content-Type header field defining the media type of that body.
-- Content-Encoding may be used to indicate any additional content codings applied to the data, usually for the purpose of data compression, that are a property of the requested resource. There is no default encoding.
-- If and only if the media type is not given by a Content-Type field, the recipient MAY attempt to guess the media type via inspection of its content and/or the name extension(s) of the URI used to identify the resource. If the media type remains unknown, the recipient SHOULD treat it as type "application/octet-stream".
-- The entity-length of a message is the length of the message-body before any transfer-codings have been applied.
+Here are a few examples of valid targets files in the http format:
 
-# METHODS
-## GET
-The GET method means retrieve whatever information (in the form of an entity) is identified by the Request-URI.
-
-If the Request-URI refers to a data-producing process, it is the produced data which shall be returned as the entity in the response and not the source text of the process, unless that text happens to be the output of the process.
-
-## POST
-The POST method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI in the Request-Line.
-
-The action performed by the POST method might not result in a resource that can be identified by a URI. In this case, either 200 (OK) or 204 (No Content) is the appropriate response status, depending on whether or not the response includes an entity that describes the result.
-A quoi ressemble le body d'une POST Response ?
-
-## DELETE
-The DELETE method requests that the origin server delete the resource identified by the Request-URI.
-
-# URI (Uniform Resource Identifier)
-```
-          userinfo       host      port
-          ┌──┴───┐ ┌──────┴──────┐ ┌┴┐
-  https://john.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top
-  └─┬─┘   └───────────┬──────────────┘└───────┬───────┘ └───────────┬─────────────┘ └┬┘
-  scheme          authority                  path                 query           fragment
-```
-
-
-http_URL = "http:" "//" host [ ":" port ] [ abs_path [ "?" query ]]# [CONFIGURING NGINX AS A WEB SERVER](https://docs.nginx.com/nginx/admin-guide/web-server/web-server/)
-
-## Setting up a virtual servers
-
-The NGINX Plus configuration file must include at least one **server** directive to define a virtual server. When NGINX Plus processes a request, it first selects the virtual server that will serve the request.
-A virtual server is defined by a **server** directive in the **http** context, for example:
+###### Simple targets
 
 ```
-http {
-	server {
-		# Server configuration
-	}
+GET http://goku:9090/path/to/dragon?item=ball
+GET http://user:password@goku:9090/path/to
+HEAD http://goku:9090/path/to/success
+```
+
+###### Targets with custom headers
+
+```
+GET http://user:password@goku:9090/path/to
+X-Account-ID: 8675309
+
+DELETE http://goku:9090/path/to/remove
+Confirmation-Token: 90215
+Authorization: Token DEADBEEF
+```
+
+###### Targets with custom bodies
+
+```
+POST http://goku:9090/things
+@/path/to/newthing.json
+
+PATCH http://goku:9090/thing/71988591
+@/path/to/thing-71988591.json
+```
+
+###### Targets with custom bodies and headers
+
+```
+POST http://goku:9090/things
+X-Account-ID: 99
+@/path/to/newthing.json
+```
+
+###### Add comments to the targets
+
+Lines starting with `#` are ignored.
+
+```
+# get a dragon ball
+GET http://goku:9090/path/to/dragon?item=ball
+```
+
+#### `-h2c`
+
+Specifies that HTTP2 requests are to be sent over TCP without TLS encryption.
+
+#### `-header`
+
+Specifies a request header to be used in all targets defined, see `-targets`.
+You can specify as many as needed by repeating the flag.
+
+#### `-http2`
+
+Specifies whether to enable HTTP/2 requests to servers which support it.
+
+#### `-insecure`
+
+Specifies whether to ignore invalid server TLS certificates.
+
+#### `-keepalive`
+
+Specifies whether to reuse TCP connections between HTTP requests.
+
+#### `-key`
+
+Specifies the PEM encoded TLS client certificate private key file to be
+used with HTTPS requests.
+
+#### `-laddr`
+
+Specifies the local IP address to be used.
+
+#### `-lazy`
+
+Specifies whether to read the input targets lazily instead of eagerly.
+This allows streaming targets into the attack command and reduces memory
+footprint.
+The trade-off is one of added latency in each hit against the targets.
+
+#### `-max-body`
+
+Specifies the maximum number of bytes to capture from the body of each
+response. Remaining unread bytes will be fully read but discarded.
+Set to -1 for no limit. It knows how to intepret values like these:
+
+- `"10 MB"` -> `10MB`
+- `"10240 g"` -> `10TB`
+- `"2000"` -> `2000B`
+- `"1tB"` -> `1TB`
+- `"5 peta"` -> `5PB`
+- `"28 kilobytes"` -> `28KB`
+- `"1 gigabyte"` -> `1GB`
+
+#### `-name`
+
+Specifies the name of the attack to be recorded in responses.
+
+#### `-output`
+
+Specifies the output file to which the binary results will be written
+to. Made to be piped to the report command input. Defaults to stdout.
+
+#### `-rate`
+
+Specifies the request rate per time unit to issue against
+the targets. The actual request rate can vary slightly due to things like
+garbage collection, but overall it should stay very close to the specified.
+If no time unit is provided, 1s is used.
+
+#### `-redirects`
+
+Specifies the max number of redirects followed on each request. The
+default is 10. When the value is -1, redirects are not followed but
+the response is marked as successful.
+
+#### `-resolvers`
+
+Specifies custom DNS resolver addresses to use for name resolution instead of
+the ones configured by the operating system. Works only on non Windows systems.
+
+#### `-root-certs`
+
+Specifies the trusted TLS root CAs certificate files as a comma separated
+list. If unspecified, the default system CAs certificates will be used.
+
+#### `-targets`
+
+Specifies the file from which to read targets, defaulting to stdin.
+See the [`-format`](#-format) section to learn about the different target formats.
+
+#### `-timeout`
+
+Specifies the timeout for each request. The default is 0 which disables
+timeouts.
+
+#### `-workers`
+
+Specifies the initial number of workers used in the attack. The actual
+number of workers will increase if necessary in order to sustain the
+requested rate.
+
+### `report` command
+
+```console
+Usage: vegeta report [options] [<file>...]
+
+Outputs a report of attack results.
+
+Arguments:
+  <file>  A file with vegeta attack results encoded with one of
+          the supported encodings (gob | json | csv) [default: stdin]
+
+Options:
+  --type    Which report type to generate (text | json | hist[buckets]).
+            [default: text]
+
+  --every   Write the report to --output at every given interval (e.g 100ms)
+            The default of 0 means the report will only be written after
+            all results have been processed. [default: 0]
+
+  --output  Output file [default: stdout]
+
+Examples:
+  echo "GET http://:80" | vegeta attack -rate=10/s > results.gob
+  echo "GET http://:80" | vegeta attack -rate=100/s | vegeta encode > results.json
+  vegeta report results.*
+```
+
+#### `report -type=text`
+
+```console
+Requests      [total, rate]             1200, 120.00
+Duration      [total, attack, wait]     10.094965987s, 9.949883921s, 145.082066ms
+Latencies     [mean, 50, 95, 99, max]   113.172398ms, 108.272568ms, 140.18235ms, 247.771566ms, 264.815246ms
+Bytes In      [total, mean]             3714690, 3095.57
+Bytes Out     [total, mean]             0, 0.00
+Success       [ratio]                   55.42%
+Status Codes  [code:count]              0:535  200:665
+Error Set:
+Get http://localhost:6060: dial tcp 127.0.0.1:6060: connection refused
+Get http://localhost:6060: read tcp 127.0.0.1:6060: connection reset by peer
+Get http://localhost:6060: dial tcp 127.0.0.1:6060: connection reset by peer
+Get http://localhost:6060: write tcp 127.0.0.1:6060: broken pipe
+Get http://localhost:6060: net/http: transport closed before response was received
+Get http://localhost:6060: http: can't write HTTP request on broken connection
+```
+
+The `Requests` row shows:
+
+- The `total` number of issued requests.
+- The real request `rate` sustained during the attack.
+
+The `Duration` row shows:
+
+- The `attack` time taken issuing all requests (`total` - `wait`)
+- The `wait` time waiting for the response to the last issued request (`total` - `attack`)
+- The `total` time taken in the attack (`attack` + `wait`)
+
+Latency is the amount of time taken for a response to a request to be read (including the `-max-body` bytes from the response body).
+
+- `mean` is the [arithmetic mean / average](https://en.wikipedia.org/wiki/Arithmetic_mean) of the latencies of all requests in an attack.
+- `50`, `95`, `99` are the 50th, 95th an 99th [percentiles](https://en.wikipedia.org/wiki/Percentile), respectively, of the latencies of all requests in an attack. To understand more about why these are useful, I recommend [this article](https://bravenewgeek.com/everything-you-know-about-latency-is-wrong/) from @tylertreat.
+- `max` is the maximum latency of all requests in an attack.
+
+The `Bytes In` and `Bytes Out` rows shows:
+
+- The `total` number of bytes sent (out) or received (in) with the request or response bodies.
+- The `mean` number of bytes sent (out) or received (in) with the request or response bodies.
+
+The `Success` ratio shows the percentage of requests whose responses didn't error and had status codes between **200** and **400** (non-inclusive).
+
+The `Status Codes` row shows a histogram of status codes. `0` status codes mean a request failed to be sent.
+
+The `Error Set` shows a unique set of errors returned by all issued requests. These include requests that got non-successful response status code.
+
+#### `report -type=json`
+
+```json
+{
+  "latencies": {
+    "total": 237119463,
+    "mean": 2371194,
+    "50th": 2854306,
+    "95th": 3478629,
+    "99th": 3530000,
+    "max": 3660505
+  },
+  "bytes_in": {
+    "total": 606700,
+    "mean": 6067
+  },
+  "bytes_out": {
+    "total": 0,
+    "mean": 0
+  },
+  "earliest": "2015-09-19T14:45:50.645818631+02:00",
+  "latest": "2015-09-19T14:45:51.635818575+02:00",
+  "end": "2015-09-19T14:45:51.639325797+02:00",
+  "duration": 989999944,
+  "wait": 3507222,
+  "requests": 100,
+  "rate": 101.01010672380401,
+  "success": 1,
+  "status_codes": {
+    "200": 100
+  },
+  "errors": []
 }
 ```
 
-The server configuration block usually includes a **listen** directive to specify the IP address and port on which the server listens for requests.
-The example below shows configuration of a server that listens on IP address 127.0.0.1 and port 8080:
+#### `report -type=hist`
+
+Computes and prints a text based histogram for the given buckets.
+Each bucket upper bound is non-inclusive.
+
+```console
+cat results.bin | vegeta report -type='hist[0,2ms,4ms,6ms]'
+Bucket         #     %       Histogram
+[0,     2ms]   6007  32.65%  ########################
+[2ms,   4ms]   5505  29.92%  ######################
+[4ms,   6ms]   2117  11.51%  ########
+[6ms,   +Inf]  4771  25.93%  ###################
+```
+
+### `encode` command
 
 ```
-server {
-	listen 127.0.0.1:8080;
-	# Additional server configuration
+Usage: vegeta encode [options] [<file>...]
+
+Encodes vegeta attack results from one encoding to another.
+The supported encodings are Gob (binary), CSV and JSON.
+Each input file may have a different encoding which is detected
+automatically.
+
+The CSV encoder doesn't write a header. The columns written by it are:
+
+  1. Unix timestamp in nanoseconds since epoch
+  2. HTTP status code
+  3. Request latency in nanoseconds
+  4. Bytes out
+  5. Bytes in
+  6. Error
+  7. Base64 encoded response body
+  8. Attack name
+  9. Sequence number of request
+
+Arguments:
+  <file>  A file with vegeta attack results encoded with one of
+          the supported encodings (gob | json | csv) [default: stdin]
+
+Options:
+  --to      Output encoding (gob | json | csv) [default: json]
+  --output  Output file [default: stdout]
+
+Examples:
+  echo "GET http://:80" | vegeta attack -rate=1/s > results.gob
+  cat results.gob | vegeta encode | jq -c 'del(.body)' | vegeta encode -to gob
+```
+
+### `plot` command
+
+![Plot](https://i.imgur.com/Jra1sNH.png)
+
+```
+Usage: vegeta plot [options] [<file>...]
+
+Outputs an HTML time series plot of request latencies over time.
+The X axis represents elapsed time in seconds from the beginning
+of the earliest attack in all input files. The Y axis represents
+request latency in milliseconds.
+
+Click and drag to select a region to zoom into. Double click to zoom out.
+Choose a different number on the bottom left corner input field
+to change the moving average window size (in data points).
+
+Arguments:
+  <file>  A file output by running vegeta attack [default: stdin]
+
+Options:
+  --title      Title and header of the resulting HTML page.
+               [default: Vegeta Plot]
+  --threshold  Threshold of data points to downsample series to.
+               Series with less than --threshold number of data
+               points are not downsampled. [default: 4000]
+
+Examples:
+  echo "GET http://:80" | vegeta attack -name=50qps -rate=50 -duration=5s > results.50qps.bin
+  cat results.50qps.bin | vegeta plot > plot.50qps.html
+  echo "GET http://:80" | vegeta attack -name=100qps -rate=100 -duration=5s > results.100qps.bin
+  vegeta plot results.50qps.bin results.100qps.bin > plot.html
+```
+
+## Usage: Generated targets
+
+Apart from accepting a static list of targets, Vegeta can be used together with another program that generates them in a streaming fashion. Here's an example of that using the `jq` utility that generates targets with an incrementing id in their body.
+
+```console
+jq -ncM 'while(true; .+1) | {method: "POST", url: "http://:6060", body: {id: .} | @base64 }' | \
+  vegeta attack -rate=50/s -lazy -format=json -duration=30s | \
+  tee results.bin | \
+  vegeta report
+```
+
+## Usage: Distributed attacks
+
+Whenever your load test can't be conducted due to Vegeta hitting machine limits
+such as open files, memory, CPU or network bandwidth, it's a good idea to use Vegeta in a distributed manner.
+
+In a hypothetical scenario where the desired attack rate is 60k requests per second,
+let's assume we have 3 machines with `vegeta` installed.
+
+Make sure open file descriptor and process limits are set to a high number for your user **on each machine**
+using the `ulimit` command.
+
+We're ready to start the attack. All we need to do is to divide the intended rate by the number of machines,
+and use that number on each attack. Here we'll use [pdsh](https://code.google.com/p/pdsh/) for orchestration.
+
+```shell
+$ PDSH_RCMD_TYPE=ssh pdsh -b -w '10.0.1.1,10.0.2.1,10.0.3.1' \
+    'echo "GET http://target/" | vegeta attack -rate=20000 -duration=60s > result.bin'
+```
+
+After the previous command finishes, we can gather the result files to use on our report.
+
+```shell
+$ for machine in 10.0.1.1 10.0.2.1 10.0.3.1; do
+    scp $machine:~/result.bin $machine.bin &
+  done
+```
+
+The `report` command accepts multiple result files.
+It'll read and sort them by timestamp before generating reports.
+
+```console
+$ vegeta report 10.0.1.1.bin 10.0.2.1.bin 10.0.3.1.bin
+Requests      [total, rate]         3600000, 60000.00
+Latencies     [mean, 95, 99, max]   223.340085ms, 326.913687ms, 416.537743ms, 7.788103259s
+Bytes In      [total, mean]         3714690, 3095.57
+Bytes Out     [total, mean]         0, 0.00
+Success       [ratio]               100.0%
+Status Codes  [code:count]          200:3600000
+Error Set:
+```
+
+## Usage: Real-time Analysis
+
+If you are a happy user of iTerm, you can integrate vegeta with [jplot](https://github.com/rs/jplot) using [jaggr](https://github.com/rs/jaggr) to plot a vegeta report in real-time in the comfort of you terminal:
+
+```
+echo 'GET http://localhost:8080' | \
+    vegeta attack -rate 5000 -duration 10m | vegeta encode | \
+    jaggr @count=rps \
+          hist\[100,200,300,400,500\]:code \
+          p25,p50,p95:latency \
+          sum:bytes_in \
+          sum:bytes_out | \
+    jplot rps+code.hist.100+code.hist.200+code.hist.300+code.hist.400+code.hist.500 \
+          latency.p95+latency.p50+latency.p25 \
+          bytes_in.sum+bytes_out.sum
+```
+
+![](https://i.imgur.com/ttBDsQS.gif)
+
+## Usage (Library)
+
+The library versioning follows [SemVer v2.0.0](https://semver.org/spec/v2.0.0.html).
+Since [lib/v9.0.0](https://github.com/tsenart/vegeta/tree/lib/v9.0.0), the library and cli
+are versioned separately to better isolate breaking changes to each component.
+
+See [Versioning](#Versioning) for more details on git tag naming schemes and compatibility
+with `go mod`.
+
+```go
+package main
+
+import (
+  "fmt"
+  "time"
+
+  vegeta "github.com/tsenart/vegeta/lib"
+)
+
+func main() {
+  rate := vegeta.Rate{Freq: 100, Per: time.Second}
+  duration := 4 * time.Second
+  targeter := vegeta.NewStaticTargeter(vegeta.Target{
+    Method: "GET",
+    URL:    "http://localhost:9100/",
+  })
+  attacker := vegeta.NewAttacker()
+
+  var metrics vegeta.Metrics
+  for res := range attacker.Attack(targeter, rate, duration, "Big Bang!") {
+    metrics.Add(res)
+  }
+  metrics.Close()
+
+  fmt.Printf("99th percentile: %s\n", metrics.Latencies.P99)
 }
 ```
 
-If a port is omitted, the standard port is used. Likewise, if an address is omitted, the server listens on all addresses (0.0.0.0 or :::). If the **listen** directive is not included at all, the “standard” port is 80/tcp.
-If there are several servers that match the IP address and port of the request, NGINX Plus tests the request’s *Host* header field against the **server\_name** directives in the **server** blocks. The parameter to **server\_name** IS a full (exact) name. This example illustrates an exact name.
+#### Limitations
 
-```
-server {
-	listen	80;
-	server_name example.org www.example.org;
-	#...
-}
-```
+There will be an upper bound of the supported `rate` which varies on the
+machine being used.
+You could be CPU bound (unlikely), memory bound (more likely) or
+have system resource limits being reached which ought to be tuned for
+the process execution. The important limits for us are file descriptors
+and processes. On a UNIX system you can get and set the current
+soft-limit values for a user.
 
-If several names match the *Host* header, NGINX Plus selects one by searching for names in the following order and using the first match it finds.
-- Exact name
-- *More options unrelated to project*
-
-If the *Host* header field does not match a **server\_name**, NGINX Plus routes the request to the default server for the port on which the request arrived. The default server is the first one listed in the nginx.conf file.
-
-## Configuring Locations
-
-NGINX Plus can send traffic to different proxies or serve different files based on the request URIs. These blocks are defined using the **location** directive placed within a **server** directive.
-
-NGINX Plus tests request URIs against the parameters of all **location** directives and applies the directives defined in the matching **location**. Inside each **location** block, it is usually possible (with a few exceptions) to place even more **location** directives to further refine the processing for specific groups of requests.
-
-The **location** directive takes a prefix parameter. The following sample **location** with a pathname parameter matches request URIs that begin with */some/path/*, such as */some/path/document.html*. (It does not match */my-site/some/path* because */some/path* does not occur at the start of that URI.)
-
-The exact logic for selecting a location to process a request is given below:
-- Test the URI against all prefix strings.
-- *The = (equals sign) modifier defines an exact match of the URI and a prefix string. If the exact match is found, the search stops.*
-- Store the longest matching prefix string.
-
-*A typical use case for the = modifier is requests for / (forward slash). If requests for / are frequent, specifying = / as the parameter to the location directive speeds up processing, because the search for matches stops after the first comparison.*
-
-A location context can contain directives that define how to resolve a request.
-
-```
-    location /images/ {
-        root /data;
-    }
+```shell
+$ ulimit -n # file descriptors
+2560
+$ ulimit -u # processes / threads
+709
 ```
 
-The **root** directive specifies the file system path in which to search for the static files to serve. The request URI associated with the location is appended to the path to obtain the full name of the static file to serve. In the example above, in response to a request for */images/example.png*, NGINX Plus delivers the file */data/images/example.png*.
+Just pass a new number as the argument to change it.
 
-## Returning Specific Status Codes
+## License
 
-Some website URIs require immediate return of a response with a specific **redirect** code, for example when a page has been moved temporarily or permanently. The easiest way to do this is to use the **return** directive. For example:
+See [LICENSE](LICENSE).
 
-```
-location /wrong/url {
-    return 404;
-}
-```
+## Donate
 
-The first parameter of **return** is a response code. The optional second parameter can be the URL of a redirect (for codes 301, 302, 303, and 307) or the text to return in the response body. For example:
+If you use and love Vegeta, please consider sending some Satoshi to
+`1MDmKC51ve7Upxt75KoNM6x1qdXHFK6iW2`. In case you want to be mentioned as a
+sponsor, let me know!
 
-```
-location /permanently/moved/url {
-    return 301 http://www.example.com/moved/here;
-}
-```
-
-The return directive can be included in both the **location** and **server** contexts.
-
-## Handling Errors
-
-With the **error\_page** directive, you can configure NGINX Plus to return a custom page along with an error code, substitute a different error code in the response, or redirect the browser to a different URI. In the following example, the **error\_page** directive specifies the page (/404.html) to return with the 404 error code.
-
-```
-error_page 404 /404.html;
-```
-
-Note that this directive does not mean that the error is returned immediately (the **return** directive does that), but simply specifies how to treat errors when they occur. The error code can occur during processing by NGINX Plus (for example, the 404 results when NGINX Plus can’t find the file requested by the client).
-
-# [SERVING STATIC CONTENT](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/)
-
-Configure NGINX and NGINX Plus to serve static content, with type-specific root directories, checks for file existence, and performance optimizations.
-
-## Root Directory and Index Files
-
-The **[root](https://nginx.org/en/docs/http/ngx_http_core_module.html#root)** directive specifies the root directory that will be used to search for a file. To obtain the path of a requested file, NGINX appends the request URI to the path specified by the **root** directive. The directive can be placed on any level within the **http {}**, **server {}**, or **location {}** contexts. In the example below, the root directive is defined for a virtual server. It applies to all **location {}** blocks where the root directive is not included to explicitly redefine the root:
-
-```
-server {
-    root /www/data;
-
-    location / {
-    }
-
-    location /images/ {
-    }
-
-    location ~ \.(mp3|mp4) {
-        root /www/media;
-    }
-}
-```
-
-If a request ends with a slash, NGINX treats it as a request for a directory and tries to find an index file in the directory. The **[index](https://nginx.org/en/docs/http/ngx_http_index_module.html#index)** directive defines the index file’s name (the default value is index.html). To continue with the example, if the request URI is /images/some/path/, NGINX delivers the file /www/data/images/some/path/index.html if it exists. If it does not, NGINX returns HTTP code 404 (Not Found) by default. To configure NGINX to return an automatically generated directory listing instead, include the on parameter to the **[autoindex](https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex)** directive: 
-
-```
-location /images/ {
-    autoindex on;
-}
-```
-
-You can list more than one filename in the **index** directive. NGINX searches for files in the specified order and returns the first one it finds.
-
-```
-location / {
-    index index.htm index.html;
-}
-```
-
-To return the index file, NGINX checks for its existence and then makes an internal redirect to the URI obtained by appending the name of the index file to the base URI. The internal redirect results in a new search of a location and can end up in another location as in the following example:
-
-```
-location / {
-    root /data;
-    index index.html index.php;
-}
-
-location ~ \.php {
-    fastcgi_pass localhost:8000;
-    #...
-}
-```
-
-Here, if the URI in a request is /path/, and /data/path/index.html does not exist but /data/path/index.php does, the internal redirect to /path/index.php is mapped to the second location. As a result, the request is proxied.
-
-# [HOW NGINX PROCESSES A REQUEST](http://nginx.org/en/docs/http/request_processing.html)
-
-## Name-based virtual servers
-
-nginx first decides which server should process the request. Let’s start with a simple configuration where all three virtual servers listen on port \*:80 : 
-
-```
-
-
-    server {
-        listen      80;
-        server_name example.org www.example.org;
-        ...
-    }
-
-    server {
-        listen      80;
-        server_name example.net www.example.net;
-        ...
-    }
-
-    server {
-        listen      80;
-        server_name example.com www.example.com;
-        ...
-    }
-```
-
-In this configuration nginx tests only the request’s header field “Host” to determine which server the request should be routed to. If its value does not match any **server\_name**, or the request does not contain this header field at all, then nginx will route the request to the default server for this port (the first defined for this port). In the configuration above, the default server is the first one — which is nginx’s standard default behaviour.
-
-## Mixed name-based and IP-based virtual servers
-
-Let’s look at a more complex configuration where some virtual servers listen on different addresses: 
-
-```
-server {
-    listen      192.168.1.1:80;
-    server_name example.org www.example.org;
-    ...
-}
-
-server {
-    listen      192.168.1.1:80;
-    server_name example.net www.example.net;
-    ...
-}
-
-server {
-    listen      192.168.1.2:80;
-    server_name example.com www.example.com;
-    ...
-}
-```
-
-In this configuration, nginx first tests the IP address and port of the request against the **[listen](http://nginx.org/en/docs/http/ngx_http_core_module.html#listen)** directives of the **[server](http://nginx.org/en/docs/http/ngx_http_core_module.html#server)** blocks. It then tests the “Host” header field of the request against the **[server_name](http://nginx.org/en/docs/http/ngx_http_core_module.html#server_name)** entries of the **[server](http://nginx.org/en/docs/http/ngx_http_core_module.html#server)** blocks that matched the IP address and port. If the server name is not found, the request will be processed by the default server. For example, a request for www.example.com received on the 192.168.1.1:80 port will be handled by the default server of the 192.168.1.1:80 port, i.e., by the first server, since there is no www.example.com defined for this port. 
-
-## A simple PHP site configuration
-
-**(THIS SECTION IS NOT FULLY RELEVANT REGARDING THE SUBJECT, AS WE DON'T NEED TO HANDLE REGULAR EXPRESSIONS BUT NEED TO BE ABLE TO HANDLE REQUEST WITH A CGI BASED ON FILE EXTENSION. I THINK WE WILL THEN MAKE UNIQUE RECOGNIZABLE REGULAR EXPRESSION PATTERN - " \*.php " FOR EXAMPLE - AS A POSSIBLE PARAMETER FOR A location DIRECTIVE.)**
-
-Now let’s look at how nginx chooses a **location** to process a request for a typical, simple PHP site: 
-
-```
-server {
-    listen      80;
-    server_name example.org www.example.org;
-    root        /data/www;
-
-    location / {
-        index   index.html index.php;
-    }
-
-    location ~ \.php$ {
-        fastcgi_pass  localhost:9000;
-        fastcgi_param SCRIPT_FILENAME
-                      $document_root$fastcgi_script_name;
-        include       fastcgi_params;
-    }
-}
-```
-
-nginx first searches for the most specific prefix location given by literal strings regardless of the listed order. In the configuration above the only prefix location is “/” and since it matches any request it will be used as a last resort. Then nginx checks locations given by regular expression in the order listed in the configuration file. The first matching expression stops the search and nginx will use this location. If no regular expression matches a request, then nginx uses the most specific prefix location found earlier. 
-
-Note that locations of all types test only a URI part of request line without arguments. This is done because arguments in the query string may be given in several ways, for example: 
-
-```
-/index.php?user=john&page=1
-/index.php?page=1&user=john
-```
-
-Besides, anyone may request anything in the query string: 
-
-```
-/index.php?page=1&something+else&user=john
-```
-Now let’s look at how requests would be processed in the configuration above: 
-- A request “/index.php” is matched by the prefix location “/” first and then by the regular expression “\.(php)$”. Therefore, it is handled by the latter **location** and the request is passed to a FastCGI server listening on localhost:9000. The **fastcgi\_param** directive sets the FastCGI parameter SCRIPT\_FILENAME to “/data/www/index.php”, and the FastCGI server executes the file. The variable $document\_root is equal to the value of the **root** directive and the variable $fastcgi\_script\_name is equal to the request URI, i.e. “/index.php”. 
-- A request “/about.html” is matched by the prefix location “/” only, therefore, it is handled in this **location**. Using the directive “**root /data/www**” the request is mapped to the file /data/www/about.html, and the file is sent to the client. 
-- Handling a request “/” is more complex. It is matched by the prefix location “/” only, therefore, it is handled by this location. Then the index directive tests for the existence of index files according to its parameters and the “root /data/www” directive. If the file /data/www/index.html does not exist, and the file /data/www/index.php exists, then the directive does an internal redirect to “/index.php”, and nginx searches the locations again as if the request had been sent by a client. As we saw before, the redirected request will eventually be handled by the FastCGI server. 
-
-## SUBJECT CONFIG FILE RULES AND NGINX EQUIVALENT
-
-In the configuration file, you should be able to:
-- Choose the port and host of each ’server’.
-	- ==> **[listen](http://nginx.org/en/docs/http/ngx_http_core_module.html#listen)**
-- Setup the server\_names or not.
-	- ==> **[server\_name](http://nginx.org/en/docs/http/ngx_http_core_module.html#server_name)**
-- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server).
-	- ==> **[default NGINX behaviour](http://nginx.org/en/docs/http/request_processing.html)**
-- Setup default error pages.
-	- ==> **[error\_page](http://nginx.org/en/docs/http/ngx_http_core_module.html#error_page)**
-- Limit client body size.
-	- ==> **[client\_max\_body\_size](http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size)**
-- Setup routes with one or multiple of the following rules/configuration (routes won't be using regexp):
-	- ==> **[location](http://nginx.org/en/docs/http/ngx_http_core_module.html#location)**
-	- Define a list of accepted HTTP methods for the route.
-		- ==> **[limit_except](http://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except)**
-	- Define a HTTP redirection.
-		- ==> **[return](https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return)**
-	- Define a directory or a file from where the file should be searched (for example, if url /kapouet is rooted to /tmp/www, url /kapouet/pouic/toto/pouet is /tmp/www/pouic/toto/pouet).
-		- ==> **[root](http://nginx.org/en/docs/http/ngx_http_core_module.html#root)**
-	- Turn on or off directory listing.
-		- ==> **[autoindex](http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex)**
-	- Set a default file to answer if the request is a directory.
-		- ==> **[index](https://nginx.org/en/docs/http/ngx_http_index_module.html#index)**
-	- Execute CGI based on certain file extension (for example .php).
-	- Make the route able to accept uploaded files and configure where they should be saved.
-		- Do you wonder what a CGI is?
-		- Because you won’t call the CGI directly, use the full path as PATH_INFO.
-		- Just remember that, for chunked request, your server needs to unchunk it and the CGI will expect EOF as end of the body.
-		- Same things for the output of the CGI. If no content_length is returned from the CGI, EOF will mark the end of the returned data.
-		- Your program should call the CGI with the file requested as first argument.
-		- The CGI should be run in the correct directory for relative path file access.
-		- Your server should work with one CGI (php-CGI, Python, and so forth).
-
-
-## Detection of a body indication
-Voir nginx quand on envoie:
-- plusieurs Content-Length
-- plusieurs Transfer-Encoding differents
-- un Transfer-Encoding sans chunked
-- un Content-Length et un Transfer-Encoding
-- un Transfer-encoding et plusieurs Content-Length
-
-A recipient that receives whitespace between the start-line and the first header field MUST  reject the message as invalid
-
-
-# Testing
-- python library to make http requests https://requests.readthedocs.io/en/master/
-- quickly and easily send requests https://www.postman.com/
-- Stress test: tr -dc A-Za-z0-9 </dev/urandom | telnet localhost 8001
-
-# A faire
-- Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...
-- Une fonction send qui s'assure que toute la data a bien ete envoyé avec la valeur de retour de send()
+[![Donate Bitcoin](https://i.imgur.com/W9Vc51d.png)](#donate)

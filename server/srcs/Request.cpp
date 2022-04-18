@@ -129,6 +129,7 @@ unsigned int	Request::parseReqLine(void)
 		return (400);
 	}
 	reqLine = this->_headers.substr(_i, _next_lineI);
+	//printf("HERE reqline = %s\n", reqLine.c_str());
 	//std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
 
 	c_str = const_cast<char*>(reqLine.c_str());
@@ -157,8 +158,10 @@ unsigned int	Request::parseReqLine(void)
 		return (400);
 	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || std::string(tok) != "HTTP/1.1")
+	{
+		printf("HERE_next_lineI = %lu-%lu, reqline = %s\n", _i, _next_lineI, reqLine.c_str());
 		return (505);
-
+	}
 	this->_next_lineI += 2;
 	this->_i = this->_next_lineI;
 	this->_parsing_step = HEADERS;
