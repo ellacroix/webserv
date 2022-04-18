@@ -35,8 +35,7 @@ int	Response::ConstructResponse()
 		this->constructError();
 		return (SUCCESS);
 	}
-	std::cout << "=== FOUND LOCATION = "
-		<< this->location->getPrefix() << std::endl;
+	std::cout << "=== FOUND LOCATION = " << this->location->getPrefix() << std::endl;
 	//	CHECK limit_except
 	if (this->location->_limitExceptIsSet == true &&
 			std::find(this->location->getLimitExcept().begin(),
@@ -69,7 +68,11 @@ int	Response::ConstructResponse()
 	if (this->isCgi(this->path))
 	{
 		if (executeCgi() == -1)
-			std::cerr << "error: FAILED cgi execution" << std::endl; // need to manage this case
+		{
+			this->client->status_code = 505;
+			this->constructError();
+			return (SUCCESS);
+		}
 	}
 	
 	if (this->request->_method == "GET")

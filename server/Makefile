@@ -37,7 +37,7 @@ OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
 CXX				=	c++
 
-CXXFLAGS		= -pthread #-Wall -Wextra -Werror -std=c++98
+CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98 -g
 #CXXFLAGS		= -pthread -Wall -Wextra -Werror
 
 SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
@@ -68,7 +68,7 @@ sanitize	:	${OBJS}
 			./webserv confs/nginx.conf
 
 valgrind	:	$(NAME)
-			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+			valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
 
 ctags		:
 			ctags srcs/*.cpp

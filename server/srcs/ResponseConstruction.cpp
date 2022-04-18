@@ -18,9 +18,11 @@ void            Response::constructSuccess(void)
 
 		//	FILE SIZE
 		this->request_file.seekg (0, this->request_file.end);
-		this->file_len = this->request_file.tellg();
 		this->request_file.seekg (0, this->request_file.beg);
+		this->file_len = this->request_file.tellg();
 	}
+	else
+		this->file_len = body.size();
 
 	//	STATUS LINE
     this->raw_response.append("HTTP/1.1 ");
@@ -28,18 +30,13 @@ void            Response::constructSuccess(void)
 	this->raw_response.append(getErrorMessage(this->client->status_code) + "\r\n");
 	//	HEADERS
     this->raw_response.append("Content-Length: ");
-	if (this->isCgi(this->path))
+	this->raw_response.append(numberToString(this->file_len) + "\r\n");
+	if (!this->isCgi(this->path))
 	{
-		printf("ABOUT SIZE ______________ %d\n", sizeof(body));
-		printf("ABOUT SIZE ______________ %d\n", body.size());
-    	this->raw_response.append(numberToString(sizeof(body)));
+		this->raw_response.append("Content-Type: ");
+		this->raw_response.append(this->findContentType() + "\r\n");
 		this->raw_response.append("\r\n");
 	}
-	else
-		this->raw_response.append(numberToString(this->file_len) + "\r\n");
-    this->raw_response.append("Content-Type: ");
-	this->raw_response.append(this->findContentType() + "\r\n");
-    this->raw_response.append("\r\n");
 
 	if (!this->isCgi(this->path))
 	{

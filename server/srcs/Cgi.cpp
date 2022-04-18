@@ -21,10 +21,7 @@ int	 Response::executeCgi()
 
 	printf("=== CGI EXECUTION\n");
 	if (pipe(fds) == -1)
-	{
-		std::cerr << "error: execve failed" << std::endl; // need to change err msg FREE
 		return (-1);
-	}
 
 	arg = new char*[3];
 	arg[0] = new char[client->request->_virtual_server->getCgiPath().length() + 1];
@@ -38,7 +35,7 @@ int	 Response::executeCgi()
 	{
 		delete [] arg[0];
 		delete [] arg[1];
-		std::cerr << "error: fork failed" << std::endl; // need to change err msg
+		delete [] arg;
 		return (-1);
 	}
 	if (!pid)
@@ -47,10 +44,8 @@ int	 Response::executeCgi()
 		dup2(fds[1], STDOUT_FILENO);
 		close(fds[1]);
 
-		execve(arg[0], arg, NULL); //need to exit and free if fail
-
-		std::cerr << "error: execve failed" << std::endl;
-		exit(1);
+		execve(arg[0], arg, NULL);
+		return (-1); // or exit and free?
 	}
 	else
 	{
@@ -61,12 +56,13 @@ int	 Response::executeCgi()
 			buffer[count] = '\0';
 			body.append(buffer);
 		}
-		std::size_t find = body.find("\r\n\r\n");
-		body.erase(body.begin(), body.begin() + find + 4);
+		// std::size_t find = body.find("\r\n\r\n");
+		// body.erase(body.begin(), body.begin() + find + 4);
 
 		close(fds[0]);
 	}
 	delete [] arg[0];
 	delete [] arg[1];
+	delete [] arg;
 	return (0);
 }
