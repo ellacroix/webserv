@@ -1,0 +1,112 @@
+body
+{
+	height: 100vh;
+	font-family:"Futura PT", "Futura", "Helvetica", "Sans serif";
+	color:#2c2c34;
+	background:#fafafa;
+	margin: 0;
+
+	font-weight: 700;
+	font-size: 1.2em;
+}
+
+
+
+/* GENERAL */
+.bloc
+{
+	/* border: 2px solid red; */
+	width: 42%;
+}
+
+.center
+{
+	margin: auto;
+	height: 50%;
+	padding: 10px;
+}
+
+.display-row
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.display-col
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* MAIN BL0C */
+#mainContainer
+{
+	height: 95%;
+	display: flex;
+}
+
+/* LOGO BLOCK */
+
+#schoolLogo
+{
+	height: 180px;
+	width: 180px;
+}
+
+.line
+{
+	height: 31px;
+	width: 3px;
+	min-width: 3px;
+	transform: translate(0, 15px);
+	background-color: black;
+	margin-left: 30px;
+
+}
+#mainContainer h1 
+{
+	margin-left: 15px;
+	font-size: 40px;
+	transform: translate(0, 20px);
+
+}
+
+/* DESCRIPTION BLOCK */
+#mainContainer .description
+{
+	/* border: 2px 0 solid; */
+	/* border-color: black; */
+	font-style: italic;
+	border-top: 2px solid black;
+	border-bottom: 2px solid black;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+/* PHOTOS BLOCK */
+#photoContainer img
+{
+	border-radius: 50%;
+	width: 110px;
+	margin: 10px;
+}
+
+/* ****************************** */
+#github
+{
+	position: absolute;
+	bottom: 3%;
+	height: 30px;
+	width: 30px;
+}
+
+#github:hover
+{
+	transition: 0.3s;
+	transition-timing-function: ease-in-out;
+	transform: rotate(45deg);
+}
