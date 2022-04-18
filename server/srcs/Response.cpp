@@ -29,6 +29,7 @@ int	Response::ConstructResponse()
 	//	constructError();
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
+	// if (this->location == NULL && !this->isCgi(request->_URI))
 	if (this->location == NULL)
 	{
 		this->client->status_code = 404;
@@ -118,10 +119,6 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 	std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-	std::cout << "ABOUT AUTOindex_________________" << std::endl;
-	std::cout << "pathDir " << pathDir << std::endl;
-	std::cout << "path " << path << std::endl;
-	std::cout << "ABOUT AUTOindex_________________" << std::endl;
 	while ((entry = readdir(dir)) != NULL)
 	{
 		fullPath = path + "/" + entry->d_name;
@@ -143,8 +140,6 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 			if (entry->d_type == DT_DIR) { entryPath += "/"; }
 			entryLink = fillTag("a href=\"" + entryPath + "\"", entryPath);
 
-			// for (int i = entryLink.length(); entryLink.length() < 51; i++)
-			//     entryLink += " ";
 			for (int i = 0; entryLink.length() + i < 109; i++)
 				entryLink += " ";
 
@@ -225,8 +220,11 @@ void	Response::constructError()
 
 	//Headers
 	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
-	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
-	raw_response.append("\r\n");
+	if (!this->isCgi(this->path))
+	{
+		raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+		raw_response.append("\r\n");
+	}
 
 	//Body
 	raw_response.append(body);

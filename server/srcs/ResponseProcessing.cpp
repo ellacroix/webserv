@@ -55,7 +55,6 @@ std::string	Response::findContentType(void)
 	std::string	extension;
 	const std::pair<std::string, std::string>	*pair_arr;
 
-//	extension = findUriExtension(this->request->_URI);
 	extension = findUriExtension(this->path);
 
 	if (extension.empty() == true)
@@ -77,7 +76,7 @@ std::string	Response::findContentType(void)
 int		Response::methodGET(void)
 {
 	std::cout << "=== TESTING FILE/DIR = " << this->path << std::endl;
-	if (pathExists(this->path) == false)
+	if (pathExists(this->path) == false) // change
 	{
 		std::cout << std::boolalpha;
 		std::cout << "=== PATH DOESN'T EXIST" << std::endl;

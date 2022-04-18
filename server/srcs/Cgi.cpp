@@ -6,7 +6,7 @@ bool	Response::isCgi(std::string path)
 	std::string fileExtension = findUriExtension(path);
 
 	cgiExtension.erase(0,1);
-	if (cgiExtension == fileExtension && isFile(this->path))
+	if (cgiExtension == fileExtension)
 		return (true);
 	return (false);
 }
@@ -45,7 +45,10 @@ int	 Response::executeCgi()
 		close(fds[1]);
 
 		execve(arg[0], arg, NULL);
-		return (-1); // or exit and free?
+		delete [] arg[0];
+		delete [] arg[1];
+		delete [] arg;
+		exit(1); // LEAKS
 	}
 	else
 	{
@@ -56,9 +59,6 @@ int	 Response::executeCgi()
 			buffer[count] = '\0';
 			body.append(buffer);
 		}
-		// std::size_t find = body.find("\r\n\r\n");
-		// body.erase(body.begin(), body.begin() + find + 4);
-
 		close(fds[0]);
 	}
 	delete [] arg[0];

@@ -6,6 +6,7 @@ void            Response::constructSuccess(void)
 	std::string	extension;
 	char		*buffer;
 
+	std::cout << "=== CONSTRUCT SUCCESS RESPONSE" << std::endl;
 	if (!this->isCgi(this->path))
 	{
 		this->request_file.open(this->path.c_str());
@@ -18,8 +19,8 @@ void            Response::constructSuccess(void)
 
 		//	FILE SIZE
 		this->request_file.seekg (0, this->request_file.end);
-		this->request_file.seekg (0, this->request_file.beg);
 		this->file_len = this->request_file.tellg();
+		this->request_file.seekg (0, this->request_file.beg);
 	}
 	else
 		this->file_len = body.size();
@@ -31,6 +32,7 @@ void            Response::constructSuccess(void)
 	//	HEADERS
     this->raw_response.append("Content-Length: ");
 	this->raw_response.append(numberToString(this->file_len) + "\r\n");
+	printf("THIS is CGI ? %d\n", this->isCgi(this->path));
 	if (!this->isCgi(this->path))
 	{
 		this->raw_response.append("Content-Type: ");
