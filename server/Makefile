@@ -76,7 +76,6 @@ ctags		:
 			ctags includes/*.hpp
 
 
-
 leaks		:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt \
 			--child-silent-after-fork=yes \

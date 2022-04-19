@@ -33,10 +33,16 @@ int main(int argc, char *argv[])
     signal(SIGQUIT, shutdownWebserv);
 	signal(SIGPIPE, SIG_IGN);
 	
-	if (argc != 2)
+	if (argc > 3)
 		return (-1);
 	ConfigParser	config;
-	config.parse(argv[1]);
+	if (argc == 1)
+	{
+		char default_path[17] = "confs/nginx.conf";
+		config.parse(default_path);
+	}
+	else
+		config.parse(argv[1]);
 
 	
 	//EPOLL

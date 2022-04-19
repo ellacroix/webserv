@@ -13,6 +13,15 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		monitorForReading(client, thread_info);
 		return ;
 	}
+
+	if (client->request_buffer.size() > SERVER_MAX_BODY_SIZE + SERVER_MAX_HEADERS_SIZE)
+	{
+		logger("Client " + numberToString(client->stream_socket) + " request too big");
+		client->status_code = 431;
+		createAndConstructResponse(client);
+		monitorForWriting(client, thread_info);
+		return ;
+	}
 	
 	//We received the headers, is the request complete ?
 	size_t end = client->request_buffer.find("\r\n\r\n");

@@ -24,42 +24,16 @@
 - Une classe Response, pour stocker la reponse HTTP a renvoyer
 
 ## Logique multi-thread
-On a une pool de thread qui s'occuperont de toutes les taches de recv() a send().
-Le main process gere juste les connections entrantes et l'ajout de taches pour la thread pool.
+On a une pool de thread qui s'occuperont de toutes les taches apres recv() et jusqu'a send() inclus.
+Le main process gere juste les connections, timeouts et l'ajout de taches pour la thread pool.
 
 ## Sujet
-- Your server must never block and the client can be bounced properly if necessary.
-- A request to your server should never hang forever.
-- You must be able to serve a fully static website.
+- Your server must never block and the client can be bounced properly if necessary. :heavy_check_mark:
+- A request to your server should never hang forever. :heavy_check_mark:
+- You must be able to serve a fully static website. :heavy_check_mark:
 - You need at least GET, POST, and DELETE methods.
-- Your server must be able to listen to multiple ports (see Configuration file).
-- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (Cas de plusieurs serveurs sur le meme port avec des noms differents).
-
-## Fonctions autorisées
-**[int poll(struct pollfd *fds, nfds_t nfds, int timeout)](https://man7.org/linux/man-pages/man2/poll.2.html)**
-```
-struct pollfd {
-               int   fd;         /* file descriptor */
-               short events;     /* requested events */
-               short revents;    /* returned events */};
-```
-
-**[int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)](http://manpagesfr.free.fr/man/man2/select.2.html)**
-``` 
-exemple /experiment/select_experiment.c 
-```
-
-**htons, htonl, ntohs, ntohl**
-Ensure the conversion of short and long numbers between Host and Network, regardless of their endian-ness
-
-**[epoll](https://man7.org/linux/man-pages/man7/epoll.7.html)**
-
-
-
-## Questions
-- Doit on gerer l'access authentication ?
-- Si le client ferme la connection apres l'envoi de sa requete, doit on lui repondre ? (https://stackoverflow.com/questions/4824451/detect-end-of-http-request-body)
-- Gestion des trailers pas necessaires, car on peut les ignorer ? [IBM](https://www.ibm.com/docs/en/zvse/6.2?topic=SSB27H_6.2.0/dfhe7_use_chunked_tranfercoding.html#:~:text=Note%20that%20the%20HTTP/1.1%20specification%20sets%20requirements%20for%20the%20use%20of%20trailing%20headers%2C%20including%20that%20it%20should%20not%20matter%20if%20the%20recipient%20ignores%20them.)
+- Your server must be able to listen to multiple ports (see Configuration file). :heavy_check_mark:
+- The first server for a host:port will be the default for this host:port (that means it will answer to all the requests that don’t belong to an other server). (Cas de plusieurs serveurs sur le meme port avec des noms differents). :heavy_check_mark:
 
 ## Resources
 
