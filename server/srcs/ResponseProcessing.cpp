@@ -162,8 +162,8 @@ int		Response::methodPOST(void)
 {
 	std::string	path_to_folder;
 	size_t		last_slash_pos;
-	std::string	def_upload_name;
-	size_t		n;
+//	std::string	def_upload_name;
+//	size_t		n;
 
 	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
 	{
