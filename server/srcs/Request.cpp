@@ -31,9 +31,9 @@ bool			Request::isValid(void) const
 //	PARSING FUNCTIONS
 unsigned int	Request::parser(void)
 {
-	printf("parser()\t- working on:\n\"%s\"\n", this->_headers.c_str());
+	//printf("parser()\t- working on:\n\"%s\"\n", this->_headers.c_str());
 
-	std::cout << "parser()\t- _double_CRLF_pos = " << this->_double_CRLF_pos << std::endl;
+	//std::cout << "parser()\t- _double_CRLF_pos = " << this->_double_CRLF_pos << std::endl;
 	while (this->_i < this->_double_CRLF_pos)
 	{
 		if (this->_parsing_step == REQUEST_LINE)
@@ -42,7 +42,7 @@ unsigned int	Request::parser(void)
 			this->_status_code = this->parseHeaders();
 		if (this->_status_code >= 400)
 		{
-			std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
+			//std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
 			return (this->_status_code);
 		}
 	}
@@ -54,11 +54,11 @@ unsigned int	Request::parser(void)
 	this->_status_code = this->parseBody();
 	if (this->_status_code >= 400)
 	{
-		std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
+		//std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
 		return (this->_status_code);
 	}
-	std::cout << "parser()\t- EXITED LOOP" << std::endl;
-	std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
+	//std::cout << "parser()\t- EXITED LOOP" << std::endl;
+	//std::cout << "parser()\t- RETURNING (SUCCESS)" << std::endl;
 	return (SUCCESS);
 }
 
@@ -76,7 +76,7 @@ unsigned int	Request::parseHeaders(void)
 	if (this->_next_lineI == std::string::npos)
 		return (400);
 	headerLine = this->_headers.substr(_i, _next_lineI - _i);
-	std::cout << "parseHeaders()\t- line\t= \"" << headerLine << "\"" << std::endl;
+	//std::cout << "parseHeaders()\t- line\t= \"" << headerLine << "\"" << std::endl;
 	// FIND ':'
 	colonPos = headerLine.find(":");
 	if (colonPos == std::string::npos)
@@ -93,8 +93,8 @@ unsigned int	Request::parseHeaders(void)
 	if (firstPrintValChar != 0 || lastPrintValChar != value.length())
 		value = value.substr(firstPrintValChar,
 				lastPrintValChar + 1 - firstPrintValChar);
-	std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl
-		<< "\t\t- value\t= \"" << value << "\"" << std::endl;
+	//std::cout << "\t\t- key\t= \"" << key << "\"" << std::endl
+	//	<< "\t\t- value\t= \"" << value << "\"" << std::endl;
 	// CHECK IF HEADER IS SUPPORTED
 	header_index = this->isSupportedHeader(key);
 	if (header_index != NOT_SUPPORTED_HEADER
@@ -125,17 +125,18 @@ unsigned int	Request::parseReqLine(void)
 	this->_next_lineI = this->_headers.find("\r\n");
 	if (this->_next_lineI == std::string::npos)
 	{
-		//		std::cout << "parseReqLine()\t- NO \"\\r\\n\"" << std::endl;
+		//		//std::cout << "parseReqLine()\t- NO \"\\r\\n\"" << std::endl;
 		return (400);
 	}
 	reqLine = this->_headers.substr(_i, _next_lineI);
-	std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
+	//printf("HERE reqline = %s\n", reqLine.c_str());
+	//std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
 
 	c_str = const_cast<char*>(reqLine.c_str());
 
 	// METHOD
 	tok = std::strtok(c_str, " \t");
-	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
+	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
 		return (501);	//Plutot 501 "Not Implemented"
 	this->_method = std::string(tok);
@@ -147,20 +148,24 @@ unsigned int	Request::parseReqLine(void)
 	this->_URI = std::string(tok);
 	if (isValidReqUri(this->_URI) == false)
 		return (400);
+	if (this->_URI.find("?") != std::string::npos)
+		this->splitUriAndQueryString();
 	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 
 	//	HTTP VERSION
 	tok = std::strtok(NULL, " \t");
 	if (tok == NULL)
 		return (400);
-	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
+	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || std::string(tok) != "HTTP/1.1")
+	{
+		printf("HERE_next_lineI = %lu-%lu, reqline = %s\n", _i, _next_lineI, reqLine.c_str());
 		return (505);
-
+	}
 	this->_next_lineI += 2;
 	this->_i = this->_next_lineI;
 	this->_parsing_step = HEADERS;
-	std::cout << "\t\t- IS VALID" << std::endl;
+	//std::cout << "\t\t- IS VALID" << std::endl;
 	return (SUCCESS);
 }
 
@@ -197,7 +202,7 @@ int				Request::isSupportedHeader(std::string & key)
 
 const char *	Request::_supported_headers[N_SUPPORTED_HEADERS] =
 {
-	"transfer-encoding", "host", "content-length", "content-type"
+	"transfer-encoding", "host", "content-length"
 };
 
 
@@ -245,4 +250,14 @@ VirtualServer *	Request::findVirtualServer(std::string & s)
 		it++;
 	}
 	return (this->_client->parent_port->_VS_list.front());
+}
+
+void			Request::splitUriAndQueryString(void)
+{
+	size_t	question_mark_pos;
+	
+	question_mark_pos = this->_URI.find("?");
+	this->_query_string = this->_URI.substr(question_mark_pos + 1,
+			this->_URI.length() - question_mark_pos);
+	this->_URI = this->_URI.substr(0, question_mark_pos);
 }

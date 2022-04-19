@@ -58,6 +58,8 @@ public:
 
 	//	FILE - ResponseConstruction.cpp
 	void		constructSuccess(void);
+	void		constructRedirection(void);
+
 
 	//	FILE - Cgi.cpp
 	int			executeCgi(void);

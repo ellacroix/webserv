@@ -27,6 +27,9 @@ static void shutdownWebserv(int sig_int) {
 
 int main(int argc, char *argv[])
 {
+	unlink("log.log");
+	logger("Start");
+	
 	signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
 	signal(SIGPIPE, SIG_IGN);
@@ -53,19 +56,18 @@ int main(int argc, char *argv[])
 		return (FAILURE);
 	
 	int current_connections = 0;
+	logger("\n-------------------------------START SERVER--------------------------");
 	while (RUNNING)
 	{
-		printf("\nMainProcess: Waiting on epoll_wait()\n");
+		logger("Waiting on epoll_wait()");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
-
-		printf("MainProcess: epoll_wait() activated by %d file descriptors\n",
-				new_events);
+		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
 		if (new_events == 0)
-			printf("MainProcess: epoll_wait() timed out. Checking clients timeout.\n");
+			logger("epoll_wait() timed out. Checking clients timeout.");
 		disconnectTimeout408(config.getports_list(), thread_info, &current_connections);
 
 		//LOOP TO CHECK ALL ACTIVATED FD
@@ -93,17 +95,17 @@ int main(int argc, char *argv[])
 				it_c = current_port->_clients_map.find(event_fd);
 				if (it_c != current_port->_clients_map.end())
 				{
+					//printf("HERE: %d ---- %d\n", events[i].events & EPOLLOUT, events[i].events & EPOLLIN);
 					if (events[i].events & EPOLLOUT)
 						sendClientResponse(thread_info, it_c);
-					else
+					else if (events[i].events & EPOLLIN)
 						recvClientsRequest(current_port, thread_info, it_c, &current_connections);
 				}
 			}
 		}
 	}
-
+	printf("Ending server\n");
 	cleanShutDown(thread_pool, thread_info);
-	
 	printf("End of server\n");
 	return (SUCCESS);
 }

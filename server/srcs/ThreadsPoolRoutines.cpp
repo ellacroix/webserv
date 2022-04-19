@@ -3,11 +3,12 @@
 
 void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: recv routine \n");
+	logger("Client " + numberToString(client->stream_socket) + " Recv routine");
 
 	//The request is ignored, we monitor the connection again to read a new request
 	if (client->request_buffer.find("\r\n") == 0)
 	{
+		logger("Client " + numberToString(client->stream_socket) + " blank line");
 		client->request_buffer.clear();
 		monitorForReading(client, thread_info);
 		return ;
@@ -15,6 +16,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->request_buffer.size() > SERVER_MAX_HEADERS_SIZE)
 	{
+		logger("Client " + numberToString(client->stream_socket) + " headers too big");
 		client->status_code = 431;
 		createAndConstructResponse(client);
 		monitorForWriting(client, thread_info);
@@ -25,7 +27,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	size_t end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
 	{
-		printf("Received all headers\n");
+		logger("Client " + numberToString(client->stream_socket) + " received all headers");
 		if (!client->request)
 			client->createRequest();
 
@@ -35,6 +37,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		//We check if the body size is not too big
 		if (client->request->_body.size() > SERVER_MAX_BODY_SIZE)
 		{
+			logger("Client " + numberToString(client->stream_socket) + " body too big");
 			client->status_code = 413;
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -44,6 +47,9 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		//The request is complete, we can parse it
 		if (client->read_more == false)
 		{
+			logger("Client " + numberToString(client->stream_socket) + " request is complete, ready to parse");
+			//printf("%s%s", client->request->_headers.c_str(), client->request->_body.c_str());
+			//printf("%s", client->request_buffer.c_str());
 			client->status_code = client->request->parser();
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -52,25 +58,34 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	}
 
 	//We need to read more data for the request to be complete
+	logger("Client " + numberToString(client->stream_socket) + " request not complete");
 	monitorForReading(client, thread_info);
 }
 
 void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 {	
-	printf("ThreadsPool: send routine\n");
+	logger("Client " + numberToString(client->stream_socket) + " Send routine");
 
 	//Sending the reponse to the client
 	int ret = send(client->stream_socket,
 			client->response->raw_response.c_str(),
 			client->response->raw_response.size(),
 			0);
-	if (ret < 1)
-		printf("Strange error\n");
-	
-	client->response->raw_response.erase(0, ret);
+	if (ret <= 0)
+	{
+		logger("Client " + numberToString(client->stream_socket) + " closed the connection when writing to him\n");
+		monitorForReading(client, thread_info);
+		return ;
+	}
+	else
+	{
+		logger("Client " + numberToString(client->stream_socket) + " Send routine sent " + numberToString(ret) + " bytes");
+		client->response->raw_response.erase(0, ret);
+	}
 
 	if (client->response->raw_response.size() == 0)
 	{
+		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response" + numberToString(client->status_code));
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -87,16 +102,14 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 	}
 	else
 		monitorForWriting(client, thread_info);
-
-	printf("ThreadsPool: send routine DONE\n");
 }
 
 void	*threadLoop(void* arg)
 {
 	t_thread_info *thread_info = (t_thread_info*)arg;
-	Client *currentClient;
+	Client *current_client;
 
-	printf("ThreadsPool: Thread launched\n");
+	logger("Thread launched");
 
 	while(true)
 	{
@@ -104,34 +117,72 @@ void	*threadLoop(void* arg)
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		if (thread_info->queue->empty() == true)
 		{
-			printf("ThreadsPool: No work in the queue, waiting...\n");
+			//logger("No work in the queue, waiting...");
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
-			currentClient = thread_info->queue->front();
+			//logger("Grabbing a task");
+			if (thread_info->queue->empty() == true)
+			{
+				pthread_mutex_unlock(&thread_info->queue_mutex);
+				continue ;
+			}
+			current_client = thread_info->queue->front();
+			//logger("Client " + numberToString(current_client->stream_socket) + " grabbed a task");
 		}
 		else
-			currentClient = thread_info->queue->front();
-		//printf("ThreadsPool: Grabbed a task\n");
+		{
+			//logger("Grabbing a task because queue is full");
+			current_client = thread_info->queue->front();
+			//logger("Client " + numberToString(current_client->stream_socket) + " grabbed a task from full queue");
+		}
 		thread_info->queue->pop_front();
+		//logger("Dequeue size = " + numberToString(thread_info->queue->size()));
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 
 		//Determine which routine to do on the client
-		pthread_mutex_lock(&currentClient->client_mutex);
-		if (currentClient->suicide == true)
+		//logger("Client " + numberToString(current_client->stream_socket) + " locking mutex \t- Starting to work");
+		pthread_mutex_lock(&current_client->client_mutex);
+		//logger("Client " + numberToString(current_client->stream_socket) + " locked mutex \t\t- Starting to work");
+		if (current_client->suicide == true)
 		{
-			pthread_mutex_unlock(&currentClient->client_mutex);
+			pthread_mutex_unlock(&current_client->client_mutex);
+			//logger("Client " + numberToString(current_client->stream_socket) + " unlocked mutex");
 			return (0);
 		}
-		else if (currentClient->response_ready == true)
-			threadSendRoutine(currentClient, thread_info);
+		else if (current_client->response_ready == true)
+			threadSendRoutine(current_client, thread_info);
 		else
-			threadRecvRoutine(currentClient, thread_info);
-		pthread_mutex_unlock(&currentClient->client_mutex);
+			threadRecvRoutine(current_client, thread_info);
+		//logger("Client " + numberToString(current_client->stream_socket) + " unlocked mutex \t- Finished work");
+		pthread_mutex_unlock(&current_client->client_mutex);
+	}
+}
+
+void	toLowerHeaders(Client *client)
+{
+	size_t	start = 0;
+	size_t	end = 0;
+	unsigned int 	i = 0;
+
+	while ((start = client->request->_headers.find("\r\n", start)) != std::string::npos)
+	{
+		start += 2;
+		end = client->request->_headers.find(':', start);
+		i = 0;
+
+		while (end != std::string::npos && start + i < end)
+		{
+			if (std::isupper(client->request->_headers[start + i]))
+				client->request->_headers[start + i] = std::tolower(client->request->_headers[start + i]);
+			i++;
+		}
 	}
 }
 
 void	isRequestComplete(Client *client)
-{
-	size_t start = client->request->_headers.rfind("Transfer-Encoding: ");
+{	
+	toLowerHeaders(client);
+	
+	size_t start = client->request->_headers.rfind("transfer-encoding: ");
 	if (start != std::string::npos)
 	{
 		std::string TE_line = client->request->_headers.substr(start);
@@ -144,7 +195,7 @@ void	isRequestComplete(Client *client)
 				client->read_more = false;
 		}
 	}
-	else if ((start = client->request->_headers.find("Content-Length: ")) != std::string::npos)
+	else if ((start = client->request->_headers.find("content-length: ")) != std::string::npos)
 	{
 		std::string CL_line = client->request->_headers.substr(start);
 		CL_line = CL_line.substr(CL_line.find(":") + 1, CL_line.find("\r\n") + 2);
@@ -153,7 +204,7 @@ void	isRequestComplete(Client *client)
 			client->read_more = true;
 		else
 			client->read_more = false;
-		}
+	}
 }
 
 bool	isChunkComplete(Client *client)

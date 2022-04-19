@@ -8,6 +8,7 @@ int		s_thread_info::start(int *epoll_fd, pthread_t *thread_pool)
     this->epoll_fd = epoll_fd;
     pthread_mutex_init(&this->epoll_fd_mutex, NULL);
 
+
 //    pthread_t   thread_pool[THREADS];
     for(int i = 0; i < THREADS; i++)
     {

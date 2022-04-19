@@ -19,14 +19,14 @@ int	Response::ConstructResponse()
 	if (this->request == NULL)
 		this->virtual_server = client->parent_port->_VS_list.front();
 
+	//	IF ERROR DETECTED IN PARSING
 	if (client->status_code != 0)
 	{
-	//	IF ERROR DETECTED IN PARSING
 		constructError();
 		return (SUCCESS);
 	}
+	
 	//	ELSE (PROCESSING CONTINUES)
-	//	constructError();
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
 	// if (this->location == NULL && !this->isCgi(request->_URI))
@@ -36,7 +36,9 @@ int	Response::ConstructResponse()
 		this->constructError();
 		return (SUCCESS);
 	}
-	std::cout << "=== FOUND LOCATION = " << this->location->getPrefix() << std::endl;
+	//std::cout << "=== FOUND LOCATION = "
+	//	<< this->location->getPrefix() << std::endl;
+
 	//	CHECK limit_except
 	if (this->location->_limitExceptIsSet == true &&
 			std::find(this->location->getLimitExcept().begin(),
@@ -48,16 +50,7 @@ int	Response::ConstructResponse()
 		this->constructError();
 		return (SUCCESS);
 	}
-	/*
-	//	CHECK return
-	if (this->location->_returnIsSet == true)
-	{
-	this->client->status_code = this->location->getReturnCode();
-	this->location_header = this->location->getReturnUri();
-	this->constructRedirection();
-	return (SUCCESS);
-	}
-	*/
+
 	//	MAKE DIR/FILE PATH	- ROOT VERSION
 	//this->path = this->location.getRoot().append(this->request->_URI);
 	//						- ALIAS VERSION
@@ -76,6 +69,15 @@ int	Response::ConstructResponse()
 		}
 	}
 	
+	//	CHECK return
+	if (this->location->_returnIsSet == true)
+	{
+		this->client->status_code = this->location->getReturnCode();
+		this->location_header = this->location->getReturnUri();
+		this->constructRedirection();
+		return (SUCCESS);
+	}
+	
 	if (this->request->_method == "GET")
 		this->methodGET();
 	/*
@@ -87,7 +89,7 @@ int	Response::ConstructResponse()
 
 	else
 	{
-		this->client->status_code = 404;
+		this->client->status_code = 505;
 		this->constructError();
 	}
 	return (SUCCESS);
@@ -193,92 +195,6 @@ void	Response::constructAutoIndex()
 
 	raw_response.append(body);
 
-	std::cout << "-----------------------------------------------------------\n";
+	//std::cout << "-----------------------------------------------------------\n";
 }
 
-
-void	Response::constructError()
-{
- 	//if we don't find _status_code in a std::map<code, File>, we send the default error
-	if (body.empty())
-	{
-		printf("Redacting default page\n");
-		body.append("<html>\r\n");
-		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
-		body.append("<body>\r\n");
-		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h1></center>\r\n");
-		body.append("</body>\r\n");
-		body.append("</html>\r\n");
-	}
-
-	//Status line
-	raw_response.append("HTTP/1.1 ");
-	raw_response.append(numberToString(client->status_code));
-	raw_response.append(getErrorMessage(client->status_code));
-	//Additional Info ??
-	raw_response.append("\r\n");
-
-	//Headers
-	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
-	if (!this->isCgi(this->path))
-	{
-		raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
-		raw_response.append("\r\n");
-	}
-
-	//Body
-	raw_response.append(body);
-}
-
-std::string	Response::getErrorMessage(int code)
-{
-	switch (code)
-	{
-		case 200:
-			return " OK";
-		case 201:
-			return " Created";
-		case 204:
-			return " No Content";
-		case 206:
-			return " Partial Content";
-		case 301:
-			return " Moved Permanently";
-		case 304:
-			return " Not Modified";
-		case 400:
-			return " Bad Request";
-		case 401:
-			return " Unauthorized";
-		case 403:
-			return " Forbidden";
-		case 404:
-			return " Not Found";
-		case 405:
-			return " Method Not Allowed";
-		case 406:
-			return " Not Acceptable";
-		case 408:
-			return " Request Timeout";
-		case 411:
-			return " Length Required";
-		case 413:
-			return " Request Entity Too Large";
-		case 414:
-			return " Request-URI Too Long";
-		case 415:
-			return " Unsupported Media Type";
-		case 417:
-			return " Expectation Failed";
-		case 431:
-			return " Request Header Fields Too Large";
-		case 500:
-			return " Internal Server Error";
-		case 501:
-			return " Not Implemented";
-		case 505:
-			return " HTTP Version Not Supported";			
-		default:
-			return " Should not happen";
-	}
-}

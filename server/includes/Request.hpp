@@ -15,7 +15,7 @@ enum    e_parsing_steps
 	COMPLETE
 };
 
-# define N_SUPPORTED_HEADERS 4
+# define N_SUPPORTED_HEADERS 3
 
 
 enum	e_supported_headers
@@ -24,8 +24,7 @@ enum	e_supported_headers
 	TRANSFER_ENCODING,
 	// HEADERS THAT CAN BE PRESENT ONLY ONCE START AT HOST
 	HOST,	
-	CONTENT_LENGTH,
-	CONTENT_TYPE
+	CONTENT_LENGTH
 };
 
 class Client ;
@@ -50,7 +49,7 @@ class   Request {
 		//  REQUEST LINE
 		std::string			_method;
 		std::string			_URI;
-		// std::string			_query_string;
+		std::string			_query_string;
 
 		//  HEADERS
 		std::string			_headers;
@@ -76,7 +75,9 @@ class   Request {
 		unsigned int	parseReqLine(void);
 		unsigned int	parseHeaders(void);
 		unsigned int	parseBody(void);
-		int				isSupportedHeader(std::string & key);
+		void			splitUriAndQueryString(void);
+		int             isSupportedHeader(std::string & key);
+
 		//		RequestHeaderArgs.cpp
 		void			setHeaderValue(const unsigned int header_index,
 						std::string const & value);

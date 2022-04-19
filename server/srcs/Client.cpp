@@ -25,11 +25,12 @@ Client::Client()
 }
 
 Client::~Client() {
-	printf("Deleting client\n");
+	logger("Deleting client " + numberToString(stream_socket));
  	if (request)
 		delete request;
+	if (response)
+		delete response;
 	pthread_mutex_destroy(&client_mutex);
-	printf("Closing socket\n");
 	if (stream_socket != -1)
 		close(stream_socket);
 }

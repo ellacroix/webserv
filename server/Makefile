@@ -19,7 +19,7 @@ SRCS			=	Client.cpp \
 					ResponseConstruction.cpp \
 					engineUtils.cpp \
 					fileUtils.cpp \
-					extensions.cpp
+					extensions.cpp \
 
 HEADERS			=	includes/Client.hpp \
 					includes/Port.hpp \
@@ -28,7 +28,7 @@ HEADERS			=	includes/Client.hpp \
 					includes/webserv.hpp \
 					includes/Location.hpp \
 					includes/Request.hpp \
-					includes/Response.hpp
+					includes/Response.hpp \
 
 INC_FLD			=	includes/
 
@@ -37,7 +37,7 @@ OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
 CXX				=	c++
 
-CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98
 #CXXFLAGS		= -pthread -Wall -Wextra -Werror
 
 SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
@@ -61,6 +61,7 @@ fclean		:	clean
 re			:	fclean all
 
 run			:	${NAME}
+			clear
 			./webserv confs/nginx.conf
 
 sanitize	:	${OBJS}
@@ -68,7 +69,7 @@ sanitize	:	${OBJS}
 			./webserv confs/nginx.conf
 
 valgrind	:	$(NAME)
-			valgrind --leak-check=full --show-leak-kinds=all --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
 
 ctags		:
 			ctags srcs/*.cpp
