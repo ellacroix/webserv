@@ -233,13 +233,12 @@ int		Response::methodPOST(void)
 	{
 		
 		std::cout << "=== POST - REQUEST TO FOLDER\t=> 403" << std::endl;
-		/*
 		this->client->status_code = 403;
 		this->constructError();
 		return (SUCCESS);
-		*/
 		// NEED FOLDER WRITE PERM CHECK
 		// OR => 403
+		/*
 		def_upload_name = "upload_";
 
 		n = 1;
@@ -256,5 +255,6 @@ int		Response::methodPOST(void)
 		this->client->status_code = 201;
 		this->construct201Created();
 		return (SUCCESS);
+		*/
 	}
 }
