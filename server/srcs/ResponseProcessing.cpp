@@ -271,3 +271,58 @@ int		Response::methodPOST(void)
 		*/
 	}
 }
+
+int	Response::methodDELETE(void)
+{
+	if (this->request->_URI[this->request->_URI.length() - 1] != '/')
+	//	REQUEST A FILE
+	{
+		if (pathExists(this->path) == true)
+		//	FILE EXISTS
+		{
+			std::cout << "=== DELETE - PATH EXISTS" << std::endl;
+			if (isFile(this->path) == false)
+			{
+				std::cout << "=== DELETE - PATH IS NOT A FILE\t=> 403" << std::endl;
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+			if (canWrite(this->path) == false)
+			{
+				std::cout << "=== DELETE - NO WRITE PERMISSION FOR FILE\t=> 403"
+					<< std::endl;
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+			if (unlink(this->path.c_str()) != 0)
+			{
+				this->client->status_code = 403;
+				this->constructError();
+				return (SUCCESS);
+			}
+			else
+			{
+				this->client->status_code = 200;
+				this->construct200Deleted();
+				return (SUCCESS);
+			}
+		}
+		else
+		//	FILE DOESN'T EXIST
+		{
+			this->client->status_code = 404;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
+	else
+	//	REQUEST A DIR => 403
+	{
+		std::cout << "=== DELETE - REQUEST TO FOLDER\t=> 403" << std::endl;
+		this->client->status_code = 403;
+		this->constructError();
+		return (SUCCESS);
+	}
+}

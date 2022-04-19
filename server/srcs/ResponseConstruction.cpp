@@ -224,4 +224,38 @@ void	Response::construct201Created(void)
 	raw_response.append(body);
     
     return ;
+
+}
+
+void	Response::construct200Deleted(void)
+{
+    if (body.empty())
+	{
+		body.append("<html>\r\n");
+		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
+		body.append("<body>\r\n");
+		body.append("<center><h1> The file "
+			   + this->request->_URI
+			   + "was succesfully deleted</h1></center>\r\n");
+        body.append("</body>\r\n");
+		body.append("</html>\r\n");
+	}
+
+    //Status line
+	raw_response.append("HTTP/1.1 ");
+	raw_response.append(numberToString(client->status_code));
+	raw_response.append(getErrorMessage(client->status_code));
+	//Additional Info ??
+	raw_response.append("\r\n");
+
+	//Headers
+	raw_response.append("Content-Length: " + numberToString(body.size()) + "\r\n");
+	raw_response.append("Content-Type: text/html; charset=UTF-8\r\n");
+	raw_response.append("\r\n");
+
+	//Body
+	raw_response.append(body);
+    
+    return ;
+
 }

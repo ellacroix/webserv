@@ -56,10 +56,12 @@ public:
 	void			constructAutoIndex();
 	int				methodGET(void);
 	int				methodPOST(void);
+	int				methodDELETE(void);
 	Location *		findLocation(std::string & URI);
 
 	//	FILE - ResponseConstruction.cpp
 	void		construct200Ok(void);
+	void		construct200Deleted(void);
 	void		construct201Created(void);
 	void		constructRedirection(void);
 	int			createFile(void);

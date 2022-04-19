@@ -79,9 +79,8 @@ int	Response::processRequest()
 		this->methodGET();
 	else if (this->request->_method == "POST")
 		this->methodPOST();
-	/*
-	else if (this->request->method == "DELETE")
-	*/
+	else if (this->request->_method == "DELETE")
+		this->methodDELETE();
 
 	else
 	{
@@ -193,4 +192,3 @@ void	Response::constructAutoIndex()
 
 	//std::cout << "-----------------------------------------------------------\n";
 }
-
