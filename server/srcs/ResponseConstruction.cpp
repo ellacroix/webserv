@@ -81,7 +81,7 @@ void	Response::constructError()
  	//if we don't find _status_code in a std::map<code, File>, we send the default error
 	if (body.empty())
 	{
-		printf("Redacting default page for: %s\n", client->request->_headers.c_str() );
+		printf("Redacting default page\n");
 		body.append("<html>\r\n");
 		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
 		body.append("<body>\r\n");

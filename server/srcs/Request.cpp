@@ -159,7 +159,7 @@ unsigned int	Request::parseReqLine(void)
 	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || std::string(tok) != "HTTP/1.1")
 	{
-		printf("HERE_next_lineI = %lu-%lu, reqline = %s\n", _i, _next_lineI, reqLine.c_str());
+		printf("_headers = %s, substr(%lu-%lu), reqline = %s\n", _headers.c_str(), _i, _next_lineI, reqLine.c_str());
 		return (505);
 	}
 	this->_next_lineI += 2;
