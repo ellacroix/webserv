@@ -257,7 +257,7 @@ bool	isValidLimitExcept(std::vector<std::string> v)
 bool	isValidReqUri(std::string const & s)
 {
 	return (s[0] == '/'
-			&& s.find("..") == std::string::npos
+			&& s.find("/../") == std::string::npos
 			&& s.find("//") == std::string::npos);
 	//Manage absoluteURI ? GET http://www.w3.org/pub/WWW/TheProject.html HTTP/1.1
 }

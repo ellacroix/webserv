@@ -224,5 +224,4 @@ void	Response::construct201Created(void)
 	raw_response.append(body);
     
     return ;
-
 }

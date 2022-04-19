@@ -162,14 +162,28 @@ int		Response::methodPOST(void)
 {
 	std::string	path_to_folder;
 	size_t		last_slash_pos;
+	std::string	file_only;
 //	std::string	def_upload_name;
 //	size_t		n;
 
 	if (this->path[this->path.length() - 1] != '/')		//REQUEST A FILE
 	{
 		std::cout << "=== POST - REQUEST TO FILE" << std::endl;
-		//	FILE ALREADY EXISTS
+		if (this->location->_uploadFldIsSet == true)
+		//	UPLOAD_FLD IS SET
+		{
+			last_slash_pos = this->path.find_last_of("/");
+			file_only = this->path.substr(last_slash_pos + 1,
+					this->path.length() - last_slash_pos);
+			this->path = this->location->getRoot();
+			this->path.append(this->location->getUploadFld());
+			this->path.append(file_only);
+			this->request->_URI = this->location->getPrefix();
+			this->request->_URI.append(this->location->getUploadFld());
+			this->request->_URI.append(file_only);
+		}
 		if (pathExists(this->path) == true)
+		//	FILE ALREADY EXISTS
 		{
 			std::cout << "=== POST - PATH EXISTS" << std::endl;
 			if (isFile(this->path) == false)
@@ -188,8 +202,8 @@ int		Response::methodPOST(void)
 				return (SUCCESS);
 			}
 		}
-		//	FILE DOESN'T EXIST YET
 		else	
+		//	FILE DOESN'T EXIST YET
 		{
 			std::cout << "=== POST - PATH DOESN'T EXIST" << std::endl;
 			last_slash_pos = this->path.find_last_of("/");

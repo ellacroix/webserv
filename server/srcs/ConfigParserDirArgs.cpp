@@ -287,10 +287,16 @@ int	ConfigParser::validateCgiArgs(void)
 
 int	ConfigParser::validateUploadFldArgs(void)
 {
+	//	upload_fld	upload_fld_relative_to_root 
+	//	no starting '/' needs trailing '/'
 	if (this->_line.size() != 2)
 		return (ARG_ERROR);
+	if (this->_curLoc->_uploadFldIsSet == true)
+		return (ALRDY_SET_ERROR);
 	if (isValidPrefix(&this->_line[1]) == false)
 		return (ARG_ERROR);
+	if (this->_line[1][0] == '/')	// UGLY AF
+		this->_line[1].erase(0, 1);
 	this->_curLoc->setUploadFld(this->_line[1]);
 	this->_curLoc->_uploadFldIsSet = true;
 	return (true);
