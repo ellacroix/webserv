@@ -25,7 +25,7 @@ const std::pair<std::string, std::string> Response::document_type[105] = {
 	std::pair<std::string, std::string>("ico","image/x-icon"),
 	std::pair<std::string, std::string>("jng","image/x-jng"),
 	std::pair<std::string, std::string>("bmp","image/x-ms-bmp"),
-	std::pair<std::string, std::string>("svg","image/x-ms-bmp"),
+	std::pair<std::string, std::string>("svg","image/svg+xml"),
 	std::pair<std::string, std::string>("svgz","image/svg+xml"),
 	std::pair<std::string, std::string>("webp","image/webp"),
 	std::pair<std::string, std::string>("woff","application/font-woff"),
