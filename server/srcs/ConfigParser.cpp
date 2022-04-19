@@ -238,7 +238,7 @@ const char *	ConfigParser::_directives[N_DIR] =
 {
 	"server", "listen", "server_name", "client_max_body_size",
 	"cgi", "error_page",
-	"root", "autoindex", "index", "return", "limit_except",
+	"root", "autoindex", "index", "return", "limit_except", "upload_fld",
 	"location", "{", "}"
 };
 

@@ -11,7 +11,8 @@ Location::Location(void) :
 	_autoIndexIsSet(false),
 	_indexIsSet(false),
 	_returnIsSet(false),
-	_limitExceptIsSet(false)//,
+	_limitExceptIsSet(false),
+	_uploadFldIsSet(false)//,
 //	_client_max_body_size_is_set(false)
 {
 	return ;
@@ -31,13 +32,15 @@ Location::Location(Location const & src) :
 	_limitExcept(src._limitExcept),
 	_returnCode(src._returnCode),
 	_returnUri(src._returnUri),
+	_uploadFld(src._uploadFld),
 //	_client_max_body_size(src._client_max_body_size),
 	_rootIsSet(src._rootIsSet),
 //	_error_page_is_set(src._error_page_is_set),
 	_autoIndexIsSet(src._autoIndexIsSet),
 	_indexIsSet(src._indexIsSet),
 	_returnIsSet(src._returnIsSet),
-	_limitExceptIsSet(src._limitExceptIsSet)//,
+	_limitExceptIsSet(src._limitExceptIsSet),
+	_uploadFldIsSet(src._uploadFldIsSet)//,
 //	_client_max_body_size_is_set(src._client_max_body_size_is_set)
 {
 	return ;
@@ -53,6 +56,7 @@ Location &	Location::operator=(Location const & rhs)
 	this->_limitExcept = rhs._limitExcept;
 	this->_returnCode = rhs._returnCode;
 	this->_returnUri = rhs._returnUri;
+	this->_uploadFld = rhs._uploadFld;
 //	this->_client_max_body_size = rhs._client_max_body_size;
 	this->_rootIsSet = rhs._rootIsSet;
 //	this->_error_page_is_set = rhs._error_page_is_set;
@@ -60,6 +64,7 @@ Location &	Location::operator=(Location const & rhs)
 	this->_indexIsSet = rhs._indexIsSet;
 	this->_returnIsSet = rhs._returnIsSet;
 	this->_limitExceptIsSet = rhs._limitExceptIsSet;
+	this->_uploadFldIsSet = rhs._uploadFldIsSet;
 //	this->_client_max_body_size_is_set = rhs._client_max_body_size_is_set;
 	return (*this);
 }
@@ -110,6 +115,11 @@ void	Location::setReturnCode(int	n)
 void	Location::setReturnUri(std::string s)
 {
 	this->_returnUri = s;
+}
+
+void	Location::setUploadFld(std::string s)
+{
+	this->_uploadFld = s;
 }
 
 void	Location::setLimitExcept(std::vector<std::string> v)
@@ -167,6 +177,11 @@ std::string						Location::getReturnUri(void) const
 	return (this->_returnUri);
 }
 
+std::string						Location::getUploadFld(void) const
+{
+	return (this->_uploadFld);
+}
+
 std::vector<std::string> &		Location::getLimitExcept(void)
 {
 	return (this->_limitExcept);
@@ -194,6 +209,7 @@ void	Location::reset(void)
 	this->_limitExcept = std::vector<std::string>();
 	this->_returnCode = -1;
 	this->_returnUri = "";
+	this->_uploadFld = "";
 //	this->_client_max_body_size = 0;
 
 	this->_rootIsSet = false;
@@ -202,6 +218,7 @@ void	Location::reset(void)
 	this->_indexIsSet = false;
 	this->_returnIsSet = false;
 	this->_limitExceptIsSet = false;
+	this->_uploadFldIsSet = false;
 //	this->_client_max_body_size_is_set = false;
 }
 
@@ -264,6 +281,7 @@ void	Location::display(void) const
 	}
 	std::cout << "\t\t_return\t\t\t=\t" << this->_returnCode << std::endl;
 	std::cout << "\t\t_returnUri\t\t=\t\"" << this->_returnUri << "\"" << std::endl;
+	std::cout << "\t\t_uploadFld\t\t=\t\"" << this->_uploadFld << "\"" << std::endl;
 //	std::cout << "\t\t_client_max_body_size\t=\t"
 //		<< this->_client_max_body_size << std::endl;
 
@@ -274,6 +292,7 @@ void	Location::display(void) const
 	std::cout << "\t\t_indexIsSet\t\t=\t" << this->_indexIsSet << std::endl;
 	std::cout << "\t\t_returnIsSet\t\t=\t" << this->_returnIsSet << std::endl;
 	std::cout << "\t\t_limitExceptIsSet\t=\t" << this->_limitExceptIsSet << std::endl;
+	std::cout << "\t\t_uploadFldIsSet\t\t=\t" << this->_uploadFldIsSet << std::endl;
 //	std::cout << "\t\t_client_max_body_size_is_set\t=\t"
 //		<< this->_client_max_body_size_is_set << std::endl;
 }
@@ -299,5 +318,6 @@ void	Location::resetIsDefBooleans(void)
 	this->_indexIsSet = false;
 	this->_returnIsSet = false;
 	this->_limitExceptIsSet = false;
+	this->_uploadFldIsSet = false;
 //	this->_client_max_body_size_is_set = false;
 }

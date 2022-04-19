@@ -6,7 +6,7 @@
 # include "VirtualServer.hpp"
 # include "Port.hpp"
 
-# define N_DIR 14
+# define N_DIR 15
 # define N_CONTEXTS 5
 
 enum	contexts
@@ -35,6 +35,7 @@ enum	directives
 	RETURN,	// PASS return DIRECTIVE AS LOCATION CONTEXT ONLY ?
 	//	VALID IN LOCATION ONLY
 	LIMIT_EXCEPT,
+	UPLOAD_FLD,
 	LOCATION,
 	OPENING_BRACKET,
 	CLOSING_BRACKET,
@@ -140,6 +141,7 @@ class	ConfigParser {
 		int			validateOpeningBracketArgs(void);
 		int			validateClosingBracketArgs(void);
 		int			validateCgiArgs(void);
+		int			validateUploadFldArgs(void);
 		bool		noDuplicateErrorPage(void);
 };
 

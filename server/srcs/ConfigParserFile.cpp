@@ -149,6 +149,9 @@ int					ConfigParser::validateArguments(void)
 		case LIMIT_EXCEPT :
 			ret = this->validateLimitExceptArgs();
 			break ;
+		case UPLOAD_FLD :
+			ret = this->validateUploadFldArgs();
+			break ;
 		case OPENING_BRACKET :
 			ret = this->validateOpeningBracketArgs();
 			break ;
@@ -178,7 +181,7 @@ bool        ConfigParser::validateContext(void)
 			&& this->_context == SERVER_CONTEXT)
 		return (true);
 	else if (this->_dir >= ROOT
-			&& this->_dir <= LIMIT_EXCEPT
+			&& this->_dir <= UPLOAD_FLD
 			&& this->_context == LOCATION_CONTEXT)
 		return (true);
 	else if (this->_dir == CLOSING_BRACKET

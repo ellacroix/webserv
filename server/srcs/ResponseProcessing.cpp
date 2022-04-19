@@ -165,7 +165,7 @@ int		Response::methodPOST(void)
 //	std::string	def_upload_name;
 //	size_t		n;
 
-	if (this->path[this->path.length() - 1] != '/')	//REQUEST A FILE
+	if (this->path[this->path.length() - 1] != '/')		//REQUEST A FILE
 	{
 		std::cout << "=== POST - REQUEST TO FILE" << std::endl;
 		//	FILE ALREADY EXISTS
@@ -231,14 +231,13 @@ int		Response::methodPOST(void)
 	}
 	else											//REQUEST A DIR
 	{
-		
 		std::cout << "=== POST - REQUEST TO FOLDER\t=> 403" << std::endl;
 		this->client->status_code = 403;
 		this->constructError();
 		return (SUCCESS);
+		/*
 		// NEED FOLDER WRITE PERM CHECK
 		// OR => 403
-		/*
 		def_upload_name = "upload_";
 
 		n = 1;

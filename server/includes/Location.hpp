@@ -16,6 +16,7 @@ class	Location
 		std::vector<std::string>			_limitExcept;	// STRINGS
 		int									_returnCode;
 		std::string							_returnUri;
+		std::string							_uploadFld;
 //		ssize_t								_client_max_body_size;
 //		std::string							_returnBody;
 
@@ -34,6 +35,7 @@ class	Location
 		bool								_indexIsSet;
 		bool								_returnIsSet;
 		bool								_limitExceptIsSet;
+		bool								_uploadFldIsSet;
 //		bool								_client_max_body_size_is_set;
 
 		//	SETTERS
@@ -44,6 +46,7 @@ class	Location
 //		void		setIndex(std::string s);
 		void		setReturnCode(int n);
 		void		setReturnUri(std::string s);
+		void		setUploadFld(std::string s);
 		void		setLimitExcept(std::vector<std::string> v);
 		void		setClientMaxBodySize(std::string s);
 
@@ -53,6 +56,7 @@ class	Location
 		std::string						getRoot(void) const;
 		int								getReturnCode(void) const;
 		std::string						getReturnUri(void) const;
+		std::string						getUploadFld(void) const;
 		std::vector<std::string> &		getLimitExcept(void);
 		std::vector<std::string> &		getIndex(void);
 		bool							getAutoIndex(void) const;

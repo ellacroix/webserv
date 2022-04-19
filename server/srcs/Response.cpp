@@ -83,7 +83,6 @@ int	Response::processRequest()
 	else if (this->request->method == "DELETE")
 	*/
 
-
 	else
 	{
 		this->client->status_code = 505;

@@ -284,3 +284,14 @@ int	ConfigParser::validateCgiArgs(void)
 	this->_curVS->_cgi_is_set = true;
 	return (true);
 }
+
+int	ConfigParser::validateUploadFldArgs(void)
+{
+	if (this->_line.size() != 2)
+		return (ARG_ERROR);
+	if (isValidPrefix(&this->_line[1]) == false)
+		return (ARG_ERROR);
+	this->_curLoc->setUploadFld(this->_line[1]);
+	this->_curLoc->_uploadFldIsSet = true;
+	return (true);
+}

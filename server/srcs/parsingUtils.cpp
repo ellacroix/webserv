@@ -20,14 +20,12 @@ bool	isValidPrefix(std::string *s)
 	//	ADD LEADING '/' IF MISSING
 	if ((*s)[0] != '/')
 		(*s).insert(0, "/");
+	if (s->find("//") != std::string::npos)
+		return (false);
 	len = (*s).length();
 	for (i = 0 ; (*s)[i] ; i++)
 	{
 		if (std::isprint((*s)[i]) == false)
-			return (false);
-		if ((*s)[i] == '/'
-				&& i != len - 1
-				&& (*s)[i + 1] == '/')
 			return (false);
 	}
 	//	ADD TRAILING '/' IF MISSING
