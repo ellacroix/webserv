@@ -10,7 +10,6 @@
 #include <sys/epoll.h>
 #include <sys/time.h>
 #include <time.h>
-#include <dirent.h>
 #include <sys/types.h>
 
 #include "webserv.hpp"

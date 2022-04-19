@@ -13,23 +13,20 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		monitorForReading(client, thread_info);
 		return ;
 	}
-
-	// BUGGY
-	/*
-	if (client->request_buffer.size() > SERVER_MAX_HEADERS_SIZE)
-	{
-		logger("Client " + numberToString(client->stream_socket) + " headers too big");
-		client->status_code = 431;
-		createAndConstructResponse(client);
-		monitorForWriting(client, thread_info);
-		return ;
-	}
-	*/
 	
 	//We received the headers, is the request complete ?
 	size_t end = client->request_buffer.find("\r\n\r\n");
 	if (end != std::string::npos)
 	{
+		if (end > SERVER_MAX_HEADERS_SIZE)
+		{
+			logger("Client " + numberToString(client->stream_socket) + " headers too big");
+			client->status_code = 431;
+			createAndConstructResponse(client);
+			monitorForWriting(client, thread_info);
+			return ;
+		}
+		
 		logger("Client " + numberToString(client->stream_socket) + " received all headers");
 		if (!client->request)
 			client->createRequest();
@@ -51,8 +48,6 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		if (client->read_more == false)
 		{
 			logger("Client " + numberToString(client->stream_socket) + " request is complete, ready to parse");
-			//printf("%s%s", client->request->_headers.c_str(), client->request->_body.c_str());
-			//printf("%s", client->request_buffer.c_str());
 			client->status_code = client->request->parser();
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -68,6 +63,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 {	
 	logger("Client " + numberToString(client->stream_socket) + " Send routine");
+	printf("RESPONSE= %s\n", client->response->raw_response.c_str());
 
 	//Sending the reponse to the client
 	int ret = send(client->stream_socket,
@@ -88,7 +84,7 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->response->raw_response.size() == 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response" + numberToString(client->status_code));
+		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response " + numberToString(client->status_code));
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -222,10 +218,18 @@ bool	isChunkComplete(Client *client)
 		client->request->_body = body;
 		
 		// No trailer case
-		if (body.find("\r\n0\r\n\r\n") != std::string::npos)
+		if (client->request_buffer.find("\r\n0\r\n\r\n", bodyEnd) != std::string::npos)
 			return true;
-		//Trailer case to do ?
-		return true;
+		//Trailer case
+		else if (client->request_buffer.find("\r\n\r\n", bodyEnd + 5) != std::string::npos)
+		{
+			size_t	trailer_start = bodyEnd + 5;
+			size_t	trailer_end = client->request_buffer.find("\r\n\r\n", trailer_start);
+			std::string headers = client->request_buffer.substr(trailer_start, trailer_end - trailer_start + 2);
+			client->request->_headers.append(headers);
+			return true;
+		}
+		return false;
 	}
 	else
 		return false;

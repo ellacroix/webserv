@@ -7,7 +7,7 @@ Request::Request(std::string raw, Client *parent_client) :
 	_has_body(false),
 	_i(0),
 	_next_lineI(0),
-	_double_CRLF_pos(raw.length()),
+	_double_CRLF_pos(0),
 	_headers(raw),
 	_content_length(-1),
 	_body_length(-1),
@@ -33,6 +33,7 @@ unsigned int	Request::parser(void)
 {
 	//printf("parser()\t- working on:\n\"%s\"\n", this->_headers.c_str());
 
+	this->_double_CRLF_pos = this->_headers.size();
 	//std::cout << "parser()\t- _double_CRLF_pos = " << this->_double_CRLF_pos << std::endl;
 	while (this->_i < this->_double_CRLF_pos)
 	{

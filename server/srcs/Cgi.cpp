@@ -18,6 +18,7 @@ int	 Response::executeCgi()
 	int			fds[2];
 	char		buffer[1024];
 	int			count;
+	int			code = 0;
 
 	printf("=== CGI EXECUTION\n");
 	if (pipe(fds) == -1)
@@ -48,12 +49,14 @@ int	 Response::executeCgi()
 		delete [] arg[0];
 		delete [] arg[1];
 		delete [] arg;
-		exit(1); // LEAKS
+		exit(50); // LEAKS
 	}
 	else
 	{
 		close(fds[1]);
-		wait(NULL);
+		wait(&code);
+		if (code/256 == 50)
+			client->status_code = 500;
 		while ((count = read(fds[0], buffer, sizeof(buffer))) != 0)
 		{
 			buffer[count] = '\0';

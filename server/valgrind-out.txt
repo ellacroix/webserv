@@ -1,15 +1,15 @@
-==1012902== Memcheck, a memory error detector
-==1012902== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==1012902== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
-==1012902== Command: ./webserv confs/nginx.conf
-==1012902== Parent PID: 1012898
-==1012902== 
-==1012902== 
-==1012902== HEAP SUMMARY:
-==1012902==     in use at exit: 0 bytes in 0 blocks
-==1012902==   total heap usage: 504 allocs, 504 frees, 131,841 bytes allocated
-==1012902== 
-==1012902== All heap blocks were freed -- no leaks are possible
-==1012902== 
-==1012902== For lists of detected and suppressed errors, rerun with: -s
-==1012902== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 2 from 2)
+==388447== Memcheck, a memory error detector
+==388447== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==388447== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==388447== Command: ./webserv confs/nginx.conf
+==388447== Parent PID: 388446
+==388447== 
+==388447== 
+==388447== HEAP SUMMARY:
+==388447==     in use at exit: 0 bytes in 0 blocks
+==388447==   total heap usage: 376 allocs, 376 frees, 118,949 bytes allocated
+==388447== 
+==388447== All heap blocks were freed -- no leaks are possible
+==388447== 
+==388447== For lists of detected and suppressed errors, rerun with: -s
+==388447== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 1 from 1)
