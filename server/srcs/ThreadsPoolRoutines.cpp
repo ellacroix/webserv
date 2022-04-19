@@ -51,6 +51,8 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		if (client->read_more == false)
 		{
 			logger("Client " + numberToString(client->stream_socket) + " request is complete, ready to parse");
+			//printf("%s%s", client->request->_headers.c_str(), client->request->_body.c_str());
+			//printf("%s", client->request_buffer.c_str());
 			client->status_code = client->request->parser();
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -59,7 +61,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	}
 
 	//We need to read more data for the request to be complete
-	logger("Client " + numberToString(client->stream_socket) + " headers not complete");
+	logger("Client " + numberToString(client->stream_socket) + " request not complete");
 	monitorForReading(client, thread_info);
 }
 
@@ -86,7 +88,7 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->response->raw_response.size() == 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response\n");
+		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response" + numberToString(client->status_code));
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -158,9 +160,32 @@ void	*threadLoop(void* arg)
 	}
 }
 
-void	isRequestComplete(Client *client)
+void	toLowerHeaders(Client *client)
 {
-	size_t start = client->request->_headers.rfind("Transfer-Encoding: ");
+	size_t	start = 0;
+	size_t	end = 0;
+	unsigned int 	i = 0;
+
+	while ((start = client->request->_headers.find("\r\n", start)) != std::string::npos)
+	{
+		start += 2;
+		end = client->request->_headers.find(':', start);
+		i = 0;
+
+		while (end != std::string::npos && start + i < end)
+		{
+			if (std::isupper(client->request->_headers[start + i]))
+				client->request->_headers[start + i] = std::tolower(client->request->_headers[start + i]);
+			i++;
+		}
+	}
+}
+
+void	isRequestComplete(Client *client)
+{	
+	toLowerHeaders(client);
+	
+	size_t start = client->request->_headers.rfind("transfer-encoding: ");
 	if (start != std::string::npos)
 	{
 		std::string TE_line = client->request->_headers.substr(start);
@@ -173,7 +198,7 @@ void	isRequestComplete(Client *client)
 				client->read_more = false;
 		}
 	}
-	else if ((start = client->request->_headers.find("Content-Length: ")) != std::string::npos)
+	else if ((start = client->request->_headers.find("content-length: ")) != std::string::npos)
 	{
 		std::string CL_line = client->request->_headers.substr(start);
 		CL_line = CL_line.substr(CL_line.find(":") + 1, CL_line.find("\r\n") + 2);

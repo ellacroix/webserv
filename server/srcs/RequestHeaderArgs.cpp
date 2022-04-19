@@ -26,7 +26,7 @@ bool	Request::valueIsValid(const unsigned int header_index,
 {
 	char	*endPtr;
 
-	std::cout << "HEADER_INDEX = " << header_index << std::endl;
+	//std::cout << "HEADER_INDEX = " << header_index << std::endl;
 
 	switch (header_index)
 	{
