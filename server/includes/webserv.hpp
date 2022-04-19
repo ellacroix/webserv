@@ -13,9 +13,11 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <sys/epoll.h>
+#include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
@@ -33,6 +35,7 @@
 #include <sstream>
 #include <deque>
 #include <algorithm>
+#include <new>
 
 //	CUSTOM HEADERS
 /*

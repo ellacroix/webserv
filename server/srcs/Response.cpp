@@ -1,6 +1,4 @@
 #include "Response.hpp"
-#include <sys/types.h>
-#include <dirent.h>
 
 Response::Response(Client *parent_client)
 {
@@ -30,6 +28,7 @@ int	Response::processRequest()
 	//	ELSE (PROCESSING CONTINUES)
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
+	// if (this->location == NULL && !this->isCgi(request->_URI))
 	if (this->location == NULL)
 	{
 		this->client->status_code = 404;
@@ -55,6 +54,17 @@ int	Response::processRequest()
 	this->path = this->request->_URI;
 	this->path.replace(0, this->location->getPrefix().length(),
 			this->location->getRoot());
+
+	// EXECUTION CGI
+	if (this->isCgi(this->path))
+	{
+		if (executeCgi() == -1)
+		{
+			this->client->status_code = 505;
+			this->constructError();
+			return (SUCCESS);
+		}
+	}
 	
 	//	CHECK return
 	if (this->location->_returnIsSet == true)
@@ -112,6 +122,7 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 	{
 		fullPath = path + "/" + entry->d_name;
 		stat(fullPath.c_str(), &info);
+		printf("full path %s\n", fullPath.c_str());
 
 		if (!std::strcmp(entry->d_name,  "."))
 			continue ;
@@ -128,8 +139,6 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 			if (entry->d_type == DT_DIR) { entryPath += "/"; }
 			entryLink = fillTag("a href=\"" + entryPath + "\"", entryPath);
 
-			// for (int i = entryLink.length(); entryLink.length() < 51; i++)
-			//     entryLink += " ";
 			for (int i = 0; entryLink.length() + i < 109; i++)
 				entryLink += " ";
 

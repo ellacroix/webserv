@@ -15,6 +15,7 @@ SRCS			=	Client.cpp \
 					RequestHeaderArgs.cpp \
 					Response.cpp \
 					ResponseProcessing.cpp \
+					Cgi.cpp \
 					ResponseConstruction.cpp \
 					engineUtils.cpp \
 					fileUtils.cpp \
@@ -69,6 +70,12 @@ sanitize	:	${OBJS}
 
 valgrind	:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+
+ctags		:
+			ctags srcs/*.cpp
+			ctags includes/*.hpp
+
+
 
 leaks		:	$(NAME)
 			valgrind --suppressions=valgrind_ignore.txt \

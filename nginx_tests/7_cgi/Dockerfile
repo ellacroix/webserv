@@ -8,12 +8,11 @@ RUN rm /var/log/nginx/*
 RUN rm /etc/nginx/nginx.conf
 
 RUN mkdir /data ; \
-	mkdir /data/www \
-	mkdir /data/www/public
+	mkdir /data/www 
 
 RUN chmod +r /data
 
-COPY /srcs/public /data/www/public/.
+COPY /srcs/public /data/www/.
 COPY ./srcs/index.html /data/www/.
 COPY ./srcs/init.sh /
 RUN chmod 777 /init.sh

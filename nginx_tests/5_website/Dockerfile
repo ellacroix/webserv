@@ -2,6 +2,7 @@ FROM fabiocicerchia/nginx-lua
 
 RUN apk update
 RUN apk add vim 
+RUN apk add php-cgi 
 
 RUN rm /var/log/nginx/*
 RUN rm /etc/nginx/nginx.conf

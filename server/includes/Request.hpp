@@ -75,8 +75,8 @@ class   Request {
 		unsigned int	parseReqLine(void);
 		unsigned int	parseHeaders(void);
 		unsigned int	parseBody(void);
-		int				isSupportedHeader(std::string & key);
 		void			splitUriAndQueryString(void);
+		int             isSupportedHeader(std::string & key);
 
 		//		RequestHeaderArgs.cpp
 		void			setHeaderValue(const unsigned int header_index,
@@ -87,8 +87,6 @@ class   Request {
 		unsigned int	decodeChunk(void);
 		VirtualServer	*findVirtualServer(std::string & s);
 		bool			isValid(void) const;
-
-
 };
 
 

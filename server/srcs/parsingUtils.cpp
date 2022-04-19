@@ -273,7 +273,7 @@ std::string	findUriExtension(std::string uri)
 
 	last_slash = uri.find_last_of("/");
 	file = uri.substr(last_slash + 1, uri.length() - last_slash);
-	//std::cout << "=== FILE ONLY\t=\t\"" << file << "\"" << std::endl;
+	std::cout << "=== FILE ONLY\t=\t\"" << file << "\"" << std::endl;
 
 	last_pt = file.find_last_of(".");
 	if (last_pt == std::string::npos)
