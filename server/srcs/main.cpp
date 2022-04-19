@@ -10,7 +10,6 @@
 #include <sys/epoll.h>
 #include <sys/time.h>
 #include <time.h>
-#include <dirent.h>
 #include <sys/types.h>
 
 #include "webserv.hpp"
@@ -34,10 +33,16 @@ int main(int argc, char *argv[])
     signal(SIGQUIT, shutdownWebserv);
 	signal(SIGPIPE, SIG_IGN);
 	
-	if (argc != 2)
+	if (argc > 3)
 		return (-1);
 	ConfigParser	config;
-	config.parse(argv[1]);
+	if (argc == 1)
+	{
+		char default_path[17] = "confs/nginx.conf";
+		config.parse(default_path);
+	}
+	else
+		config.parse(argv[1]);
 
 	
 	//EPOLL
@@ -59,7 +64,7 @@ int main(int argc, char *argv[])
 	logger("\n-------------------------------START SERVER--------------------------");
 	while (RUNNING)
 	{
-		logger("Waiting on epoll_wait()");
+		//logger("Waiting on epoll_wait()");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
 		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){

@@ -14,4 +14,12 @@ et voici deux derniers morceaux
 12
 sans saut de ligne
 0
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+Pragma: no-cache
+Cache-Control: no-cache
 

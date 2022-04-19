@@ -6,7 +6,7 @@ void            Response::construct200Ok(void)
 	std::string	extension;
 	char		*buffer;
 
-	std::cout << "=== CONSTRUCT SUCCESS RESPONSE" << std::endl;
+	//std::cout << "=== CONSTRUCT SUCCESS RESPONSE" << std::endl;
 	if (!this->isCgi(this->path))
 	{
 		this->request_file.open(this->path.c_str());
@@ -32,7 +32,7 @@ void            Response::construct200Ok(void)
 	//	HEADERS
     this->raw_response.append("Content-Length: ");
 	this->raw_response.append(numberToString(this->file_len) + "\r\n");
-	printf("THIS is CGI ? %d\n", this->isCgi(this->path));
+	//printf("THIS is CGI ? %d\n", this->isCgi(this->path));
 	if (!this->isCgi(this->path))
 	{
 		this->raw_response.append("Content-Type: ");
@@ -61,7 +61,7 @@ void    Response::constructRedirection()
     
     if (body.empty())
 	{
-		printf("Redacting default page\n");
+		//printf("Redacting default page\n");
 		body.append("<html>\r\n");
 		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
 		body.append("<body>\r\n");
@@ -95,7 +95,7 @@ void	Response::constructError()
  	//if we don't find _status_code in a std::map<code, File>, we send the default error
 	if (body.empty())
 	{
-		printf("Redacting default page\n");
+		//printf("Redacting default page\n");
 		body.append("<html>\r\n");
 		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
 		body.append("<body>\r\n");
