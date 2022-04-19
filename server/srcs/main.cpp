@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	logger("\n-------------------------------START SERVER--------------------------");
 	while (RUNNING)
 	{
-		logger("Waiting on epoll_wait()");
+		//logger("Waiting on epoll_wait()");
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
 		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){

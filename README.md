@@ -13,7 +13,7 @@
 10. Fermeture de la connection si necessaire, ou retour a l'etape 5
 
 ## Nomenclature
-- CamelCase pour les fonctions
+- camelCase pour les fonctions
 - snake_case pour les variables
 
 ## Architecture (Voir le dossier app.diagrams.net)
