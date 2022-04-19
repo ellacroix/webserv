@@ -85,7 +85,7 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->response->raw_response.size() == 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response\n");
+		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response" + numberToString(client->status_code));
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
