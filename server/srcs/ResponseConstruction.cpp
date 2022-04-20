@@ -93,6 +93,13 @@ void    Response::constructRedirection()
 void	Response::constructError()
 {
  	//if we don't find _status_code in a std::map<code, File>, we send the default error
+	if (virtual_server->getErrorPage().find(client->status_code) != virtual_server->getErrorPage().end())
+	{
+		std::string path = location->getRoot() + virtual_server->getErrorPage()[client->status_code];
+		printf("FOUND PAGE %s\n", path.c_str());
+		//Methode GET pour pouvoir avoir
+	}
+
 	if (body.empty())
 	{
 		//printf("Redacting default page\n");

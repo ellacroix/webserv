@@ -115,10 +115,10 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c)
 {	
-	int     connection;
+	//int     connection;
 	Client  *current_client;
 
-	connection = it_c->first;
+	//connection = it_c->first;
 	current_client = it_c->second;
 
 	pthread_mutex_lock(&current_client->client_mutex);
