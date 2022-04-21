@@ -100,7 +100,8 @@ int		Response::methodGET(void)
 		{
 			this->is_file = true;
 			//std::cout << "=== FILE IS FOUND" << std::endl;
-			this->client->status_code = 200;
+			if (this->client->status_code == 0)
+				this->client->status_code = 200;
 			this->construct200Ok();
 			return (SUCCESS);
 		}

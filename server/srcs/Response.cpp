@@ -10,12 +10,13 @@ Response::Response(Client *parent_client)
 	{
 		virtual_server = parent_client->request->_virtual_server;
 	}
+	error_directive = false;
 }
 
 int	Response::processRequest()
 {	
  	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
-	if (this->request == NULL)
+	if (this->request == NULL || this->virtual_server == NULL)
 		this->virtual_server = client->parent_port->_VS_list.front();
 
 	//	IF ERROR DETECTED IN PARSING

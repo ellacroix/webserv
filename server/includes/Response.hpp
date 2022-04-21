@@ -35,6 +35,7 @@ public:
 	size_t			file_len;
 	bool			chunked;
 	bool			is_file;
+	bool			error_directive;
 
 	//	HEADERS
 	std::string		location_header;

@@ -31,10 +31,8 @@ bool			Request::isValid(void) const
 //	PARSING FUNCTIONS
 unsigned int	Request::parser(void)
 {
-	//printf("parser()\t- working on:\n\"%s\"\n", this->_headers.c_str());
-
 	this->_double_CRLF_pos = this->_headers.size();
-	//std::cout << "parser()\t- _double_CRLF_pos = " << this->_double_CRLF_pos << std::endl;
+
 	while (this->_i < this->_double_CRLF_pos)
 	{
 		if (this->_parsing_step == REQUEST_LINE)
@@ -44,6 +42,12 @@ unsigned int	Request::parser(void)
 		if (this->_status_code >= 400)
 		{
 			//std::cout << "parser()\t- RETURNING " << this->_status_code << std::endl;
+			printf("Found an error %d in parsing, finishing headers parsing\n", this->_status_code);
+			while (this->_i < this->_double_CRLF_pos)
+			{
+				this->parseHeaders();
+			}
+			printf("Finished headers parsing %d\n", this->_status_code);
 			return (this->_status_code);
 		}
 	}
@@ -124,14 +128,14 @@ unsigned int	Request::parseReqLine(void)
 	char		*c_str;
 
 	this->_next_lineI = this->_headers.find("\r\n");
+	this->_i = this->_next_lineI + 2;
 	if (this->_next_lineI == std::string::npos)
 	{
 		//		//std::cout << "parseReqLine()\t- NO \"\\r\\n\"" << std::endl;
 		return (400);
 	}
-	reqLine = this->_headers.substr(_i, _next_lineI);
-	//printf("HERE reqline = %s\n", reqLine.c_str());
-	//std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
+	reqLine = this->_headers.substr(0, _next_lineI);
+	std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
 
 	c_str = const_cast<char*>(reqLine.c_str());
 
@@ -159,12 +163,9 @@ unsigned int	Request::parseReqLine(void)
 		return (400);
 	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 	if (tok == NULL || std::string(tok) != "HTTP/1.1")
-	{
-		printf("_headers = %s, substr(%lu-%lu), reqline = %s\n", _headers.c_str(), _i, _next_lineI, reqLine.c_str());
 		return (505);
-	}
-	this->_next_lineI += 2;
-	this->_i = this->_next_lineI;
+/* 	this->_next_lineI += 2;
+	this->_i = this->_next_lineI; */
 	this->_parsing_step = HEADERS;
 	//std::cout << "\t\t- IS VALID" << std::endl;
 	return (SUCCESS);
