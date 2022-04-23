@@ -1,0 +1,31 @@
+<?php
+phpinfo(INFO_VARIABLES);
+// AUTH_TYPE
+// CONTENT_LENGTH
+// CONTENT_TYPE
+// DOCUMENT_ROOT
+// GATEWAY_INTERFACE
+// HTTP_ACCEPT
+
+echo "is working ?";
+// echo $HTTP_COOKIE;
+// echo "$_SERVER["HTTP_FROM"];
+
+// echo "$_SERVER["HTTP_REFERER
+// echo "$_SERVER["HTTP_USER_AGENT
+// echo "$_SERVER["PATH_INFO
+// echo "$_SERVER["PATH_TRANSLATED
+// echo "$_SERVER["QUERY_STRING
+// echo "$_SERVER["REMOTE_ADDR
+// echo "$_SERVER["REMOTE_HOST
+// echo "$_SERVER["REMOTE_IDENT
+// echo "$_SERVER["REMOTE_USER
+// echo $REQUEST_METHOD;
+// echo "$_SERVER["SCRIPT_NAME
+// echo "$_SERVER["SERVER_NAME
+// echo "$_SERVER["SERVER_PORT
+// echo "$_SERVER["SERVER_PROTOCOL
+// echo "$_SERVER["SERVER_SOFTWARE
+
+?>
+

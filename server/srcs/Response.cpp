@@ -65,6 +65,14 @@ int	Response::processRequest()
 			this->constructError();
 			return (SUCCESS);
 		}
+		/*
+		else
+		{
+			this->client->status_code = 200;
+			this->construct200Ok();
+			return (SUCCESS);
+		}
+		*/
 	}
 	
 	//	CHECK return
@@ -77,7 +85,10 @@ int	Response::processRequest()
 	}
 	
 	if (this->request->_method == "GET")
+	{
+		printf("RESP_PROCESSING - ENTERING METHOD_GET()\n");
 		this->methodGET();
+	}
 	else if (this->request->_method == "POST")
 		this->methodPOST();
 	else if (this->request->_method == "DELETE")
