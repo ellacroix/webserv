@@ -172,6 +172,14 @@ int		Response::methodPOST(void)
 	std::string	file_only;
 //	std::string	def_upload_name;
 //	size_t		n;
+//
+	// ADD THIS PROVISIONALLY JUST FOR TEST
+	if (this->isCgi(this->path))
+	{
+		this->construct200OkCgi();
+		return (SUCCESS);
+	}
+
 	if (this->path[this->path.length() - 1] != '/')		//REQUEST A FILE
 	{
 		std::cout << "=== POST - REQUEST TO FILE" << std::endl;
@@ -246,13 +254,6 @@ int		Response::methodPOST(void)
 			return (this->client->status_code);
 		std::cout << "=== POST - CREATED FILE\t=> 201" << std::endl;
 		this->client->status_code = 201;
-
-		// ADD THIS PROVISIONALLY
-		if (this->isCgi(this->path))
-		{
-			this->construct200OkCgi();
-			return (SUCCESS);
-		}
 
 		this->construct201Created();
 		return (SUCCESS);
