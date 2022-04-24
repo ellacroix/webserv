@@ -29,6 +29,7 @@ public:
 	//	RESPONSE DATA
 	std::string		raw_response;
 	std::string		body;
+	std::string		header;
 	int				status_code;
 	std::ifstream	request_file;
 	std::ofstream	post_file;
@@ -62,6 +63,7 @@ public:
 
 	//	FILE - ResponseConstruction.cpp
 	void		construct200Ok(void);
+	void		construct200OkCgi(void);
 	void		construct200Deleted(void);
 	void		construct201Created(void);
 	void		constructRedirection(void);
