@@ -42,6 +42,7 @@ void            Response::construct200Ok(void)
 	this->request_file.close();
 	this->raw_response.append(body);
 }
+
 void            Response::construct200OkCgi(void)
 {
     std::string line;
@@ -49,6 +50,7 @@ void            Response::construct200OkCgi(void)
 
 	this->file_len = body.size();
 
+	printf("=== CONSTRUCT CGI\n");
 	//	STATUS LINE
     this->raw_response.append("HTTP/1.1 ");
 	this->raw_response.append(numberToString(this->client->status_code));

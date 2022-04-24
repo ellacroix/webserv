@@ -2,13 +2,13 @@
 
 bool   Response::isCgi(std::string path)
 {
-       std::string cgiExtension = client->request->_virtual_server->getCgiExtension();
-       std::string fileExtension = findUriExtension(path);
+	std::string cgiExtension = client->request->_virtual_server->getCgiExtension();
+	std::string fileExtension = findUriExtension(path);
 
-       cgiExtension.erase(0,1);
-       if (cgiExtension == fileExtension)
-               return (true);
-       return (false);
+	cgiExtension.erase(0,1);
+	if (cgiExtension == fileExtension)
+		return (true);
+	return (false);
 }
 
 int	 Response::executeCgi()
@@ -54,11 +54,10 @@ int	 Response::executeCgi()
 		bodyFile = std::tmpfile(); // ERROR ?
 		std::fputs(this->request->_body.c_str(), bodyFile);
 		std::rewind(bodyFile);
-		// printf("file descriptor %d\n", bodyFile->_fileno);
-
-		// bodyFile << this->request->_body.c_str();
-		// bodyFile.seekg (0, std::ios::beg);
-		// bodyFile.close();
+		// printf("ABOUT FILE ___\n");
+		// char readFromFile[50];
+		// fgets(readFromFile, sizeof(readFromFile), bodyFile);
+		// std::cout << readFromFile;
 	}
 
 	pid = fork();
@@ -68,12 +67,15 @@ int	 Response::executeCgi()
 		deleteArray(env);
 		return (-1);
 	}
-	if (this->request->_method == "GET")
-	{
 	if (!pid)
 	{
 		close(fds[0]);
 		dup2(fds[1], STDOUT_FILENO);
+		if (this->request->_method == "POST")
+		{
+			dup2(bodyFile->_fileno, STDIN_FILENO);
+			fclose(bodyFile);
+		}
 		close(fds[1]);
 
 		execve(argv[0], argv, env);
@@ -85,6 +87,7 @@ int	 Response::executeCgi()
 	{
 		close(fds[1]);
 		wait(&code);
+		fclose(bodyFile);
 		if (WIFEXITED(code))
 			printf("=== CGI - CHILD EXITED WITH %d STATUS\n", WEXITSTATUS(code));
 		if (code/256 == 50)
@@ -102,44 +105,6 @@ int	 Response::executeCgi()
 	}
 	header = responseBuffer.substr(0, responseBuffer.find("\r\n\r\n") + 4);
 	body = responseBuffer.substr(responseBuffer.find("\r\n\r\n") + 4, responseBuffer.length());
-	}
-	else
-	{
-
-
-	printf("=== POST EXEC\n");
-	if (!pid)
-	{
-		dup2(bodyFile->_fileno, STDIN_FILENO);
-		fclose(bodyFile);
-
-		execve(argv[0], argv, env);
-		deleteArray(argv);
-		deleteArray(env);
-		exit(50); // LEAKS
-	}
-	else
-	{
-		fclose(bodyFile);
-		wait(&code);
-		if (WIFEXITED(code))
-			printf("=== CGI - CHILD EXITED WITH %d STATUS\n", WEXITSTATUS(code));
-		if (code/256 == 50)
-			client->status_code = 500;
-		bzero(buffer, 1024);
-		while ((count = read(fds[0], buffer, sizeof(buffer))) != 0)
-		{
-			buffer[count] = '\0';
-			responseBuffer.append(buffer);
-		}
-	}
-	header = responseBuffer.substr(0, responseBuffer.find("\r\n\r\n") + 4);
-	body = responseBuffer.substr(responseBuffer.find("\r\n\r\n") + 4, responseBuffer.length());
-
-
-
-
-	}
 
 	deleteArray(argv);
 	deleteArray(env);
