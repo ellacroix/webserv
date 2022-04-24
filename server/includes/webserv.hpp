@@ -149,4 +149,9 @@ bool canRead(std::string path);
 bool canWrite(std::string path);
 bool canExecute(std::string path);
 
+// cgiUtils.cpp
+char	*ft_strdup(const char *src);
+char	*ft_strdup(std::string src);
+void	deleteArray(char **array);
+
 #endif

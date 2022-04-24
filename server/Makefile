@@ -16,6 +16,7 @@ SRCS			=	Client.cpp \
 					Response.cpp \
 					ResponseProcessing.cpp \
 					Cgi.cpp \
+					cgiUtils.cpp \
 					ResponseConstruction.cpp \
 					engineUtils.cpp \
 					fileUtils.cpp \
