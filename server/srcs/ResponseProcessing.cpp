@@ -179,6 +179,7 @@ int		Response::methodPOST(void)
 		this->construct200OkCgi();
 		return (SUCCESS);
 	}
+	// ------------------------------------
 
 	if (this->path[this->path.length() - 1] != '/')		//REQUEST A FILE
 	{

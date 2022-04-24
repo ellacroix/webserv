@@ -47,17 +47,11 @@ int	 Response::executeCgi()
 	env[9] = ft_strdup("BODY=" + this->request->_body);
 	env[10] = NULL;
 
-
-	printf("BODY ____________\n[%s]\n", this->request->_body.c_str());
 	if (this->request->_method == "POST")
 	{
 		bodyFile = std::tmpfile(); // ERROR ?
 		std::fputs(this->request->_body.c_str(), bodyFile);
 		std::rewind(bodyFile);
-		// printf("ABOUT FILE ___\n");
-		// char readFromFile[50];
-		// fgets(readFromFile, sizeof(readFromFile), bodyFile);
-		// std::cout << readFromFile;
 	}
 
 	pid = fork();
@@ -87,7 +81,8 @@ int	 Response::executeCgi()
 	{
 		close(fds[1]);
 		wait(&code);
-		fclose(bodyFile);
+		if (this->request->_method == "POST")
+			fclose(bodyFile);
 		if (WIFEXITED(code))
 			printf("=== CGI - CHILD EXITED WITH %d STATUS\n", WEXITSTATUS(code));
 		if (code/256 == 50)
