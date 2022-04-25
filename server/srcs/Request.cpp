@@ -31,7 +31,6 @@ bool			Request::isValid(void) const
 //	PARSING FUNCTIONS
 unsigned int	Request::parser(void)
 {
-	logger("Client " + numberToString(_client->stream_socket) + "\n" + this->_headers + this->_body);
 	
 	this->_double_CRLF_pos = this->_headers.size();
 
@@ -83,6 +82,7 @@ unsigned int	Request::parseHeaders(void)
 	if (this->_next_lineI == std::string::npos)
 		return (400);
 	headerLine = this->_headers.substr(_i, _next_lineI - _i);
+	this->_i = this->_next_lineI + 2;
 	//std::cout << "parseHeaders()\t- line\t= \"" << headerLine << "\"" << std::endl;
 	// FIND ':'
 	colonPos = headerLine.find(":");
@@ -118,66 +118,63 @@ unsigned int	Request::parseHeaders(void)
 	}
 
 	// UPDATE CURSORS
-	this->_next_lineI += 2;
-	this->_i = this->_next_lineI;
+ 	this->_next_lineI += 2;
+//	this->_i = this->_next_lineI;
 	return (SUCCESS);
 }
 
 unsigned int	Request::parseReqLine(void)
 {
-	std::string	reqLine;
-	char		*tok;
-	char		*c_str;
+	std::string	req_line;
+	std::string	part;
 
 	this->_next_lineI = this->_headers.find("\r\n");
 	this->_i = this->_next_lineI + 2;
 	if (this->_next_lineI == std::string::npos)
-	{
-		//		//std::cout << "parseReqLine()\t- NO \"\\r\\n\"" << std::endl;
 		return (400);
-	}
-	reqLine = this->_headers.substr(0, _next_lineI);
-	std::cout << "parseReqLine()\t- reqLine = \"" << reqLine << "\"" << std::endl;
-
-	c_str = const_cast<char*>(reqLine.c_str());
+	req_line = this->_headers.substr(0, _next_lineI);
 
 	// METHOD
-	tok = std::strtok(c_str, " \t");
-	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
-	if (tok == NULL || isSupportedHttpMethod(std::string(tok)) == false)
+	size_t whitespace = req_line.find_first_of(" \t");
+	if (whitespace == std::string::npos)
+		return (501);
+	part = req_line.substr(0, whitespace);
+	if (isSupportedHttpMethod(part) == false)
 		return (501);	//Plutot 501 "Not Implemented"
-	this->_method = std::string(tok);
+	this->_method = part;
 
 	//	URI
-	tok = std::strtok(NULL, " \t");
-	if (tok == NULL)
+	size_t character = req_line.find_first_not_of(" \t", whitespace);
+	if (character == std::string::npos)
 		return (400);
-	this->_URI = std::string(tok);
+	whitespace = req_line.find_first_of(" \t", character);
+	if (whitespace == std::string::npos)
+		return (400);
+	part = req_line.substr(character, whitespace - character);
+	this->_URI = part;
 	if (isValidReqUri(this->_URI) == false)
 		return (400);
 	if (this->_URI.find("?") != std::string::npos)
 		this->splitUriAndQueryString();
-	//	std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
 
 	//	HTTP VERSION
-	tok = std::strtok(NULL, " \t");
-	if (tok == NULL)
+	character = req_line.find_first_not_of(" \t", whitespace);
+	if (character == std::string::npos)
 		return (400);
-	//	//std::cout << "parseReqLine()\t- working on tok \"" << tok << "\"" << std::endl;
-	if (tok == NULL || std::string(tok) != "HTTP/1.1")
+	part = req_line.substr(character);
+	if (part != "HTTP/1.1")
 		return (505);
-/* 	this->_next_lineI += 2;
-	this->_i = this->_next_lineI; */
+ 	
+	this->_next_lineI += 2;
 	this->_parsing_step = HEADERS;
-	//std::cout << "\t\t- IS VALID" << std::endl;
 	return (SUCCESS);
 }
 
 unsigned int	Request::parseBody(void)
 {
-/* 	//De-activated until config manages clientMaxBodySize in VS
+	//De-activated until config manages clientMaxBodySize in VS
 	if (_body.size() > _virtual_server->getClientMaxBodySize())
-		return (413); */
+		return (413);
 	
 	if (_method == "POST")
 		if (_has_body == false)

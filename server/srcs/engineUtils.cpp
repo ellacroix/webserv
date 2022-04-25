@@ -85,6 +85,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	current_client = it_c->second;
 
 	gettimeofday(&current_client->last_activity, NULL);
+
 	//Receiving all we can from the client
 	bzero(buffer, RECV_BUFFER_SIZE);
 	ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
@@ -106,7 +107,6 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 		pthread_mutex_lock(&thread_info->queue_mutex);
 		thread_info->queue->push_back(current_client);
 		pthread_cond_signal(&thread_info->condition_var);
-		//logger("Client " + numberToString(connection) + " added to the queue for recv routine");
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
@@ -115,17 +115,14 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 void	sendClientResponse(t_thread_info *thread_info,
 		t_clientMapIt it_c)
 {	
-	//int     connection;
 	Client  *current_client;
 
-	//connection = it_c->first;
 	current_client = it_c->second;
 
 	pthread_mutex_lock(&current_client->client_mutex);
 	pthread_mutex_lock(&thread_info->queue_mutex);
 	thread_info->queue->push_back(current_client);
 	pthread_cond_signal(&thread_info->condition_var);
-	//logger("Client " + numberToString(connection) + " added to the queue for send routine");
 	pthread_mutex_unlock(&thread_info->queue_mutex);
 	pthread_mutex_unlock(&current_client->client_mutex);
 }
@@ -135,7 +132,6 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 	struct timeval current_time;
 	gettimeofday(&current_time, NULL);
 
-	//logger("Checking for timeouts");
 	for (std::list<Port*>::iterator it_p = ports_list.begin(); it_p != ports_list.end(); it_p++)
 	{
 		Port *current_port = *it_p;

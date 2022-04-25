@@ -126,7 +126,7 @@ bool			isValidReqUri(std::string const & s);
 bool			areValidDomainNames(std::vector<std::string> & v);
 std::string		numberToString(int n);
 std::string		findUriExtension(std::string uri);
-void	logger(std::string message);
+void			logger(std::string message);
 
 
 //	engineUtils.cpp

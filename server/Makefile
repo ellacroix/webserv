@@ -34,13 +34,11 @@ INC_FLD			=	includes/
 
 OBJS			=	${addprefix srcs/,${SRCS:.cpp=.o}}
 
-
 CXX				=	c++
 
 CXXFLAGS		= -pthread -Wall -Wextra -Werror -std=c++98 -g3
-#CXXFLAGS		= -pthread -Wall -Wextra -Werror
 
-SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98
+SANITIZE_FLAGS	= -pthread -fsanitize=thread -Wall -Wextra -Werror -std=c++98 -g3
 
 
 all			:	${NAME}
@@ -51,6 +49,7 @@ ${NAME}		:	${OBJS}
 
 %.o			:	%.cpp ${HEADERS}
 			${CXX} ${CXXFLAGS} -I ${INC_FLD} -c $< -o ${<:.cpp=.o}
+#			${CXX} ${SANITIZE_FLAGS} -I ${INC_FLD} -c $< -o ${<:.cpp=.o}
 
 clean		:
 			rm -rf ${OBJS}

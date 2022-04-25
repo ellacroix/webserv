@@ -55,6 +55,6 @@ bool	Request::valueIsValid(const unsigned int header_index,
 			}
 			break;
 	}
-	std::cout << "VALUE IS false" << std::endl;
+	std::cout << "VALUE IS false for " << header_index << " |"<< value << "|" << std::endl;
 	return (false);
 }
