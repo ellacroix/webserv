@@ -31,6 +31,8 @@ bool			Request::isValid(void) const
 //	PARSING FUNCTIONS
 unsigned int	Request::parser(void)
 {
+	logger("Client " + numberToString(_client->stream_socket) + "\n" + this->_headers + this->_body);
+	
 	this->_double_CRLF_pos = this->_headers.size();
 
 	while (this->_i < this->_double_CRLF_pos)
@@ -216,11 +218,19 @@ unsigned int	Request::decodeChunk(void)
 	size_t		chunkStart = 0;
 	std::string chunk;
 
+	if (chunkSize == 0)
+	{
+		if (_body.find("0\r\n") == 0)
+			this->_body = "";
+		else
+			return 400;
+		return 0;
+	}
+
 	while (chunkSize > 0)
 	{
 		chunkStart = _body.find("\r\n", chunkStart) + 2;
 		chunk = _body.substr(chunkStart, chunkSize);
-//		printf("Chunk %lu = %s\n", chunkSize, chunk.c_str());
 		decodedBody.append(chunk.c_str(), chunkSize);
 		chunkStart += chunkSize + 2;
 		chunkSize = strtol(_body.c_str() + chunkStart, NULL, 16);

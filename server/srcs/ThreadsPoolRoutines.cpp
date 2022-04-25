@@ -42,6 +42,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 
 		//We analyze the headers to see if we are expecting a body, and if it is complete
 		isRequestComplete(client);
+//		logger("Client " + numberToString(client->stream_socket) + "\n" + client->request->_headers + client->request->_body);
 
 		//We check if the body size is not too big
 		if (client->request->_body.size() > SERVER_MAX_BODY_SIZE)
@@ -207,7 +208,7 @@ void	isRequestComplete(Client *client)
 bool	isChunkComplete(Client *client)
 {
 	size_t			body_start = client->request_buffer.find("\r\n\r\n") + 4;
-	size_t			body_end = client->request_buffer.find("\r\n0\r\n", body_start);
+	size_t			body_end = client->request_buffer.find("\r\n0\r\n", body_start - 4);
 
 	if (body_end != std::string::npos)
 	{

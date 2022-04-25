@@ -1,4 +1,4 @@
-POST / HTTP/1.1
+GET / HTTP/1.1
 Host: blaexamplebobbla.fr
 Content-Type: text/plain
 Transfer-Encoding: chunked

@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	unlink("log.log");
 	logger("Start");
 	
-	signal(SIGINT, shutdownWebserv);
+	//signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
 	signal(SIGPIPE, SIG_IGN);
 	
