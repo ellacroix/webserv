@@ -204,7 +204,7 @@ int				Request::isSupportedHeader(std::string & key)
 
 const char *	Request::_supported_headers[N_SUPPORTED_HEADERS] =
 {
-	"transfer-encoding", "host", "content-length"
+	"transfer-encoding", "host", "content-length", "content-type"
 };
 
 

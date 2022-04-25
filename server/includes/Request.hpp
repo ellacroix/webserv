@@ -15,7 +15,7 @@ enum    e_parsing_steps
 	COMPLETE
 };
 
-# define N_SUPPORTED_HEADERS 3
+# define N_SUPPORTED_HEADERS 4
 
 
 enum	e_supported_headers
@@ -24,7 +24,8 @@ enum	e_supported_headers
 	TRANSFER_ENCODING,
 	// HEADERS THAT CAN BE PRESENT ONLY ONCE START AT HOST
 	HOST,	
-	CONTENT_LENGTH
+	CONTENT_LENGTH,
+	CONTENT_TYPE
 };
 
 class Client ;
@@ -57,8 +58,10 @@ class   Request {
 		std::string			_host;
 		std::string			_transfer_encoding;
 		bool				_header_alrdy_set[N_SUPPORTED_HEADERS];
+		std::string			_content_type;
 		//  BODY
 		std::string			_body;
+		std::vector<char>	_bodyBinary;
 		ssize_t				_body_length;
 
 		//	CLASSES REQ DEPENDS ON

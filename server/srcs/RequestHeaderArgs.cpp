@@ -54,6 +54,14 @@ bool	Request::valueIsValid(const unsigned int header_index,
 				return (true);
 			}
 			break;
+		case CONTENT_TYPE :
+			if (this->_header_alrdy_set[CONTENT_TYPE] == false)
+			{
+				this->_header_alrdy_set[CONTENT_TYPE] = true;
+				this->_content_type = value;
+				return (true);
+			}
+			break;
 	}
 	std::cout << "VALUE IS false" << std::endl;
 	return (false);

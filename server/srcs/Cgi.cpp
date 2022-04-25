@@ -14,6 +14,7 @@ bool   Response::isCgi(std::string path)
 int	 Response::executeCgi()
 {
 	std::FILE* bodyFile;
+	// std::fstream bodyFile;
 	std::string responseBuffer;
 	pid_t		pid;
 	char  		**argv;
@@ -22,6 +23,7 @@ int	 Response::executeCgi()
 	char		buffer[1024];
 	int			count;
 	int			code = 0;
+	std::ofstream	tmp_body;
 
 	printf("=== CGI EXECUTION\n");
 	if (pipe(fds) == -1)
@@ -43,16 +45,62 @@ int	 Response::executeCgi()
 	env[5] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
 	env[6] = ft_strdup("CONTENT_LENGTH=" + numberToString(this->request->_body.length()));
 	env[7] = ft_strdup("HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-//	env[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded");
-	env[8] = ft_strdup("CONTENT_TYPE=multipart/form-data");
+	if (this->request->_header_alrdy_set[CONTENT_TYPE] == true)
+		env[8] = ft_strdup("CONTENT_TYPE=" + this->request->_content_type);
+	//	env[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded");
+	//	env[8] = ft_strdup("CONTENT_TYPE=multipart/form-data");
 	env[9] = ft_strdup("BODY=" + this->request->_body);
 	env[10] = NULL;
 	printf("=== CGI - BODY :\n\"%s\"\n", this->request->_body.c_str());
 
 	if (this->request->_method == "POST")
 	{
+		/* GOAL */
+		// unsigned char* imgdata = ...;
+		// size_t         imgdata_size = ...;
+
+		// std::fstream imgout("MyImage.bin", std::out | std::binary);
+
+		// imgout.write(reinterpret_cast<char*>(imgdata), imgdata_size);
+		// imgout.close();
+		/* ---------*/ 
+	
+
+		// size_t bodyImgSize;
+		// bodyFile = body.open("body_delete", std::out | std::binary);
+		//
+		// image.jpg expected
+		// HTTP/1.1 200 OK
+		// Content-Length: 109122
+		// Content-Type: image/jpeg
+		printf("LEN body_____ %lu\n", this->request->_body.length());
+		// bodyImg.write()
+		std::vector<char> bodyChr(this->request->_body.begin(), this->request->_body.end());
+		
 		bodyFile = std::tmpfile(); // ERROR ?
-		std::fputs(this->request->_body.c_str(), bodyFile);
+		// printf("FILE________ [%s]\n", this->request->body)
+		// bodyFile.write("salut");
+		// LEN body_____ 109472
+		// LEN body.c_str()_____ 167
+		// LEN vector_____ 109472
+		printf("LEN body.c_str()_____ %lu\n", strlen(this->request->_body.c_str()));
+		printf("LEN vector_____ %lu\n", bodyChr.size());
+		size_t len = bodyChr.size();
+		char *buf;
+		size_t i;
+		for (i = 0; i < len; i++)
+		{
+			buf = &bodyChr[i];
+			fputs(buf, bodyFile);
+
+		}
+
+			// write(bodyFile->_fileno, buf, 1);
+		printf("LEN int %lu\n", len);
+		printf("LEN WRITE I %lu\n", i);
+			
+		// std::fputs(bodyChr, bodyFile);
+		//std::fputs(this->request->_body.c_str(), sizeof(char), body.length(), bodyFile);
 		std::rewind(bodyFile);
 	}
 
