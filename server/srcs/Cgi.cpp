@@ -13,8 +13,9 @@ bool   Response::isCgi(std::string path)
 
 int	 Response::executeCgi()
 {
-	std::FILE* bodyFile;
-	// std::fstream bodyFile;
+	// std::FILE* bodyFile;
+	std::fstream bodyFile;
+	int fd;
 	std::string responseBuffer;
 	pid_t		pid;
 	char  		**argv;
@@ -67,7 +68,7 @@ int	 Response::executeCgi()
 	
 
 		// size_t bodyImgSize;
-		// bodyFile = body.open("body_delete", std::out | std::binary);
+		bodyFile.open("body_delete", std::ios::out | std::ios::binary);
 		//
 		// image.jpg expected
 		// HTTP/1.1 200 OK
@@ -77,7 +78,7 @@ int	 Response::executeCgi()
 		// bodyImg.write()
 		std::vector<char> bodyChr(this->request->_body.begin(), this->request->_body.end());
 		
-		bodyFile = std::tmpfile(); // ERROR ?
+		// bodyFile = std::tmpfile(); // ERROR ?
 		// printf("FILE________ [%s]\n", this->request->body)
 		// bodyFile.write("salut");
 		// LEN body_____ 109472
@@ -86,13 +87,10 @@ int	 Response::executeCgi()
 		printf("LEN body.c_str()_____ %lu\n", strlen(this->request->_body.c_str()));
 		printf("LEN vector_____ %lu\n", bodyChr.size());
 		size_t len = bodyChr.size();
-		char *buf;
 		size_t i;
 		for (i = 0; i < len; i++)
 		{
-			buf = &bodyChr[i];
-			fputs(buf, bodyFile);
-
+			bodyFile << bodyChr[i];
 		}
 
 			// write(bodyFile->_fileno, buf, 1);
@@ -101,9 +99,10 @@ int	 Response::executeCgi()
 			
 		// std::fputs(bodyChr, bodyFile);
 		//std::fputs(this->request->_body.c_str(), sizeof(char), body.length(), bodyFile);
-		std::rewind(bodyFile);
+		bodyFile.close();
 	}
 
+	fd = open("body_delete", O_RDONLY);
 	pid = fork();
 	if (pid == -1)
 	{
@@ -117,8 +116,8 @@ int	 Response::executeCgi()
 		dup2(fds[1], STDOUT_FILENO);
 		if (this->request->_method == "POST")
 		{
-			dup2(bodyFile->_fileno, STDIN_FILENO);
-			fclose(bodyFile);
+			dup2(fd, STDIN_FILENO);
+			close(fd);
 		}
 		close(fds[1]);
 
@@ -132,7 +131,7 @@ int	 Response::executeCgi()
 		close(fds[1]);
 		wait(&code);
 		if (this->request->_method == "POST")
-			fclose(bodyFile);
+			close(fd);
 		if (WIFEXITED(code))
 			printf("=== CGI - CHILD EXITED WITH %d STATUS\n", WEXITSTATUS(code));
 		if (code/256 == 50)
