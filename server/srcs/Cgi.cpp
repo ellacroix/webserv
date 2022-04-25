@@ -43,9 +43,11 @@ int	 Response::executeCgi()
 	env[5] = ft_strdup("SERVER_PROTOCOL=HTTP/1.1");
 	env[6] = ft_strdup("CONTENT_LENGTH=" + numberToString(this->request->_body.length()));
 	env[7] = ft_strdup("HTTP_ACCEPT=text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-	env[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded");
+//	env[8] = ft_strdup("CONTENT_TYPE=application/x-www-form-urlencoded");
+	env[8] = ft_strdup("CONTENT_TYPE=multipart/form-data");
 	env[9] = ft_strdup("BODY=" + this->request->_body);
 	env[10] = NULL;
+	printf("=== CGI - BODY :\n\"%s\"\n", this->request->_body.c_str());
 
 	if (this->request->_method == "POST")
 	{

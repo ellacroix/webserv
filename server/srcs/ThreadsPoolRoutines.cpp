@@ -3,6 +3,7 @@
 
 void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
+	printf("RECV_ROUTINE() - BUFFER : \"%s\"\n", client->request_buffer.c_str());
 	//logger("Client " + numberToString(client->stream_socket) + " Recv routine");
 
 	//The request is ignored, we monitor the connection again to read a new request

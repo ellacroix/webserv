@@ -65,14 +65,12 @@ int	Response::processRequest()
 			this->constructError();
 			return (SUCCESS);
 		}
-		/*
 		else
 		{
 			this->client->status_code = 200;
-			this->construct200Ok();
+			this->construct200OkCgi();
 			return (SUCCESS);
 		}
-		*/
 	}
 	
 	//	CHECK return
