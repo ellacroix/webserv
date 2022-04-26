@@ -11,50 +11,60 @@ bool   Response::isCgi(std::string path)
 	return (false);
 }
 
-int	 Response::executeCgi()
+char	**setCgiEnvironnement(Request *request, std::string path)
+{
+	char **env;
+	env = new char*[9];
+	env[0] = ft_strdup("QUERY_STRING=" + request->_query_string);
+	env[1] = ft_strdup("REQUEST_METHOD=" + request->_method);
+	env[2] = ft_strdup("SCRIPT_FILENAME=" + path);
+	env[3] = ft_strdup("REDIRECT_STATUS=200");
+	env[4] = ft_strdup("CONTENT_LENGTH=" + numberToString(request->_body.length()));
+	env[5] = ft_strdup("CONTENT_TYPE=" + request->_content_type);
+	env[6] = ft_strdup("BODY=" + request->_body);
+	env[7] = NULL;
+
+	return (env);
+}
+
+int getBodyFileFd(std::string filename, std::string body)
 {
 	std::ofstream	bodyFile;
-	std::string		responseBuffer;
-	pid_t			pid;
-	char  			**argv;
-	char  			**env;
-	int				fds[2];
-	char			buffer[1024];
-	int				count;
-	int				code = 0;
-	int				fd;
+	int	fd;
 
-	printf("=== CGI EXECUTION\n");
-
-	if (pipe(fds) == -1)
+	bodyFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+	if (!bodyFile.good())
 		return (-1);
+	bodyFile.write(body.c_str(), body.length());	
+	bodyFile.close();
 
-	// WRITE REQUEST BODY IN FILE
-	if (this->request->_method == "POST")
+	if ((fd = open(filename.c_str(), O_RDONLY)) == -1)
+		return (-1);
+	return (fd);
+}
+
+void	readResponseBuffer(std::string & header, std::string & body, int fd)
+{
+	int count;
+	char buffer[1024];
+	std::string responseBuffer;
+
+	(void)header;
+	(void)body;
+	while ((count = read(fd, buffer, sizeof(buffer))) != 0)
 	{
-		bodyFile.open("/tmp/webserv-body", std::ios::out | std::ios::binary);
-		if (!bodyFile.good())
-			return (-1);
-		bodyFile.write(this->request->_body.c_str(), this->request->_body.length());	
-		bodyFile.close();
-		if ((fd = open("/tmp/webserv-body", O_RDONLY)) == -1)
-			return (-1);	
+		buffer[count] = '\0';
+		responseBuffer.append(buffer);
 	}
 
-	// SET CGI PARAMS
-	argv = new char*[2];
-	argv[0] = ft_strdup(client->request->_virtual_server->getCgiPath());
-	argv[1] = NULL;
+	header = responseBuffer.substr(0, responseBuffer.find("\r\n\r\n") + 4);
+	body = responseBuffer.substr(responseBuffer.find("\r\n\r\n") + 4, responseBuffer.length());
+}
 
-	env = new char*[9];
-	env[0] = ft_strdup("QUERY_STRING=" + this->request->_query_string);
-	env[1] = ft_strdup("REQUEST_METHOD=" + this->request->_method);
-	env[2] = ft_strdup("SCRIPT_FILENAME=" + this->path);
-	env[3] = ft_strdup("REDIRECT_STATUS=200");
-	env[4] = ft_strdup("CONTENT_LENGTH=" + numberToString(this->request->_body.length()));
-	env[5] = ft_strdup("CONTENT_TYPE=" + this->request->_content_type);
-	env[6] = ft_strdup("BODY=" + this->request->_body);
-	env[7] = NULL;
+int		executeBinaryCgi(char **argv, char **env, int *fds, int bodyFd, std::string method)
+{
+	int pid;
+	int code = 0;
 
 	if ((pid = fork()) == -1)
 	{
@@ -69,10 +79,10 @@ int	 Response::executeCgi()
 		dup2(fds[1], STDOUT_FILENO);
 		close(fds[1]);
 
-		if (this->request->_method == "POST")
+		if (method == "POST")
 		{
-			dup2(fd, STDIN_FILENO);
-			close(fd);
+			dup2(bodyFd, STDIN_FILENO);
+			close(bodyFd);
 		}
 
 		execve(argv[0], argv, env);
@@ -85,26 +95,51 @@ int	 Response::executeCgi()
 		// IN PARENT: READ THE OUTPUT OF THE CGI BINARY EXECUTION
 		close(fds[1]);
 		wait(&code);
-		if (this->request->_method == "POST")
-			close(fd);
-		if (WIFEXITED(code))
-			printf("=== CGI - CHILD EXITED WITH %d STATUS\n", WEXITSTATUS(code));
-		if (code/256 == 50)
-			client->status_code = 500;
-		bzero(buffer, 1024);
-		while ((count = read(fds[0], buffer, sizeof(buffer))) != 0)
-		{
-			buffer[count] = '\0';
-			responseBuffer.append(buffer);
-		}
-		close(fds[0]);
+		if (method == "POST")
+			close(bodyFd);
+	}
+	return (code);
+}
+
+
+int	 Response::executeCgi()
+{
+	std::string		filename;
+	// std::string		respoeBuffer;
+	char  			**argv;
+	char  			**env;
+	int				fds[2];
+	int				code;
+	int				fd = -1;
+
+	printf("=== CGI EXECUTION\n");
+
+	if (pipe(fds) == -1)
+		return (-1);
+
+	// WRITE REQUEST BODY IN FILE
+	if (this->request->_method == "POST")
+	{
+		filename = "/tmp/webserv_body_" + numberToString(syscall(__NR_gettid));
+		if ((fd = getBodyFileFd(filename, this->request->_body)) == -1)
+			return (-1);
 	}
 
-	// PARSE OUTPUT AND WRITE RESPONSE HEADER+BODY
-	header = responseBuffer.substr(0, responseBuffer.find("\r\n\r\n") + 4);
-	body = responseBuffer.substr(responseBuffer.find("\r\n\r\n") + 4, responseBuffer.length());
+	// SET CGI PARAMS
+	argv = new char*[2];
+	argv[0] = ft_strdup(client->request->_virtual_server->getCgiPath());
+	argv[1] = NULL;
+
+	env = setCgiEnvironnement(this->request, this->path);
+
+	code = executeBinaryCgi(argv, env, fds, fd, this->request->_method);
+	if (code/256 == 50)
+		client->status_code = 500;
+
+	readResponseBuffer(this->header, this->body, fds[0]);
 
 	deleteArray(argv);
 	deleteArray(env);
 	return (0);
 }
+
