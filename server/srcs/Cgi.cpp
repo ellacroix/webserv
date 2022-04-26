@@ -105,7 +105,6 @@ int		executeBinaryCgi(char **argv, char **env, int *fds, int bodyFd, std::string
 int	 Response::executeCgi()
 {
 	std::string		filename;
-	// std::string		respoeBuffer;
 	char  			**argv;
 	char  			**env;
 	int				fds[2];
