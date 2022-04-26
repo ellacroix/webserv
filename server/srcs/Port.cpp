@@ -90,7 +90,7 @@ int Port::start(void)
 	}
 
 	//Set the socket as listen listening for any connections
-	listen(listen_socket, 20);
+	listen(listen_socket, BACKLOG);
 	if (rc < 0){
 		perror("listen() failed");
 		close(listen_socket);

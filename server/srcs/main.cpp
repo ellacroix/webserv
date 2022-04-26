@@ -27,6 +27,7 @@ static void shutdownWebserv(int sig_int) {
 int main(int argc, char *argv[])
 {
 	unlink("log.log");
+
 	logger("Start with PID: " + numberToString(syscall(__NR_gettid)));
 	
 	signal(SIGINT, shutdownWebserv);

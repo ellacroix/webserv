@@ -56,6 +56,7 @@
 # define SERVER_MAX_BODY_SIZE 30 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 # define MAX_CONNECTIONS 150
+# define BACKLOG 20
 
 # define RED "\033[31m"
 # define RESET "\033[0m"

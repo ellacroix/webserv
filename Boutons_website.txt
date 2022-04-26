@@ -1,0 +1,17 @@
+Page d'index:
+- Afficher le numero de hostname:port
+- Afficher le chemin interne vers la page d'index
+
+Boutons:
+- Lien vers un autre hostname sur le meme port, avec un autoindex juste pour montrer qu'on est dans un autre dossier
+- Lien vers un autre hostname sur un autre port
+- Lien vers un dossier autoindex, idealement media/ pour montrer que les differents formats de fichiers sont bien affiches par Firefox
+- Lien vers une requete GET CGI, donc juste un lien vers fichier.php
+- Bouton pour une requete POST CGI
+- Bouton pour une requete POST avec une grosse image, vers media/
+- Bouton pour une requete POST qui cree un simple fichier.txt "Hello"
+- Bouton pour une requete DELETE qui essaie de detruire ce fichier.txt
+- Lien vers un fichier inexistant, 404
+- Bouton pour une requete HEAD, not implemented
+- Lien vers une URL redirection, qui renvoie vers la page d'accueil
+- Bouton qui force une erreur 505, redirige par la directive error_page
