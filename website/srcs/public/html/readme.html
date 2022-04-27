@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Presentation Webserv</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark bg-dark main-nav">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="/">Home</a>
+                <a class="nav-item nav-link" href="../media/subject.pdf">Subject</a>
+                <a class="nav-item nav-link" href="https://datatracker.ietf.org/doc/html/rfc2016">RFC 2616</a>
+                <a class="nav-item nav-link" href="../html/conf.html">Configuration File</a>
+                <a class="nav-item nav-link" href="../html/conf.html">Readme</a>
+
+            </div>
+        </div>
+    </nav>
+    <section>
+        <h2 id="logique">Logique</h2>
+        <ol>
+            <li>Parsing du fichier de config</li>
+            <li>Lancement du serveur</li>
+            <li>Reception des demandes de connection</li>
+            <li>Etablissement de la connectiom </li>
+            <li>Reception des requetes HTTP</li>
+            <li>Parsing des requetes HTTP</li>
+            <li>Execution des CGI si necessaire</li>
+            <li>Parsing de l&#39;output du CGI</li>
+            <li>Envoi des reponses </li>
+            <li>Fermeture de la connection si necessaire, ou retour a l&#39;etape 5</li>
+        </ol>
+        <h2 id="nomenclature">Nomenclature</h2>
+        <ul>
+            <li>camelCase pour les fonctions</li>
+            <li>snake_case pour les variables</li>
+        </ul>
+        <h2 id="architecture-voir-le-dossier-app-diagrams-net-">Architecture (Voir le dossier app.diagrams.net)</h2>
+        <ul>
+            <li>Une classe Port, qui contient une std::map<int, Client*>
+            </li>
+            <li>Une classe Virtual_Server</li>
+            <li>Une classe Client, qui contient ses parametres, un pointeur vers son Port, une instance Request, une
+                instance Response</li>
+            <li>Une classe Request, pour stocker la requete HTTP a recevoir</li>
+            <li>Une classe Response, pour stocker la reponse HTTP a renvoyer</li>
+        </ul>
+        <h2 id="logique-multi-thread">Logique multi-thread</h2>
+        <p>On a une pool de thread qui s&#39;occuperont de toutes les taches apres recv() et jusqu&#39;a send() inclus.
+            Le main process gere juste les connections, timeouts et l&#39;ajout de taches pour la thread pool.</p>
+        <h2 id="sujet">Sujet</h2>
+        <ul>
+            <li>Your server must never block and the client can be bounced properly if necessary. :heavy_check_mark:
+            </li>
+            <li>A request to your server should never hang forever. :heavy_check_mark:</li>
+            <li>You must be able to serve a fully static website. :heavy_check_mark:</li>
+            <li>You need at least GET, POST, and DELETE methods.</li>
+            <li>Your server must be able to listen to multiple ports (see Configuration file). :heavy_check_mark:</li>
+            <li>The first server for a host:port will be the default for this host:port (that means it will answer to
+                all the requests that don’t belong to an other server). (Cas de plusieurs serveurs sur le meme port avec
+                des noms differents). :heavy_check_mark:</li>
+        </ul>
+        <h2 id="resources">Resources</h2>
+        <h3 id="server-setup">Server setup</h3>
+        <p><a
+                href="https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa">How
+                to build a simple HTTP server in C</a></p>
+        <p><a href="https://ncona.com/2019/04/building-a-simple-server-with-cpp/">Simple server with C++</a></p>
+        <p><a href="https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm">C++ Web Programming</a></p>
+        <h3 id="http-1-1-standard-to-follow-">HTTP 1.1 (standard to follow) :</h3>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc2616.html">HTTP/1.1 (RFC 2616)</a>
+            <a href="http://www.cs.cmu.edu/~srini/15-441/F11/responses">Minimal version</a>
+        </p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7230.html">HTTP/1.1 : Message Syntax and Routing (RFC 7230)</a>
+        </p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7231.html">HTTP/1.1 : Semantics and Content (RFC 7231)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7232.html">HTTP/1.1 : Conditional Requests (RFC 7232)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7233.html">HTTP/1.1 : Range Requests (RFC 7233)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7234.html">HTTP/1.1 : Caching (RFC 7234)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7235.html">HTTP/1.1 : Authentication (RFC 7235)</a></p>
+        <h3 id="other-http-legacy-future-">Other HTTP (legacy / future) :</h3>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc1945.html">HTTP/1.0 (RFC 1945)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7540.html">HTTP/2 (RFC 7240)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc7541.html">HTTP/2 : Header Compression (RFC 7241)</a></p>
+        <p><a href="https://www.rfc-editor.org/rfc/rfc959.html">FTP (RFC 959)</a></p>
+        <h3 id="http-header-syntax">HTTP Header Syntax</h3>
+        <p><a href="https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods">HTTP Request Methods</a>
+        </p>
+        <p><a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">HTTP Status Codes</a></p>
+        <p><a href="https://stackoverflow.com/questions/5757290/http-header-line-break-style">HTTP Header Break
+                Style</a></p>
+        <h3 id="select-and-non-blocking">Select and non-blocking</h3>
+        <p><a href="https://www.lowtek.com/sockets/select.html">Select</a></p>
+        <p><a href="https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm">Non-blocking I/O</a>
+        </p>
+        <h3 id="cgi">CGI</h3>
+        <p><a href="http://www.mnuwer.dbasedeveloper.co.uk/dlearn/web/session01.htm">CGI : Getting Started</a></p>
+        <p><a href="http://www.wijata.com/cgi/cgispec.html#4.0">CGI 1.1 Documentation</a></p>
+        <p><a href="https://perso.liris.cnrs.fr/lionel.medini/enseignement/M1IF03/Tutoriels/Tutoriel_CGI_SSI.pdf">nice
+                overview</a></p>
+        <p><a href="https://www.developpez.net/forums/d151285/php/langage/php-js-quoi-sert-php-cgi-exe-repertoire-php/">some
+                details</a></p>
+        <h3 id="web-socket">web socket</h3>
+        <ul>
+            <li><a href="https://www.bogotobogo.com/cplusplus/sockets_server_client.php">nice article</a></li>
+            <li><a href="http://beej.us/guide/bgnet/html/">Beej&#39;s Guide to Network Programming</a></li>
+            <li><a
+                    href="https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa">&quot;build
+                    http server from scratch in C&quot;</a></li>
+            <li><a href="https://broux.developpez.com/articles/c/sockets/">Les sockets en C</a></li>
+            <li><a href="http://manpages.ubuntu.com/manpages/xenial/fr/man2/select_tut.2.html">select()</a></li>
+            <li><a href="https://man.developpez.com/man2/select_tut/">select()example</a></li>
+            <li><a href="https://notes.shichao.io/unp/ch6/#readset-writeset-and-exceptset-as-value-result-">select()in
+                    the details</a></li>
+            <li><a href="https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzab6/xnonblock.htm">nice schema</a>
+            </li>
+            <li><a href="https://www.lowtek.com/sockets/select.html">select() vs threads</a></li>
+            <li><a href="https://www.bogotobogo.com/cplusplus/sockets_server_client_2.php">TCP 3-way handshake schema ;
+                    Blocking vs non-blocking socket</a></li>
+            <li><a href="https://www.bogotobogo.com/cplusplus/sockets_server_client_3.php">more socket theory to waste
+                    time</a></li>
+            <li><a href="https://www.youtube.com/watch?v=bdIiTxtMaKA&amp;list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17">tuto
+                    Jacob Sorber</a></li>
+        </ul>
+        <h3 id="http-protocol">http protocol</h3>
+        <ul>
+            <li>How the web works <a
+                    href="http://www.garshol.priv.no/download/text/http-tut.html">http://www.garshol.priv.no/download/text/http-tut.html</a>
+            </li>
+            <li>Request and Response format <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages">https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages</a>
+            </li>
+        </ul>
+        <h3 id="http-headers-in-details">http headers in details</h3>
+        <ul>
+            <li>MIME list <a
+                    href="https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">https://developer.mozilla.org/fr/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types</a>
+            </li>
+            <li>response status code <a
+                    href="https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP">https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP</a>
+            </li>
+            <li>auth theory <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#Basic_authentication_scheme">https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#Basic_authentication_scheme</a>
+            </li>
+            <li>auth practice <a
+                    href="https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c">https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c</a>
+            </li>
+        </ul>
+        <h3 id="chunked-encoding">chunked encoding</h3>
+        <ul>
+            <li>wiki <a
+                    href="https://fr.wikipedia.org/wiki/Chunked_transfer_encoding">https://fr.wikipedia.org/wiki/Chunked_transfer_encoding</a>
+            </li>
+            <li>the idea <a
+                    href="https://www.geeksforgeeks.org/http-headers-transfer-encoding/">https://www.geeksforgeeks.org/http-headers-transfer-encoding/</a>
+            </li>
+        </ul>
+        <h3 id="utils">utils</h3>
+        <ul>
+            <li><a
+                    href="https://superuser.com/questions/48505/how-to-find-virtual-memory-size-and-cache-size-of-a-linux-system">https://superuser.com/questions/48505/how-to-find-virtual-memory-size-and-cache-size-of-a-linux-system</a>
+            </li>
+            <li><a
+                    href="https://blog.seboss666.info/2015/08/reprenez-le-controle-du-cache-memoire-du-noyau-linux/">https://blog.seboss666.info/2015/08/reprenez-le-controle-du-cache-memoire-du-noyau-linux/</a>
+            </li>
+        </ul>
+        <h2 id="discord">Discord</h2>
+        <p><a href="https://discord.com/channels/774300457157918772/785407573000060978/796296015522299935">Reception du
+                header Content-Language</a></p>
+        <h1 id="notes">Notes</h1>
+        <ul>
+            <li>Les stream socket SOCK_STREAM, sont surs et integrent le protocole TCP</li>
+            <li>Voir Type Mime pour gerer static site (Content Type)</li>
+            <li>Pour l&#39;optimisation multi-thread, faire une thread pool avec un std::dequeue <a
+                    href="https://www.youtube.com/watch?v=FMNnusHqjpw&amp;list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17&amp;index=6&amp;ab_channel=JacobSorber">video</a>
+            </li>
+            <li>Au vu des discussions Discord, le pipelining n&#39;a pas a etre géré, notamment car il est abandonné en
+                HTTP2.0 et par la plupart des navigateurs.</li>
+            <li>Caching: plutot une notion pour les intermediaires, pas a gerer</li>
+            <li>Charset = token, le token specifie quel charset a employer, voir cas de Missing Charset</li>
+            <li>Chunked transfer Coding: OPTIONAL trailer</li>
+            <li>If the Request has no Request-Line(an instant CRLF as first character), ignore the Request</li>
+            <li>See Nagle&#39;s algorithm if send/recv takes too much time (<a
+                    href="https://stackoverflow.com/questions/4428088/reasons-for-a-slow-recv-call">https://stackoverflow.com/questions/4428088/reasons-for-a-slow-recv-call</a>)
+            </li>
+        </ul>
+        <h1 id="message">Message</h1>
+        <pre><code>generic-message =   <span class="hljs-built_in">start</span>-<span class="hljs-built_in">line</span>
+                    *(message-header <span class="hljs-literal">CRLF</span>)
+                    <span class="hljs-literal">CRLF</span>
+                    [ message-body ]
+
+<span class="hljs-built_in">start</span>-<span class="hljs-built_in">line</span>      =   Request-Line | Status-Line
+</code></pre>
+        <ul>
+            <li>RFC 2616 note: The HTTP protocol is a request/response protocol. A client sends a request to the server
+                in the form of a request method, URI, and protocol version, followed by a MIME-like message containing
+                request modifiers, client information, and possible body content over a connection with a server.</li>
+        </ul>
+        <h2 id="headers">Headers</h2>
+        <pre><code>    message-header = field-name <span class="hljs-string">":"</span> [ field-<span class="hljs-built_in">value</span> ]
+    field-name     = <span class="hljs-keyword">token</span>
+    field-<span class="hljs-built_in">value</span>    = *( field-content | LWS )
+    field-content  = &lt;<span class="hljs-keyword">the</span> OCTETs making up <span class="hljs-keyword">the</span> field-<span class="hljs-built_in">value</span>
+                    <span class="hljs-keyword">and</span> consisting <span class="hljs-keyword">of</span> either *TEXT <span class="hljs-keyword">or</span> combinations
+                    <span class="hljs-keyword">of</span> <span class="hljs-keyword">token</span>, separators, <span class="hljs-keyword">and</span> quoted-<span class="hljs-keyword">string</span>&gt;
+</code></pre>
+        <ul>
+            <li>The order in which header fields with differing field names are received is not significant. However, it
+                is &quot;good practice&quot; to send general-header fields first, followed by request-header or
+                response-header fields, and ending with the entity-header fields</li>
+            <li>Multiple message-header fields with the same field-name MAY be present in a message if and only if the
+                entire field-value for that header field is defined as a comma-separated list [i.e., #(values)]. It MUST
+                be possible to combine the multiple header fields into one &quot;field-name: field-value&quot; pair,
+                without changing the semantics of the message, by appending each subsequent field-value to the first,
+                each separated by a comma.</li>
+            <li>General Header Fields: There are a few header fields which have general applicability for both request
+                and response messages, but which do not apply to the entity being transferred. These header fields apply
+                only to the message being transmitted.
+                <pre><code>general-header = Cache-Control | <span class="hljs-type">Connection</span> | <span class="hljs-type">Date</span> | <span class="hljs-type">Pragma</span> | <span class="hljs-type">Trailer</span> | <span class="hljs-type">Transfer</span>-En| <span class="hljs-type">Upgrade</span> | <span class="hljs-type">Via</span> | <span class="hljs-type">Warning</span>
+</code></pre>
+            </li>
+        </ul>
+        <h2 id="body">Body</h2>
+        <pre><code>message-<span class="hljs-keyword">body</span> = <span class="hljs-keyword">entity</span>-<span class="hljs-keyword">body</span> | &lt;<span class="hljs-keyword">entity</span>-<span class="hljs-keyword">body</span> encoded as per Transfer-Encoding&gt;
+</code></pre>
+        <ul>
+            <li>Transfer-Encoding MUST be used to indicate any transfer-codings applied by an application to ensure safe
+                and proper transfer of the message.</li>
+        </ul>
+        <h2 id="message-length">Message Length</h2>
+        <ul>
+            <li>The transfer-length of a message is the length of the message-body as it appears in the message; that
+                is, after any transfer-codings have been applied.</li>
+            <li>See more details <a
+                    href="https://www.rfc-editor.org/rfc/rfc2616.html#:~:text=When%20a%20message%2Dbody%20is%20included%20with%20a%20message%2C%20the%0A%20%20%20transfer%2Dlength%20of%20that%20body%20is%20determined%20by%20one%20of%20the%20following%0A%20%20%20(in%20order%20of%20precedence">HERE</a>%3A)
+            </li>
+            <li>Messages MUST NOT include both a Content-Length header field and a non-identity transfer-coding. If the
+                message does include a non-identity transfer-coding, the Content-Length MUST be ignored.</li>
+        </ul>
+        <h1 id="request">Request</h1>
+        <pre><code>Request               = Request-<span class="hljs-keyword">Line</span>            
+                        *(( general-<span class="hljs-built_in">header</span>      
+                         | request-<span class="hljs-built_in">header</span>       
+                         | entity-<span class="hljs-built_in">header</span> ) CRLF)
+                        CRLF
+                        [ message-body ]
+</code></pre>
+        <h2 id="start-line">Start-line</h2>
+        <pre><code>Request-Line   = <span class="hljs-function"><span class="hljs-keyword">Method</span> <span class="hljs-title">SP</span> <span class="hljs-title">Request</span>-<span class="hljs-title">URI</span> <span class="hljs-title">SP</span> <span class="hljs-title">HTTP</span>-<span class="hljs-title">Version</span> <span class="hljs-title">CRLF</span></span>
+</code></pre>
+        <h3 id="request-uri">Request-URI</h3>
+        <pre><code>Request-URI    = <span class="hljs-string">"*"</span> | <span class="hljs-type">absoluteURI</span> | <span class="hljs-type">abs_path</span> | <span class="hljs-type">authority</span>
+</code></pre>
+        <ul>
+            <li>&quot;*&quot; optionnel pour nous ? Vu que cela ne s&#39;applique pas pour GET/POST/DELETE ?</li>
+            <li>absoluteURI semble s&#39;appliquer aux proxys, mais a accepter tout de meme</li>
+            <li>authority is only used by the CONNECT method</li>
+            <li>Request-URI can be encoded as &quot;% HEX HEX&quot; and has to be decoded</li>
+        </ul>
+        <h3 id="the-resource-identified-by-a-request">The Resource Identified by a Request</h3>
+        <ul>
+            <li>Si on gere plusieurs host (server names ?) sur un meme port, on doit bien differencier les dossiers
+                auxquels ils ont acces</li>
+            <li>Le host peut etre defini dans l&#39;absoluteURI ou le header host, un invalid host entraine une reponse
+                400<h2 id="request-header-fields">Request Header Fields</h2>
+                <pre><code>request-header =    Accept | <span class="hljs-type">Accept</span>-Charset | <span class="hljs-type">Accept</span>-Encoding | <span class="hljs-type">Accept</span>-<span class="hljs-keyword">Language</span> 
+                  | <span class="hljs-type">Authorization</span> | <span class="hljs-type">Expect</span> | <span class="hljs-type">From</span> | <span class="hljs-type">Host</span> | <span class="hljs-type">If</span>-Match | <span class="hljs-type">If</span>-Modified-Since 
+                  | <span class="hljs-type">If</span>-None-Match | <span class="hljs-type">If</span>-Range | <span class="hljs-type">If</span>-Unmodified-Since | <span class="hljs-type">Max</span>-Forwards 
+                  | <span class="hljs-type">Proxy</span>-Authorization | <span class="hljs-type">Range</span> | <span class="hljs-type">Referer</span> | <span class="hljs-type">TE</span> | <span class="hljs-type">User</span>-Agent
+</code></pre>
+            </li>
+            <li>Expect request: &quot;100-continue&quot;, Indique que le client attend une reponse 100 avant
+                d&#39;envoyer le body. <a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-8.2.3">VOIR CAS
+                    POSSIBLES</a></li>
+        </ul>
+        <h2 id="body">Body</h2>
+        <ul>
+            <li>The presence of a message-body in a request is signaled by the inclusion of a Content-Length or
+                Transfer-Encoding header field in the request&#39;s message-headers.</li>
+            <li>A message-body MUST NOT be included in a request if the specification of the request method (section
+                5.1.1) does not allow sending an entity-body in requests.</li>
+            <li>A server SHOULD read and forward a message-body on any request; if the request method does not include
+                defined semantics for an entity-body, then the message-body SHOULD be ignored when handling the request.
+            </li>
+        </ul>
+        <h1 id="response">Response</h1>
+        <pre><code>Response      = Status-<span class="hljs-keyword">Line</span>             
+                *(( general-<span class="hljs-built_in">header</span>      
+                | response-<span class="hljs-built_in">header</span>      
+                | entity-<span class="hljs-built_in">header</span> ) CRLF)
+                CRLF
+                [ message-body ]
+</code></pre>
+        <ul>
+            <li>If a request contains a message-body and a Content-Length is not given, the server SHOULD respond with
+                400 (bad request) if it cannot determine the length of the message, or with 411 (length required) if it
+                wishes to insist on receiving a valid Content-Length.<h2 id="status-line">Status-line</h2>
+                <pre><code><span class="hljs-attribute">Status-Line</span> = HTTP-Version <span class="hljs-keyword">SP</span> Status-Code <span class="hljs-keyword">SP</span> Reason-Phrase <span class="hljs-keyword">CRLF</span>
+</code></pre>
+                <h3 id="status-codes-to-implement">Status codes to implement</h3>
+                1xx: Informational - Request received, continuing process
+            </li>
+            <li><del>101 Switching Protocols</del></li>
+        </ul>
+        <p>2xx: <a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2">Success - The action was successfully
+                received, understood, and accepted</a></p>
+        <ul>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.1">200 OK</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.2">201 Created</a></li>
+            <li><del>202 Accepted</del></li>
+            <li><del>203 Non-Authoritative Information</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.5">204 No Content</a></li>
+            <li><del>205 Reset Content</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.2.7">206 Partial Content</a></li>
+        </ul>
+        <p>3xx: Redirection - Further action must be taken in order to complete the request</p>
+        <ul>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.1">?? 300 Multiple Choices ??</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.2">301 Moved Permanently</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.3">?? 302 Found ??</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.4">?? 303 See Other ??</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.3.5">304 Not Modified</a></li>
+            <li><del>305 Use Proxy</del></li>
+            <li><del>306 (Unused)</del></li>
+            <li><del>307 Temporary Redirect</del></li>
+        </ul>
+        <p>4xx: Client Error - The request contains bad syntax or cannot be fulfilled</p>
+        <ul>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.1">400 Bad Request</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.2">?? 401 Unauthorized ??</a></li>
+            <li><del>402 Payment Required</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.4">403 Forbidden</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.5">404 Not Found</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.6">405 Method Not Allowed</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.7">406 Not Acceptable</a></li>
+            <li><del>407 Proxy Authentication Required</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.9">408 Request Timeout</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.10">?? 409 Conflict ??</a></li>
+            <li><del>410 Gone</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.12">?? 411 Length Required ??</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.13">?? 412 Precondition Failed ??</a>
+            </li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.14">413 Request Entity Too Large</a>
+            </li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.15">414 Request-URI Too Long</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.16">415 Unsupported Media Type</a>
+            </li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.17">416 Requested Range Not
+                    Satisfiable</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.4.18">417 Expectation Failed</a></li>
+        </ul>
+        <p>5xx: Server Error - The server failed to fulfill an apparently valid request</p>
+        <ul>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.1">500 Internal Server Error</a></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.2">501 Not Implemented</a></li>
+            <li><del>502 Bad Gateway</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.4">503 Service Unavailable</a>: The
+                existence of the 503 status code does not imply that a server must use it when becoming overloaded. Some
+                servers may wish to simply refuse the connection.</li>
+            <li><del>504 Gateway Timeout</del></li>
+            <li><a href="https://www.rfc-editor.org/rfc/rfc2616.html#section-10.5.6">505 HTTP Version Not Supported</a>
+            </li>
+        </ul>
+        <h2 id="response-header-fields">Response Header Fields</h2>
+        <pre><code>response-header =   Accept-Ranges | <span class="hljs-type">Age</span> | <span class="hljs-type">ETag</span> | <span class="hljs-type">Location</span> | <span class="hljs-type">Proxy</span>-Authenticate 
+                    | <span class="hljs-type">Retry</span>-After | <span class="hljs-type">Server</span> | <span class="hljs-type">Vary</span> | <span class="hljs-type">WWW</span>-Authenticate
+</code></pre>
+        <h2 id="body">Body</h2>
+        <ul>
+            <li>All 1xx (informational), 204 (no content), and 304 (not modified) responses MUST NOT include a
+                message-body. All other responses do include a message-body, although it MAY be of zero length.</li>
+        </ul>
+        <h1 id="entity">Entity</h1>
+        <h2 id="entity-header-fields">Entity Header Fields</h2>
+        <pre><code>entity-header  = Allow | <span class="hljs-type">Content</span>-Encoding | <span class="hljs-type">Content</span>-<span class="hljs-keyword">Language</span> | <span class="hljs-type">Content</span>-Length | <span class="hljs-type">Content</span>-Location 
+                | <span class="hljs-type">Content</span>-MD5 | <span class="hljs-type">Content</span>-Range | <span class="hljs-type">Content</span>-<span class="hljs-keyword">Type</span> | <span class="hljs-type">Expires</span> | <span class="hljs-type">Last</span>-Modified
+</code></pre>
+        <h2 id="entity-body">Entity Body</h2>
+        <pre><code><span class="hljs-keyword">entity</span>-<span class="hljs-keyword">body</span> := Content-Encoding( Content-<span class="hljs-keyword">Type</span>( data ) )
+</code></pre>
+        <ul>
+            <li>Content-Type specifies the media type of the underlying data. Any HTTP/1.1 message containing an
+                entity-body SHOULD include a Content-Type header field defining the media type of that body.</li>
+            <li>Content-Encoding may be used to indicate any additional content codings applied to the data, usually for
+                the purpose of data compression, that are a property of the requested resource. There is no default
+                encoding.</li>
+            <li>If and only if the media type is not given by a Content-Type field, the recipient MAY attempt to guess
+                the media type via inspection of its content and/or the name extension(s) of the URI used to identify
+                the resource. If the media type remains unknown, the recipient SHOULD treat it as type
+                &quot;application/octet-stream&quot;.</li>
+            <li>The entity-length of a message is the length of the message-body before any transfer-codings have been
+                applied.</li>
+        </ul>
+        <h1 id="methods">METHODS</h1>
+        <h2 id="get">GET</h2>
+        <p>The GET method means retrieve whatever information (in the form of an entity) is identified by the
+            Request-URI.</p>
+        <p>If the Request-URI refers to a data-producing process, it is the produced data which shall be returned as the
+            entity in the response and not the source text of the process, unless that text happens to be the output of
+            the process.</p>
+        <h2 id="post">POST</h2>
+        <p>The POST method is used to request that the origin server accept the entity enclosed in the request as a new
+            subordinate of the resource identified by the Request-URI in the Request-Line.</p>
+        <p>The action performed by the POST method might not result in a resource that can be identified by a URI. In
+            this case, either 200 (OK) or 204 (No Content) is the appropriate response status, depending on whether or
+            not the response includes an entity that describes the result.
+            A quoi ressemble le body d&#39;une POST Response ?</p>
+        <h2 id="delete">DELETE</h2>
+        <p>The DELETE method requests that the origin server delete the resource identified by the Request-URI.</p>
+        <h1 id="uri-uniform-resource-identifier-">URI (Uniform Resource Identifier)</h1>
+        <pre><code>          userinfo       host      <span class="hljs-keyword">port</span>
+          ┌──┴───┐ ┌──────┴──────┐ ┌┴┐
+  https://john.doe@www.example.com:<span class="hljs-number">123</span>/forum/questions/?<span class="hljs-keyword">tag</span>=networking&amp;order=newest<span class="hljs-comment">#top</span>
+  └─┬─┘   └───────────┬──────────────┘└───────┬───────┘ └───────────┬─────────────┘ └┬┘
+  scheme          authority                  path                 query           <span class="hljs-keyword">fragment</span>
+</code></pre>
+        <p>http_URL = &quot;http:&quot; &quot;//&quot; host [ &quot;:&quot; port ] [ abs_path [ &quot;?&quot; query ]]#
+            <a href="https://docs.nginx.com/nginx/admin-guide/web-server/web-server/">CONFIGURING NGINX AS A WEB
+                SERVER</a></p>
+        <h2 id="setting-up-a-virtual-servers">Setting up a virtual servers</h2>
+        <p>The NGINX Plus configuration file must include at least one <strong>server</strong> directive to define a
+            virtual server. When NGINX Plus processes a request, it first selects the virtual server that will serve the
+            request.
+            A virtual server is defined by a <strong>server</strong> directive in the <strong>http</strong> context, for
+            example:</p>
+        <pre><code><span class="hljs-class">http </span>{
+    <span class="hljs-class">server </span>{
+        <span class="hljs-meta"># Server configuration</span>
+    }
+}
+</code></pre>
+        <p>The server configuration block usually includes a <strong>listen</strong> directive to specify the IP address
+            and port on which the server listens for requests.
+            The example below shows configuration of a server that listens on IP address 127.0.0.1 and port 8080:</p>
+        <pre><code><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span> <span class="hljs-number">127.0.0.1:8080</span>;
+    <span class="hljs-comment"># Additional server configuration</span>
+}
+</code></pre>
+        <p>If a port is omitted, the standard port is used. Likewise, if an address is omitted, the server listens on
+            all addresses (0.0.0.0 or :::). If the <strong>listen</strong> directive is not included at all, the
+            “standard” port is 80/tcp.
+            If there are several servers that match the IP address and port of the request, NGINX Plus tests the
+            request’s <em>Host</em> header field against the <strong>server_name</strong> directives in the
+            <strong>server</strong> blocks. The parameter to <strong>server_name</strong> IS a full (exact) name. This
+            example illustrates an exact name.</p>
+        <pre><code>server {
+    listen    <span class="hljs-number">80</span><span class="hljs-comment">;</span>
+    server_name example.<span class="hljs-keyword">org </span>www.example.<span class="hljs-keyword">org;
+</span>    <span class="hljs-comment">#...</span>
+}
+</code></pre>
+        <p>If several names match the <em>Host</em> header, NGINX Plus selects one by searching for names in the
+            following order and using the first match it finds.</p>
+        <ul>
+            <li>Exact name</li>
+            <li><em>More options unrelated to project</em></li>
+        </ul>
+        <p>If the <em>Host</em> header field does not match a <strong>server_name</strong>, NGINX Plus routes the
+            request to the default server for the port on which the request arrived. The default server is the first one
+            listed in the nginx.conf file.</p>
+        <h2 id="configuring-locations">Configuring Locations</h2>
+        <p>NGINX Plus can send traffic to different proxies or serve different files based on the request URIs. These
+            blocks are defined using the <strong>location</strong> directive placed within a <strong>server</strong>
+            directive.</p>
+        <p>NGINX Plus tests request URIs against the parameters of all <strong>location</strong> directives and applies
+            the directives defined in the matching <strong>location</strong>. Inside each <strong>location</strong>
+            block, it is usually possible (with a few exceptions) to place even more <strong>location</strong>
+            directives to further refine the processing for specific groups of requests.</p>
+        <p>The <strong>location</strong> directive takes a prefix parameter. The following sample
+            <strong>location</strong> with a pathname parameter matches request URIs that begin with
+            <em>/some/path/</em>, such as <em>/some/path/document.html</em>. (It does not match
+            <em>/my-site/some/path</em> because <em>/some/path</em> does not occur at the start of that URI.)</p>
+        <p>The exact logic for selecting a location to process a request is given below:</p>
+        <ul>
+            <li>Test the URI against all prefix strings.</li>
+            <li><em>The = (equals sign) modifier defines an exact match of the URI and a prefix string. If the exact
+                    match is found, the search stops.</em></li>
+            <li>Store the longest matching prefix string.</li>
+        </ul>
+        <p><em>A typical use case for the = modifier is requests for / (forward slash). If requests for / are frequent,
+                specifying = / as the parameter to the location directive speeds up processing, because the search for
+                matches stops after the first comparison.</em></p>
+        <p>A location context can contain directives that define how to resolve a request.</p>
+        <pre><code>    <span class="hljs-keyword">location</span> <span class="hljs-title">/images</span>/ {
+        root /data;
+    }
+</code></pre>
+        <p>The <strong>root</strong> directive specifies the file system path in which to search for the static files to
+            serve. The request URI associated with the location is appended to the path to obtain the full name of the
+            static file to serve. In the example above, in response to a request for <em>/images/example.png</em>, NGINX
+            Plus delivers the file <em>/data/images/example.png</em>.</p>
+        <h2 id="returning-specific-status-codes">Returning Specific Status Codes</h2>
+        <p>Some website URIs require immediate return of a response with a specific <strong>redirect</strong> code, for
+            example when a page has been moved temporarily or permanently. The easiest way to do this is to use the
+            <strong>return</strong> directive. For example:</p>
+        <pre><code><span class="hljs-keyword">location</span> <span class="hljs-title">/wrong</span>/url {
+    return <span class="hljs-number">404</span>;
+}
+</code></pre>
+        <p>The first parameter of <strong>return</strong> is a response code. The optional second parameter can be the
+            URL of a redirect (for codes 301, 302, 303, and 307) or the text to return in the response body. For
+            example:</p>
+        <pre><code>location <span class="hljs-regexp">/permanently/</span>moved/url {
+    <span class="hljs-keyword">return</span> <span class="hljs-number">301</span> <span class="hljs-string">http:</span><span class="hljs-comment">//www.example.com/moved/here;</span>
+}
+</code></pre>
+        <p>The return directive can be included in both the <strong>location</strong> and <strong>server</strong>
+            contexts.</p>
+        <h2 id="handling-errors">Handling Errors</h2>
+        <p>With the <strong>error_page</strong> directive, you can configure NGINX Plus to return a custom page along
+            with an error code, substitute a different error code in the response, or redirect the browser to a
+            different URI. In the following example, the <strong>error_page</strong> directive specifies the page
+            (/404.html) to return with the 404 error code.</p>
+        <pre><code>error_page <span class="hljs-number">404</span> /<span class="hljs-number">404.</span>html;
+</code></pre>
+        <p>Note that this directive does not mean that the error is returned immediately (the <strong>return</strong>
+            directive does that), but simply specifies how to treat errors when they occur. The error code can occur
+            during processing by NGINX Plus (for example, the 404 results when NGINX Plus can’t find the file requested
+            by the client).</p>
+        <h1 id="-serving-static-content-https-docs-nginx-com-nginx-admin-guide-web-server-serving-static-content-"><a
+                href="https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/">SERVING STATIC
+                CONTENT</a></h1>
+        <p>Configure NGINX and NGINX Plus to serve static content, with type-specific root directories, checks for file
+            existence, and performance optimizations.</p>
+        <h2 id="root-directory-and-index-files">Root Directory and Index Files</h2>
+        <p>The <strong><a href="https://nginx.org/en/docs/http/ngx_http_core_module.html#root">root</a></strong>
+            directive specifies the root directory that will be used to search for a file. To obtain the path of a
+            requested file, NGINX appends the request URI to the path specified by the <strong>root</strong> directive.
+            The directive can be placed on any level within the <strong>http {}</strong>, <strong>server {}</strong>, or
+            <strong>location {}</strong> contexts. In the example below, the root directive is defined for a virtual
+            server. It applies to all <strong>location {}</strong> blocks where the root directive is not included to
+            explicitly redefine the root:</p>
+        <pre><code><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">root</span> /www/data;
+
+    <span class="hljs-attribute">location</span> / {
+    }
+
+    <span class="hljs-attribute">location</span> /images/ {
+    }
+
+    <span class="hljs-attribute">location</span> <span class="hljs-regexp">~ \.(mp3|mp4)</span> {
+        <span class="hljs-attribute">root</span> /www/media;
+    }
+}
+</code></pre>
+        <p>If a request ends with a slash, NGINX treats it as a request for a directory and tries to find an index file
+            in the directory. The <strong><a
+                    href="https://nginx.org/en/docs/http/ngx_http_index_module.html#index">index</a></strong> directive
+            defines the index file’s name (the default value is index.html). To continue with the example, if the
+            request URI is /images/some/path/, NGINX delivers the file /www/data/images/some/path/index.html if it
+            exists. If it does not, NGINX returns HTTP code 404 (Not Found) by default. To configure NGINX to return an
+            automatically generated directory listing instead, include the on parameter to the <strong><a
+                    href="https://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex">autoindex</a></strong>
+            directive: </p>
+        <pre><code><span class="hljs-keyword">location</span> <span class="hljs-title">/images</span>/ {
+    autoindex on;
+}
+</code></pre>
+        <p>You can list more than one filename in the <strong>index</strong> directive. NGINX searches for files in the
+            specified order and returns the first one it finds.</p>
+        <pre><code><span class="hljs-keyword">location</span> / {
+    <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.htm <span class="hljs-keyword">index</span>.html;
+}
+</code></pre>
+        <p>To return the index file, NGINX checks for its existence and then makes an internal redirect to the URI
+            obtained by appending the name of the index file to the base URI. The internal redirect results in a new
+            search of a location and can end up in another location as in the following example:</p>
+        <pre><code><span class="hljs-keyword">location</span> <span class="hljs-title">/ {
+    root</span> /data;
+    index index.html index.php;
+}
+
+<span class="hljs-keyword">location</span> <span class="hljs-title">~ \.php</span> {
+    fastcgi_pass localhost:<span class="hljs-number">8000</span>;
+    <span class="hljs-comment">#...</span>
+}
+</code></pre>
+        <p>Here, if the URI in a request is /path/, and /data/path/index.html does not exist but /data/path/index.php
+            does, the internal redirect to /path/index.php is mapped to the second location. As a result, the request is
+            proxied.</p>
+        <h1 id="-how-nginx-processes-a-request-http-nginx-org-en-docs-http-request_processing-html-"><a
+                href="http://nginx.org/en/docs/http/request_processing.html">HOW NGINX PROCESSES A REQUEST</a></h1>
+        <h2 id="name-based-virtual-servers">Name-based virtual servers</h2>
+        <p>nginx first decides which server should process the request. Let’s start with a simple configuration where
+            all three virtual servers listen on port *:80 : </p>
+        <pre><code>
+
+<span class="mipsasm">    server {
+        listen      <span class="hljs-number">80</span><span class="hljs-comment">;</span>
+        server_name example.<span class="hljs-keyword">org </span>www.example.<span class="hljs-keyword">org;
+</span>        ...
+    }
+
+    server {
+        listen      <span class="hljs-number">80</span><span class="hljs-comment">;</span>
+        server_name example.net www.example.net<span class="hljs-comment">;</span>
+        ...
+    }
+
+    server {
+        listen      <span class="hljs-number">80</span><span class="hljs-comment">;</span>
+        server_name example.com www.example.com<span class="hljs-comment">;</span>
+        ...
+    }</span>
+</code></pre>
+        <p>In this configuration nginx tests only the request’s header field “Host” to determine which server the
+            request should be routed to. If its value does not match any <strong>server_name</strong>, or the request
+            does not contain this header field at all, then nginx will route the request to the default server for this
+            port (the first defined for this port). In the configuration above, the default server is the first one —
+            which is nginx’s standard default behaviour.</p>
+        <h2 id="mixed-name-based-and-ip-based-virtual-servers">Mixed name-based and IP-based virtual servers</h2>
+        <p>Let’s look at a more complex configuration where some virtual servers listen on different addresses: </p>
+        <pre><code>server {
+    listen      <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">1</span>.<span class="hljs-number">1</span>:<span class="hljs-number">80</span><span class="hljs-comment">;</span>
+    server_name example.<span class="hljs-keyword">org </span>www.example.<span class="hljs-keyword">org;
+</span>    ...
+}
+
+server {
+    listen      <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">1</span>.<span class="hljs-number">1</span>:<span class="hljs-number">80</span><span class="hljs-comment">;</span>
+    server_name example.net www.example.net<span class="hljs-comment">;</span>
+    ...
+}
+
+server {
+    listen      <span class="hljs-number">192</span>.<span class="hljs-number">168</span>.<span class="hljs-number">1</span>.<span class="hljs-number">2</span>:<span class="hljs-number">80</span><span class="hljs-comment">;</span>
+    server_name example.com www.example.com<span class="hljs-comment">;</span>
+    ...
+}
+</code></pre>
+        <p>In this configuration, nginx first tests the IP address and port of the request against the <strong><a
+                    href="http://nginx.org/en/docs/http/ngx_http_core_module.html#listen">listen</a></strong> directives
+            of the <strong><a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#server">server</a></strong>
+            blocks. It then tests the “Host” header field of the request against the <strong><a
+                    href="http://nginx.org/en/docs/http/ngx_http_core_module.html#server_name">server_name</a></strong>
+            entries of the <strong><a
+                    href="http://nginx.org/en/docs/http/ngx_http_core_module.html#server">server</a></strong> blocks
+            that matched the IP address and port. If the server name is not found, the request will be processed by the
+            default server. For example, a request for www.example.com received on the 192.168.1.1:80 port will be
+            handled by the default server of the 192.168.1.1:80 port, i.e., by the first server, since there is no
+            www.example.com defined for this port. </p>
+        <h2 id="a-simple-php-site-configuration">A simple PHP site configuration</h2>
+        <p><strong>(THIS SECTION IS NOT FULLY RELEVANT REGARDING THE SUBJECT, AS WE DON&#39;T NEED TO HANDLE REGULAR
+                EXPRESSIONS BUT NEED TO BE ABLE TO HANDLE REQUEST WITH A CGI BASED ON FILE EXTENSION. I THINK WE WILL
+                THEN MAKE UNIQUE RECOGNIZABLE REGULAR EXPRESSION PATTERN - &quot; *.php &quot; FOR EXAMPLE - AS A
+                POSSIBLE PARAMETER FOR A location DIRECTIVE.)</strong></p>
+        <p>Now let’s look at how nginx chooses a <strong>location</strong> to process a request for a typical, simple
+            PHP site: </p>
+        <pre><code><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>      <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span> example.org www.example.org;
+    <span class="hljs-attribute">root</span>        /data/www;
+
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">index</span>   index.html index.php;
+    }
+
+    <span class="hljs-attribute">location</span> <span class="hljs-regexp">~ \.php$</span> {
+        <span class="hljs-attribute">fastcgi_pass</span>  localhost:<span class="hljs-number">9000</span>;
+        <span class="hljs-attribute">fastcgi_param</span> SCRIPT_FILENAME
+                      <span class="hljs-variable">$document_root</span><span class="hljs-variable">$fastcgi_script_name</span>;
+        <span class="hljs-attribute">include</span>       fastcgi_params;
+    }
+}
+</code></pre>
+        <p>nginx first searches for the most specific prefix location given by literal strings regardless of the listed
+            order. In the configuration above the only prefix location is “/” and since it matches any request it will
+            be used as a last resort. Then nginx checks locations given by regular expression in the order listed in the
+            configuration file. The first matching expression stops the search and nginx will use this location. If no
+            regular expression matches a request, then nginx uses the most specific prefix location found earlier. </p>
+        <p>Note that locations of all types test only a URI part of request line without arguments. This is done because
+            arguments in the query string may be given in several ways, for example: </p>
+        <pre><code>/<span class="hljs-keyword">index</span>.php?user=john&amp;page=<span class="hljs-number">1</span>
+/<span class="hljs-keyword">index</span>.php?page=<span class="hljs-number">1</span>&amp;user=john
+</code></pre>
+        <p>Besides, anyone may request anything in the query string: </p>
+        <pre><code>/<span class="hljs-keyword">index</span>.php?page=<span class="hljs-number">1</span>&amp;something+<span class="hljs-keyword">else</span>&amp;user=john
+</code></pre>
+        <p>Now let’s look at how requests would be processed in the configuration above: </p>
+        <ul>
+            <li>A request “/index.php” is matched by the prefix location “/” first and then by the regular expression
+                “.(php)$”. Therefore, it is handled by the latter <strong>location</strong> and the request is passed to
+                a FastCGI server listening on localhost:9000. The <strong>fastcgi_param</strong> directive sets the
+                FastCGI parameter SCRIPT_FILENAME to “/data/www/index.php”, and the FastCGI server executes the file.
+                The variable $document_root is equal to the value of the <strong>root</strong> directive and the
+                variable $fastcgi_script_name is equal to the request URI, i.e. “/index.php”. </li>
+            <li>A request “/about.html” is matched by the prefix location “/” only, therefore, it is handled in this
+                <strong>location</strong>. Using the directive “<strong>root /data/www</strong>” the request is mapped
+                to the file /data/www/about.html, and the file is sent to the client. </li>
+            <li>Handling a request “/” is more complex. It is matched by the prefix location “/” only, therefore, it is
+                handled by this location. Then the index directive tests for the existence of index files according to
+                its parameters and the “root /data/www” directive. If the file /data/www/index.html does not exist, and
+                the file /data/www/index.php exists, then the directive does an internal redirect to “/index.php”, and
+                nginx searches the locations again as if the request had been sent by a client. As we saw before, the
+                redirected request will eventually be handled by the FastCGI server. </li>
+        </ul>
+        <h2 id="subject-config-file-rules-and-nginx-equivalent">SUBJECT CONFIG FILE RULES AND NGINX EQUIVALENT</h2>
+        <p>In the configuration file, you should be able to:</p>
+        <ul>
+            <li>Choose the port and host of each ’server’.<ul>
+                    <li>==&gt; <strong><a
+                                href="http://nginx.org/en/docs/http/ngx_http_core_module.html#listen">listen</a></strong>
+                    </li>
+                </ul>
+            </li>
+            <li>Setup the server_names or not.<ul>
+                    <li>==&gt; <strong><a
+                                href="http://nginx.org/en/docs/http/ngx_http_core_module.html#server_name">server_name</a></strong>
+                    </li>
+                </ul>
+            </li>
+            <li>The first server for a host:port will be the default for this host:port (that means it will answer to
+                all the requests that don’t belong to an other server).<ul>
+                    <li>==&gt; <strong><a href="http://nginx.org/en/docs/http/request_processing.html">default NGINX
+                                behaviour</a></strong></li>
+                </ul>
+            </li>
+            <li>Setup default error pages.<ul>
+                    <li>==&gt; <strong><a
+                                href="http://nginx.org/en/docs/http/ngx_http_core_module.html#error_page">error_page</a></strong>
+                    </li>
+                </ul>
+            </li>
+            <li>Limit client body size.<ul>
+                    <li>==&gt; <strong><a
+                                href="http://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size">client_max_body_size</a></strong>
+                    </li>
+                </ul>
+            </li>
+            <li>Setup routes with one or multiple of the following rules/configuration (routes won&#39;t be using
+                regexp):<ul>
+                    <li>==&gt; <strong><a
+                                href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location">location</a></strong>
+                    </li>
+                    <li>Define a list of accepted HTTP methods for the route.<ul>
+                            <li>==&gt; <strong><a
+                                        href="http://nginx.org/en/docs/http/ngx_http_core_module.html#limit_except">limit_except</a></strong>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Define a HTTP redirection.<ul>
+                            <li>==&gt; <strong><a
+                                        href="https://nginx.org/en/docs/http/ngx_http_rewrite_module.html#return">return</a></strong>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Define a directory or a file from where the file should be searched (for example, if url
+                        /kapouet is rooted to /tmp/www, url /kapouet/pouic/toto/pouet is /tmp/www/pouic/toto/pouet).<ul>
+                            <li>==&gt; <strong><a
+                                        href="http://nginx.org/en/docs/http/ngx_http_core_module.html#root">root</a></strong>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Turn on or off directory listing.<ul>
+                            <li>==&gt; <strong><a
+                                        href="http://nginx.org/en/docs/http/ngx_http_autoindex_module.html#autoindex">autoindex</a></strong>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Set a default file to answer if the request is a directory.<ul>
+                            <li>==&gt; <strong><a
+                                        href="https://nginx.org/en/docs/http/ngx_http_index_module.html#index">index</a></strong>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Execute CGI based on certain file extension (for example .php).</li>
+                    <li>Make the route able to accept uploaded files and configure where they should be saved.<ul>
+                            <li>Do you wonder what a CGI is?</li>
+                            <li>Because you won’t call the CGI directly, use the full path as PATH_INFO.</li>
+                            <li>Just remember that, for chunked request, your server needs to unchunk it and the CGI
+                                will expect EOF as end of the body.</li>
+                            <li>Same things for the output of the CGI. If no content_length is returned from the CGI,
+                                EOF will mark the end of the returned data.</li>
+                            <li>Your program should call the CGI with the file requested as first argument.</li>
+                            <li>The CGI should be run in the correct directory for relative path file access.</li>
+                            <li>Your server should work with one CGI (php-CGI, Python, and so forth).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <h2 id="detection-of-a-body-indication">Detection of a body indication</h2>
+        <p>Voir nginx quand on envoie:</p>
+        <ul>
+            <li>plusieurs Content-Length</li>
+            <li>plusieurs Transfer-Encoding differents</li>
+            <li>un Transfer-Encoding sans chunked</li>
+            <li>un Content-Length et un Transfer-Encoding</li>
+            <li>un Transfer-encoding et plusieurs Content-Length</li>
+        </ul>
+        <p>A recipient that receives whitespace between the start-line and the first header field MUST reject the
+            message as invalid</p>
+        <h1 id="testing">Testing</h1>
+        <ul>
+            <li>python library to make http requests <a
+                    href="https://requests.readthedocs.io/en/master/">https://requests.readthedocs.io/en/master/</a>
+            </li>
+            <li>quickly and easily send requests <a href="https://www.postman.com/">https://www.postman.com/</a></li>
+            <li>Stress test: tr -dc A-Za-z0-9 &lt;/dev/urandom | telnet localhost 8001</li>
+        </ul>
+        <h1 id="a-faire">A faire</h1>
+        <ul>
+            <li>Un signal (SIGINT, fonction), pour quitter proprement le serveur, fermer les connections, etc...</li>
+            <li>Une fonction send qui s&#39;assure que toute la data a bien ete envoyé avec la valeur de retour de
+                send()</li>
+        </ul>
+
+    </section>
+</body>
