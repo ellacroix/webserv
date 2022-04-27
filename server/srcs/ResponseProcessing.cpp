@@ -13,7 +13,8 @@ Location *		Response::findLocation(std::string & uri)
 	ite = this->virtual_server->getLocationMap().end();
 	while (it != ite)
 	{
-		if (uri.find(it->first) != std::string::npos)
+//		if (uri.find(it->first) != std::string::npos)
+		if (uri.compare(0, it->first.length(), it->first) == 0)
 		{
 			if (it->first.length() > longestPrefixLen)
 			{

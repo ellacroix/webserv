@@ -2,6 +2,8 @@
 
 bool   Response::isCgi(std::string path)
 {
+	if (this->virtual_server->_cgi_is_set == false)
+		return (false);
 	std::string cgiExtension = client->request->_virtual_server->getCgiExtension();
 	std::string fileExtension = findUriExtension(path);
 

@@ -29,16 +29,12 @@ int	Response::processRequest()
 	//	ELSE (PROCESSING CONTINUES)
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
-	// if (this->location == NULL && !this->isCgi(request->_URI))
 	if (this->location == NULL)
 	{
 		this->client->status_code = 404;
 		this->constructError();
 		return (SUCCESS);
 	}
-	//std::cout << "=== FOUND LOCATION = "
-	//	<< this->location->getPrefix() << std::endl;
-
 	//	CHECK limit_except
 	if (this->location->_limitExceptIsSet == true &&
 			std::find(this->location->getLimitExcept().begin(),
@@ -128,7 +124,7 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 
 	while ((entry = readdir(dir)) != NULL)
 	{
-		fullPath = path + "/" + entry->d_name;
+		fullPath = path /*+ "/"*/ + entry->d_name;
 		stat(fullPath.c_str(), &info);
 		printf("full path %s\n", fullPath.c_str());
 
