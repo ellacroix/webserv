@@ -1,0 +1,231 @@
+[14:10:37][MAIN]	 Start with PID: 21643
+[14:10:37][1]		 Thread launched
+[14:10:37][2]		 Thread launched
+[14:10:37][3]		 Thread launched
+[14:10:37][4]		 Thread launched
+[14:10:37][5]		 Thread launched
+[14:10:37][6]		 Thread launched
+[14:10:37][7]		 Thread launched
+[14:10:37][8]		 Thread launched
+[14:10:37][MAIN]	 
+-------------------------------START SERVER--------------------------
+[14:10:41][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:10:41][MAIN]	 Client 6 accepted connection on port 8000
+[14:10:41][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:10:41][MAIN]	 Client 6 received 85 bytes
+[14:10:41][1]		 Client 6 received all headers
+[14:10:41][1]		 Client 6 request is complete, ready to parse
+[14:10:41][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:10:41][2]		 Client 6 Send routine sent 1374 bytes
+[14:10:41][2]		 Client 6 Send routine sent all the response 200
+[14:10:41][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:10:41][MAIN]	 Client 6 received 0 bytes
+[14:10:41][MAIN]	 Deleting client 6
+[14:11:51][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:11:51][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:13:01][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:13:01][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 6 accepted connection on port 8000
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 6 received 442 bytes
+[14:13:57][3]		 Client 6 received all headers
+[14:13:57][3]		 Client 6 request is complete, ready to parse
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][4]		 Client 6 Send routine sent 1374 bytes
+[14:13:57][4]		 Client 6 Send routine sent all the response 200
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 6 received 381 bytes
+[14:13:57][5]		 Client 6 received all headers
+[14:13:57][5]		 Client 6 request is complete, ready to parse
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 7 accepted connection on port 8000
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][6]		 Client 6 Send routine sent 1496 bytes
+[14:13:57][6]		 Client 6 Send routine sent all the response 200
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 7 received 394 bytes
+[14:13:57][7]		 Client 7 received all headers
+[14:13:57][7]		 Client 7 request is complete, ready to parse
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 8 accepted connection on port 8000
+[14:13:57][MAIN]	 Client 9 accepted connection on port 8000
+[14:13:57][MAIN]	 Client 10 accepted connection on port 8000
+[14:13:57][MAIN]	 epoll_wait() activated by 5 file descriptors
+[14:13:57][MAIN]	 Client 6 received 395 bytes
+[14:13:57][1]		 Client 6 received all headers
+[14:13:57][1]		 Client 6 request is complete, ready to parse
+[14:13:57][8]		 Client 7 Send routine sent 228379 bytes
+[14:13:57][8]		 Client 7 Send routine sent all the response 200
+[14:13:57][MAIN]	 Client 8 received 391 bytes
+[14:13:57][MAIN]	 Client 9 received 394 bytes
+[14:13:57][MAIN]	 Client 10 received 393 bytes
+[14:13:57][3]		 Client 8 received all headers
+[14:13:57][2]		 Client 9 received all headers
+[14:13:57][3]		 Client 8 request is complete, ready to parse
+[14:13:57][2]		 Client 9 request is complete, ready to parse
+[14:13:57][4]		 Client 10 received all headers
+[14:13:57][4]		 Client 10 request is complete, ready to parse
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 epoll_wait() activated by 3 file descriptors
+[14:13:57][6]		 Client 8 Send routine sent 1216 bytes
+[14:13:57][6]		 Client 8 Send routine sent all the response 200
+[14:13:57][6]		 Client 6 Send routine sent 101460 bytes
+[14:13:57][6]		 Client 6 Send routine sent all the response 200
+[14:13:57][6]		 Client 10 Send routine sent 201795 bytes
+[14:13:57][6]		 Client 10 Send routine sent all the response 200
+[14:13:57][6]		 Client 9 Send routine sent 222573 bytes
+[14:13:57][6]		 Client 9 Send routine sent all the response 200
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][MAIN]	 Client 7 received 379 bytes
+[14:13:57][3]		 Client 7 received all headers
+[14:13:57][3]		 Client 7 request is complete, ready to parse
+[14:13:57][MAIN]	 epoll_wait() activated by 1 file descriptors
+[14:13:57][1]		 Client 7 Send routine sent 67716 bytes
+[14:13:57][1]		 Client 7 Send routine sent all the response 200
+[14:15:07][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:15:07][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:15:07][MAIN]	 Client 6 exceeded timeout
+[14:15:07][MAIN]	 Client 7 exceeded timeout
+[14:15:07][MAIN]	 Client 8 exceeded timeout
+[14:15:07][MAIN]	 Client 9 exceeded timeout
+[14:15:07][MAIN]	 Client 10 exceeded timeout
+[14:15:07][MAIN]	 epoll_wait() activated by 5 file descriptors
+[14:15:07][5]		 Client 6 Send routine sent 237 bytes
+[14:15:07][5]		 Client 6 Send routine sent all the response 408
+[14:15:07][8]		 Client 10 Send routine sent 237 bytes
+[14:15:07][8]		 Client 10 Send routine sent all the response 408
+[14:15:07][2]		 Client 8 Send routine sent 237 bytes
+[14:15:07][2]		 Client 8 Send routine sent all the response 408
+[14:15:07][6]		 Client 9 Send routine sent 237 bytes
+[14:15:07][6]		 Client 9 Send routine sent all the response 408
+[14:15:07][4]		 Client 7 Send routine sent 237 bytes
+[14:15:07][4]		 Client 7 Send routine sent all the response 408
+[14:16:17][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:16:17][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:16:17][MAIN]	 Client 6 disconnected
+[14:16:17][MAIN]	 Deleting client 6
+[14:16:17][MAIN]	 Client 7 disconnected
+[14:16:17][MAIN]	 Deleting client 7
+[14:16:17][MAIN]	 Client 8 disconnected
+[14:16:17][MAIN]	 Deleting client 8
+[14:16:17][MAIN]	 Client 9 disconnected
+[14:16:17][MAIN]	 Deleting client 9
+[14:16:17][MAIN]	 Client 10 disconnected
+[14:16:17][MAIN]	 Deleting client 10
+[14:17:27][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:17:27][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:18:37][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:18:37][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:19:47][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:19:47][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:20:57][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:20:57][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:22:07][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:22:07][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:23:17][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:23:17][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:24:27][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:24:27][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:25:37][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:25:37][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:26:47][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:26:47][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:27:57][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:27:57][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:29:07][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:29:07][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:30:17][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:30:17][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:31:27][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:31:27][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:32:38][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:32:38][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:33:48][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:33:48][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:34:58][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:34:58][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:36:08][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:36:08][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:37:18][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:37:18][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:38:28][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:38:28][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:39:38][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:39:38][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:40:48][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:40:48][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:41:58][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:41:58][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:43:08][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:43:08][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:44:18][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:44:18][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:45:28][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:45:28][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:46:38][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:46:38][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:47:48][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:47:48][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:48:58][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:48:58][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:50:09][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:50:09][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:51:19][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:51:19][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:52:29][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:52:29][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:53:39][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:53:39][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:54:49][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:54:49][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:55:59][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:55:59][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:57:09][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:57:09][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:58:19][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:58:19][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[14:59:29][MAIN]	 epoll_wait() activated by 0 file descriptors
+[14:59:29][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:00:39][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:00:39][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:01:49][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:01:49][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:02:59][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:02:59][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:04:09][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:04:09][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:05:19][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:05:19][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:06:29][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:06:29][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:07:39][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:07:39][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:08:49][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:08:49][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:09:59][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:09:59][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:11:09][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:11:09][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:12:20][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:12:20][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:13:30][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:13:30][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:14:40][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:14:40][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:15:50][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:15:50][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:17:00][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:17:00][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:18:10][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:18:10][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:19:20][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:19:20][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:20:30][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:20:30][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:21:40][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:21:40][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:22:50][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:22:50][MAIN]	 epoll_wait() timed out. Checking clients timeout.
+[15:24:00][MAIN]	 epoll_wait() activated by 0 file descriptors
+[15:24:00][MAIN]	 epoll_wait() timed out. Checking clients timeout.

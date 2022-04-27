@@ -64,6 +64,10 @@ run			:	${NAME}
 			clear
 			./webserv confs/nginx.conf
 
+conf		:
+			sed "s|_PWD|$PWD|g" confs/template.conf > perso.conf
+
+
 sanitize	:	${OBJS}
 			${CXX} ${SANITIZE_FLAGS} ${OBJS} -o ${NAME}
 			./webserv confs/nginx.conf
