@@ -44,7 +44,7 @@ int	Response::processRequest()
 			std::find(this->location->getLimitExcept().begin(),
 				this->location->getLimitExcept().end(),
 				this->request->_method)
-			!= this->location->getLimitExcept().end())
+			== this->location->getLimitExcept().end())
 	{
 		this->client->status_code = 405;
 		this->constructError();

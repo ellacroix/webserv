@@ -3,9 +3,6 @@
 
 void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 {	
-	// printf("RECV_ROUTINE() - BUFFER : \"%s\"\n", client->request_buffer.c_str());
-	//logger("Client " + numberToString(client->stream_socket) + " Recv routine");
-
 	//The request is ignored, we monitor the connection again to read a new request
 	if (client->request_buffer.find("\r\n") == 0)
 	{
@@ -72,14 +69,13 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 
 void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 {	
-	//logger("Client " + numberToString(client->stream_socket) + " Send routine");
 
 	//Sending the reponse to the client
 	int ret = send(client->stream_socket,
 			client->response->raw_response.c_str(),
 			client->response->raw_response.size(),
 			0);
-	if (ret <= 0)
+	if (ret < 0)
 	{
 		logger("Client " + numberToString(client->stream_socket) + " closed the connection when writing to him\n");
 		monitorForReading(client, thread_info);
@@ -123,20 +119,11 @@ void	*threadLoop(void* arg)
 	{
 		//Check if there is work to do in the queue or wait on cond_wait for work to be added
 		pthread_mutex_lock(&thread_info->queue_mutex);
-		if (thread_info->queue->empty() == true)
+		while (thread_info->queue->empty() == true)
 		{
 			pthread_cond_wait(&thread_info->condition_var, &thread_info->queue_mutex);
-			if (thread_info->queue->empty() == true)
-			{
-				pthread_mutex_unlock(&thread_info->queue_mutex);
-				continue ;
-			}
-			current_client = thread_info->queue->front();
 		}
-		else
-		{
-			current_client = thread_info->queue->front();
-		}
+		current_client = thread_info->queue->front();
 		thread_info->queue->pop_front();
 		pthread_mutex_unlock(&thread_info->queue_mutex);
 
@@ -153,6 +140,7 @@ void	*threadLoop(void* arg)
 			threadRecvRoutine(current_client, thread_info);
 		pthread_mutex_unlock(&current_client->client_mutex);
 	}
+	usleep(50000);
 }
 
 void	toLowerHeaders(Client *client)
@@ -208,7 +196,7 @@ void	isRequestComplete(Client *client)
 bool	isChunkComplete(Client *client)
 {
 	size_t			body_start = client->request_buffer.find("\r\n\r\n") + 4;
-	size_t			body_end = client->request_buffer.find("\r\n0\r\n", body_start);
+	size_t			body_end = client->request_buffer.find("\r\n0\r\n", body_start - 4);
 
 	if (body_end != std::string::npos)
 	{

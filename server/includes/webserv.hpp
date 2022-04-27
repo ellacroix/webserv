@@ -56,6 +56,7 @@
 # define SERVER_MAX_BODY_SIZE 30 * M
 # define SERVER_MAX_HEADERS_SIZE 1 * M
 # define MAX_CONNECTIONS 150
+# define BACKLOG 20
 
 # define RED "\033[31m"
 # define RESET "\033[0m"
@@ -126,7 +127,7 @@ bool			isValidReqUri(std::string const & s);
 bool			areValidDomainNames(std::vector<std::string> & v);
 std::string		numberToString(int n);
 std::string		findUriExtension(std::string uri);
-void	logger(std::string message);
+void			logger(std::string message);
 
 
 //	engineUtils.cpp
