@@ -4,21 +4,19 @@ section {
 pre {
 	background-color: #eee;
 	border: 1px solid #999;
-	/* display: block; */
-	/* padding: 20px; */
 	width: 700PX;
 	border-radius: 5px;
-  }
+}
 
 pre {
 	padding: 1rem 2.5rem 1rem 1rem;
-margin: 1rem 0 2rem;
-background-color: #dbdbdb;
-border: 1px solid transparent;
-border-radius: red;
-/* font-size: var(--type-base-font-size-rem); */
-white-space: pre-wrap;
-word-wrap: break-word;
+	margin: 1rem 0 2rem;
+	background-color: #dbdbdb;
+	border: 1px solid transparent;
+	border-radius: red;
+	/* font-size: var(--type-base-font-size-rem); */
+	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 
 code {
@@ -26,5 +24,5 @@ code {
 
 	background: none;
 	padding: 0;
-  }
+}
 }

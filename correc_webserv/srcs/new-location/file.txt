@@ -1,0 +1,3 @@
+file.txt's content
+anciently stored at /ancient-location/file.txt
+now stored at /new-location/file.txt

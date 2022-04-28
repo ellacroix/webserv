@@ -1,0 +1,120 @@
+============
+=== PREZ ===
+============
+
+Welcome to the webserv demonstration website.
+It is a static website designed to illustrate the features of the webserv program.
+
+webserv is a 42school group project. It requires the student to implement a HTTP/1.1 web server running locally, able to serve a full static website.
+You can find the subject of the project here.
+A web server is basically a program running on a computer, receiving requests from clients (typically web browsers) and sending content (typically files) as a response to the requesting client.
+
+After compilation webserv is started with a configuration file as argument ("./webserv config_file").
+The configuration file allows you to setup one or more "virtual server", designated by a "server" block in the configuration file.
+For a virtual server, you can then setup routes, designated by the "location" block in the configuration file.
+A route's purpose is to setup where on the server file system should resources designated by the request URI be fetched. 
+
+A minimum working configuration for a config file could look like :
+
+server {
+	listen 8000
+
+	location / {
+		root /absolute/path/to/resources_folder/
+	}
+}
+
+With this configuration, if you start webserv on your computer, open Firefox and enter :
+
+http://localhost:8000/file.txt
+
+Firefox will send to localhost:8000 (address and port of webserv) a request looking like :
+
+GET /file.txt HTTP/1.1
+host: localhost:8000
+
+webserv will receive it, and will look for 'file.txt' at the following path :
+
+/absolute/path/to/resources_folder/file.txt
+
+If webserv did find it, it will open the found file, and send its content as response to the client with an "OK" status.
+If webserv did not find it, it will send response with a "Not Found" status.
+
+You can configure many virtual servers and many locations for each server in a configuration file. 
+You can also set many options for a virtual server or a location that will be described and illustrated in the upcoming sections. We will take the subject's requirements one by one. 
+
+Click here to test the GET method.
+
+===========
+=== GET ===	path : /srcs/html/get.html
+===========
+
+HTTP BASICS
+HTTP communication goes both ways :
+- client's requests use methods ("GET /file.txt", "POST /file.txt", "DELETE /file.txt"...)
+- server's responses use status codes ("200 OK", "404 Not Found"...)
+
+webserv only supports the three following request methods :
+- "GET", used to retrieve resources from the server
+- "POST", used to modify or create resources on the server
+- "DELETE", used to remove resources from the server
+
+Depending on the processing of the request, webserv will respond with a status code an optional resource.
+
+GET FILES
+Most of web browsing is probably done using the GET method.
+The page you're reading was sent to the browser as a response to a request like :
+"GET /html/get.html HTTP/1.1" 
+
+Using this method, you can GET some server's resources using the following links :
+- jboisser's picture
+- 42logo
+- subject.pdf
+
+STATUS CODES
+HTTP provides a set of status codes describing the results of the request processing.
+- success codes range 2xx ("200 OK", "201 Created)
+- http redirection codes range 3xx ("301 Moved Permanently", "307 Temporary Redirect")
+There are two types of errors :
+- client side error codes range 4xx ("404 Not Found", "403 Forbidden")
+- sever side error codes range 5xx ("500 Internal Server Error", "501 Not Implemented")
+webserv generates a default error page in case an error occured, it will display the status code and the associated description.
+
+If a webadmin wishes to set a custom error page for the website, it may do so using the "error_page" directive in the configuration file.
+For example, setting "error_page 404 403 /absolute/path/to/custom_error_page.html", webserv will send the file "custom_error_page.html" as the body of the response, assuming it does exist.
+
+The following links will return error status codes as response with webserv's default error page:
+- non-existent-file.html (/non-existnet-file.hmtl)
+- forbidden-file.html (/forbidden-file.html)
+
+The following links will return error status codes with a custom error page as set by the "error_page" directive in the 
+
+GET FOLDERS
+When your URI is slash ('/') terminated, you are making a request for a directory in the server's file system. Different situations occur depending on the configuration you set up in the configuration file (assuming the directory does exist) :
+- if the "index" directive was set (for example : "index file.html"), webserv will attempt to open and read "file.html" in the requested directory.
+- if no "index" was found or if it was not set, and if the "autoindex" directive was set to "on" ("autoindex on") webserv will attempt to read the directory's contents and respond an automatically generated directory content listing with links to the resources. By default "autoindex" directive is off.
+- if none of the the above was set, webserv will respond with a "403 Forbidden" status
+
+With the following link, you will make a GET request to "/folder-with-index/" where there is an "index2.html" file and the "index" directive is set as "index index.html". The index2.html file will then be displayed.
+With this link, you will make a GET request to "/folder-with-autoindex/", a location for which the "autoindex" directive was set as "autoindex on". webserv will then automatically generate a directory listing page that will be returned with links to the directory's elements.
+
+HTTP REDIRECTION
+You can set a HTTP redirection in a location block, webserv supports 302 and 307 redirection codes.
+When a server responds to the client with one of those status, the client is supposed to make a new request for the resource at a different URI, which will be specified in the response in the "Location:" header.
+Let's assume resources were initially in a location in the server file system but were moved to another location for system administration or architectural reasons. All the links pointing to the initial location should be modified accordingly. This could be done in the website, but not on all the other external websites pointing to the moved location.
+Setting a HTTP redirection in webserv is done using the "return" directive, with a redirection status code and the new location for the resources. For example "return 302 /new-uri/".
+This way, the content of the website can remain unmodified, a request to a location that doesn't hold the resource anymore can redirect to the new-location.
+
+The following link points to localhost:8000/ancient-location/file.txt.
+When you will click on it :
+- webserv will answer "302 Moved Permanently" with a "Location: /new-location/file.txt" header
+- browser will automatically renew the request to the new URI specified in the "Location" header
+- webserv can then retrieve the resource at the new-location
+
+NEXT : POST method.
+
+============
+=== POST ===
+============
+
+
