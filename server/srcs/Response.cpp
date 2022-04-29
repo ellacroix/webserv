@@ -15,7 +15,7 @@ Response::Response(Client *parent_client)
 
 int	Response::processRequest()
 {	
- 	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
+	//	FIND VIRTUAL SERVER IF NO REQUEST WAS CREATED
 	if (this->request == NULL || this->virtual_server == NULL)
 		this->virtual_server = client->parent_port->_VS_list.front();
 
@@ -25,7 +25,7 @@ int	Response::processRequest()
 		constructError();
 		return (SUCCESS);
 	}
-	
+
 	//	ELSE (PROCESSING CONTINUES)
 	//	FIND location
 	this->location = this->findLocation(this->request->_URI);
@@ -63,12 +63,12 @@ int	Response::processRequest()
 		}
 		else
 		{
-			this->client->status_code = 200;
+			this->client->status_code = getCgiStatusCode(header);
 			this->construct200OkCgi();
 			return (SUCCESS);
 		}
 	}
-	
+
 	//	CHECK return
 	if (this->location->_returnIsSet == true)
 	{
@@ -77,7 +77,7 @@ int	Response::processRequest()
 		this->constructRedirection();
 		return (SUCCESS);
 	}
-	
+
 	if (this->request->_method == "GET")
 	{
 		printf("RESP_PROCESSING - ENTERING METHOD_GET()\n");
@@ -113,14 +113,14 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 	struct dirent 	*entry;
 	DIR *dir =		opendir(path.c_str());
 	struct stat 	info;
-    struct tm * 	timeinfo;
+	struct tm * 	timeinfo;
 	std::string 	entryLink;
 	std::string fullPath;
 	std::string entryPath;
 	char buffer[256]; // need to reset
 
 	std::string months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 	while ((entry = readdir(dir)) != NULL)
 	{
