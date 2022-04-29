@@ -62,7 +62,7 @@ re			:	fclean all
 
 run			:	${NAME}
 			clear
-			./webserv confs/nginx.conf
+			./webserv confs/perso.conf
 
 conf		:
 			sed 's|_PWD|$(PWD)|g' confs/template.conf > confs/perso.conf

@@ -51,9 +51,9 @@
 
 				<p>Using this method, you can <strong><code>GET</code></strong> some server's resources using the following links :</p>
 				<ul>
-					<li><a href="/media/jboisser.jpeg">Jessica Boisserand's picture</a></li>
-					<li><a href="/media/42logo.svg">42 school logo</a></li>
-					<li><a href="/media/subject.pdf">webserv's subject pdf</a></li>
+					<li><a href="/public/media/jboisser.jpeg">Jessica Boisserand's picture</a></li>
+					<li><a href="/public/media/42logo.svg">42 school logo</a></li>
+					<li><a href="/public/media/subject.pdf">webserv's subject pdf</a></li>
 				</ul>
 
 				<hr>
@@ -82,7 +82,7 @@
 				<p>If the <strong><code>autoindex</code></strong> directive was set (<code>autoindex on</code>)
 					<strong>webserv</strong> will respond an automatically generated directory listing with links to the resources.</p>
 				<p>The following link will take you to a a folder with an automatically generated <code>autoindex</code>:</p>
-				<ul><li><a href="/autoindexed/">link to "/autoindexed/"</a></li></ul>
+				<ul><li><a href="/public/autoindexed/">link to "/autoindexed/"</a></li></ul>
 				<p>thanks to the following <code>location</code> configuration:</p>
 				<pre><code>
 location /autoindexed/ {
@@ -129,8 +129,8 @@ location /autoindexed/ {
 
 				<p>The following links will return error status codes as response with <strong>webserv</strong>'s default error page:</p>
 				<ul>
-					<li><a href="/static/non-existent-file.html">link to "/static/non-existent-file.html"</a></li>
-					<li><a href="/static/forbidden.html">link to "/static/forbidden.html"</a></li>
+					<li><a href="/public/static/non-existent-file.html">link to "/static/non-existent-file.html"</a></li>
+					<li><a href="/public/static/forbidden.html">link to "/static/forbidden.html"</a></li>
 				</ul>
 
 				<p>If a webadmin wishes to set a <strong>custom error page</strong> for the website,
@@ -184,7 +184,7 @@ location /autoindexed/ {
 
 
 
-				<p><a href="/static/get.html">Next: POST method</a></p>
+				<p><a href="/public/static/post.html">Next: POST method</a></p>
 			</div>
 			<br>
 			<div id="photoContainer" class="bloc display-row">

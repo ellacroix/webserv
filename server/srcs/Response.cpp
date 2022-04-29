@@ -135,7 +135,7 @@ std::vector<std::string> getDirectoryContent( std::string pathDir, std::string p
 			entryLink = fillTag("h1", "Index of " + pathDir);
 			entryLink += "<hr><pre>";
 			entryLink += fillTag("a href=\"../\"", "../");
-			dirLst.push_back(entryLink);
+			dirLst.insert(dirLst.begin(), entryLink);
 		}
 		else
 		{
