@@ -64,7 +64,7 @@ int	Response::processRequest()
 		else
 		{
 			this->client->status_code = getCgiStatusCode(header);
-			this->construct200OkCgi();
+			this->constructCgi();
 			return (SUCCESS);
 		}
 	}
