@@ -1,60 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>CGI</title>
-		<!-- <link rel="stylesheet" href="public/css/home.css"> -->
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-		<link rel="stylesheet" href="/public/css/style.css">
 
-	</head>
-	<body>
-		<nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark bg-dark main-nav">
-			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-				<div class="navbar-nav">
-					<a class="nav-item nav-link active" href="/">Home</a>
-					<a class="nav-item nav-link" href="/public/html/tests.html">Tests</a>
-					<a class="nav-item nav-link" href="/public/html/conf.html">Configuration File</a>
-					<a class="nav-item nav-link" href="/public/html/readme.html">Readme</a>
-					<a class="nav-item nav-link" href="/public/media/subject.pdf">Subject</a>
-					<a class="nav-item nav-link" href="https://datatracker.ietf.org/doc/html/rfc2016">RFC 2616</a>
+<head>
+	<meta charset="UTF-8">
+	<title>CGI</title>
+	<!-- <link rel="stylesheet" href="public/css/home.css"> -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<link rel="stylesheet" href="/public/css/style.css">
+
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark bg-dark main-nav">
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link active" href="/">Home</a>
+				<a class="nav-item nav-link" href="/public/html/tests.html">Tests</a>
+				<a class="nav-item nav-link" href="/public/html/conf.html">Configuration File</a>
+				<a class="nav-item nav-link" href="/public/html/readme.html">Readme</a>
+				<a class="nav-item nav-link" href="/public/media/subject.pdf">Subject</a>
+				<a class="nav-item nav-link" href="https://datatracker.ietf.org/doc/html/rfc2016">RFC 2616</a>
+			</div>
+		</div>
+	</nav>
+	<section>
+		<div id="mainContainer" class="center display-col">
+			<div class="bloc display-row">
+				<img id=schoolLogo src="/public/media/42logo.svg" alt="42logo">
+				<div class="line"></div>
+				<h1 class="title">WEBSERV</h1>
+			</div>
+			<div class="bloc description">
+				<p><strong>GET</strong> method </p>
+			</div>
+			<div class="bloc display-row">
+			</div>
+		</div>
+
+		<div id="presentation" style="width:60%; margin:auto; background-color: #bcbdbe; padding: 50px">
+			<h3><strong><code>CGI basics</code></strong></h3>
+			<p>In computing, Common Gateway Interface (CGI) is an interface specification
+				that enables web servers to execute an external program, typically to process user requests.</p>
+			<p>Such programs are often written in a scripting language and are commonly referred to as CGI scripts, but
+				they may include compiled programs.</p>
+			<p>A typical use case occurs when a Web user submits a Web form on a web page that uses CGI :</p>
+			<div class="input-group mb-3">
+				<input name="email" type="text" class="form-control" placeholder="login">
+				<div class="input-group-append">
+					<span class="input-group-text" id="basic-addon2">@student.42.fr</span>
 				</div>
 			</div>
-		</nav>
-		<section>
 
-			<div id="mainContainer" class="center display-col">
-				<div class="bloc display-row">
-					<img id=schoolLogo src="/public/media/42logo.svg" alt="42logo">
-					<div class="line"></div>
-					<h1 class="title">WEBSERV</h1>
-				</div>
-				<div class="bloc description">
-					<p><strong>GET</strong> method </p>
-				</div>
-				<div class="bloc display-row">
-				</div>
-			</div>
-
-			<div id="presentation" style="width:60%; margin:auto; background-color: #bcbdbe; padding: 50px">
+			<pre><code>&lt;form action=&quot;email.php&quot; method=&quot;...&quot;&gt;
+	&lt;input name=&quot;email&quot;&gt;
+&lt;/form&gt;</code></pre>
+			<p>The form's data is sent to the Web server within an HTTP request with a URL denoting a CGI script
+				<strong><code>email.php</code></strong>.</p>
+				<strong class="text-decoration-underline">Script email.php:</strong>
+				<pre><code>Your email address is: &lt;?php echo $_GET[&quot;email&quot;]; ?&gt;</code></pre>
 
 
+			<strong class="text-decoration-underline">The minimum environment variables to set before running the script:</strong>
+
+			<ul>
+				<li>REDIRECT_STATUS</li>
+				<li>SCRIPT_FILENAME</li>
+				<li>REQUEST_METHOD</li>
+				<li>CONTENT_LENGTH</li>
+				<li>QUERY_STRING</li>
+				<li>CONTENT_TYPE</li>
+			</ul>
+			<strong class="text-decoration-underline">After setting these variables you can run:</strong>
+
+			<pre><code>/usr/bin/php-cgi email.php</code></pre>
+
+			<p>The Web server then launches the CGI script in a new computer process, passing the form data to it.</p>
+			
+			<strong class="text-decoration-underline">Output of php-cgi execution:</strong>
+			<pre><code>Content-type: text/html; charset=UTF-8
+
+Your email address is: login@student.42.fr</code></pre>
+			<p>The output of the CGI script, usually in the form of HTML, is returned by the script to the Web server,
+				and
+				the server relays it back to the browser as its response to the browser's request.
+			</p>
+			<pre><code>
+
+</code></pre>
+
+			<p>The method attribute specifies how to send form-data.The form-data can be sent as URL variables
+				with <strong><code>method="get"</code></strong>
+				or as HTTP post transaction with <strong><code>method="get"</code></strong>.</p>
+			<p><em>For the following explanations we will use PHP to run the cgi part.</em></p>
+			<hr>
+			<h3><strong><code>GET Method</code></strong></h3>
 
 
 
-				<h3><strong><code>BUILD CGI ?</code></strong></h3>
-				
+			<hr>
+			<h3><strong><code>POST Method</code></strong></h3>
 
+			<p><a href="/public/static/cgi.html">Next: CGI</a></p>
+		</div>
+		<br>
+		<div id="photoContainer" class="bloc display-row">
+			<img src="/public/media/ellacroi.jpeg" title="ellacroi " alt="user">
+			<img src="/public/media/axaidan.jpeg" title="axaidan" alt="user">
+			<img src="/public/media/jboisser.jpeg" title="jboisser" alt="user">
+		</div>
+	</section>
+</body>
 
-
-				<p><a href="/public/static/cgi.html">Next: CGI</a></p>
-			</div>
-			<br>
-			<div id="photoContainer" class="bloc display-row">
-				<img src="/public/media/ellacroi.jpeg" title="ellacroi "alt="user">
-				<img src="/public/media/axaidan.jpeg" title="axaidan" alt="user">
-				<img src="/public/media/jboisser.jpeg" title="jboisser" alt="user">
-			</div>
-		</section>
-	</body>
 </html>
