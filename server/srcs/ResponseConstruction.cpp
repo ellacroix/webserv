@@ -118,9 +118,10 @@ void	Response::constructError()
 	if (body.empty())
 	{
 		body.append("<html>\r\n");
-		body.append("<head><title>" + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
+		body.append("<head><title>webserv " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</title></head>\r\n");
 		body.append("<body>\r\n");
-		body.append("<center><h1> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h1></center>\r\n");
+		body.append("<center><h1><strong>WEBSERV - ERROR</strong></h2></center>\r\n");
+		body.append("<center><h2> DEFAULT PAGE " + numberToString(client->status_code) + getErrorMessage(client->status_code) + "</h2></center>\r\n");
 		body.append("</body>\r\n");
 		body.append("</html>\r\n");
 	}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>GET method</title>
+		<!-- <link rel="stylesheet" href="public/css/home.css"> -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<link rel="stylesheet" href="/public/css/style.css">
+
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark bg-dark main-nav">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav">
+					<a class="nav-item nav-link active" href="/">Home</a>
+					<a class="nav-item nav-link" href="/public/html/tests.html">Tests</a>
+					<a class="nav-item nav-link" href="/public/html/conf.html">Configuration File</a>
+					<a class="nav-item nav-link" href="/public/html/readme.html">Readme</a>
+					<a class="nav-item nav-link" href="/public/media/subject.pdf">Subject</a>
+					<a class="nav-item nav-link" href="https://datatracker.ietf.org/doc/html/rfc2016">RFC 2616</a>
+				</div>
+			</div>
+		</nav>
+		<section>
+
+			<div id="mainContainer" class="center display-col">
+				<div class="bloc display-row">
+					<img id=schoolLogo src="/public/media/42logo.svg" alt="42logo">
+					<div class="line"></div>
+					<h1 class="title">WEBSERV</h1>
+				</div>
+				<div class="bloc description">
+					<p><strong>GET</strong> method </p>
+				</div>
+				<div class="bloc display-row">
+				</div>
+			</div>
+
+			<div id="presentation" style="width:60%; margin:auto; background-color: #bcbdbe; padding: 50px">
+
+
+
+
+
+				<h3><strong><code>GET files</code></strong></h3>
+				<p>Most of web browsing is probably done using the <strong><code>GET</code> method.</strong> </p>
+				<p>The page you're reading was sent to the browser as a server response
+				to a client request like :</p>
+
+				<pre><code>GET /html/get.html HTTP/1.1</code></pre>
+
+				<p>Using this method, you can <strong><code>GET</code></strong> some server's resources using the following links :</p>
+				<ul>
+					<li><a href="/media/jboisser.jpeg">Jessica Boisserand's picture</a></li>
+					<li><a href="/media/42logo.svg">42 school logo</a></li>
+					<li><a href="/media/subject.pdf">webserv's subject pdf</a></li>
+				</ul>
+
+				<hr>
+
+
+
+
+
+
+				<h3><strong><code>GET folders</code></strong></h3>
+				<p>When your URI is slash ('<code>/</code>') terminated,
+				you are making a request for a <strong>directory</strong> in the server's file system.</p>
+				<p>Assuming the <strong>directory</strong> does exist, different situations occur
+				depending on the configuration you set up in the configuration file:</p>
+				
+				<p>If the <strong><code>index</code></strong> directive was set (<code>index file.html</code>),
+						<strong>webserv</strong> will attempt to open and read "<code>file.html</code>" in the requested directory.</p>
+				<p>The two following links are equivalent:</p>
+				<ul>
+					<li><code><a href="/">localhost:8000/</a></code></li>
+					<li><code><a href="/index.html">localhost:8000/index.html</a></code></li>
+				</ul>
+				<p>They take you to the root of this website thanks to the following directive:</p>
+				<pre><code>index index.html</code></pre>
+
+				<p>If the <strong><code>autoindex</code></strong> directive was set (<code>autoindex on</code>)
+					<strong>webserv</strong> will respond an automatically generated directory listing with links to the resources.</p>
+				<p>The following link will take you to a a folder with an automatically generated <code>autoindex</code>:</p>
+				<ul><li><a href="/autoindexed/">link to "/autoindexed/"</a></li></ul>
+				<p>thanks to the following <code>location</code> configuration:</p>
+				<pre><code>
+location /autoindexed/ {
+    <strong>autoindex on</strong>
+    root /srcs/public/autoindexed/
+}
+				</code></pre>
+
+
+
+				<hr>
+
+
+
+
+
+
+				<h3><strong><code>Status codes</code></strong></h3>
+				<p>HTTP provides a set of <strong><code>status codes</code></strong>
+				describing the result of the request processing,
+				wether it was succesful or it produced an error:</p>
+				<ul>
+					<li><strong>success</strong> codes range <code>2xx</code>
+						("<code>200 OK</code>", "<code>201 Created</code>")</li>
+					<li>http <strong>redirection</strong> codes range <code>3xx</code>
+						("<code>301 Moved Permanently</code>", "<code>307 Temporary Redirect</code>")</li>
+				</ul>
+				<p>There are two types of <strong>errors</strong> :</p>
+				<ul>
+					<li><strong>client side error</strong> codes range <code>4xx</code> ("<code>404 Not Found</code>", "<code>403 Forbidden</code>")</li>
+					<li><strong>sever side error</strong> codes range <code>5xx</code> ("<code>500 Internal Server Error</code>", "<code>501 Not Implemented</code>")</li>
+				</ul>
+
+				<hr>
+
+
+
+
+
+
+				<h3><strong><code>Error pages</code></strong></h3>
+				<p>In case an error occured, <strong>webserv</strong> generates a default error page
+				that will display the status code and the associated description.</p>
+
+				<p>The following links will return error status codes as response with <strong>webserv</strong>'s default error page:</p>
+				<ul>
+					<li><a href="/static/non-existent-file.html">link to "/static/non-existent-file.html"</a></li>
+					<li><a href="/static/forbidden.html">link to "/static/forbidden.html"</a></li>
+				</ul>
+
+				<p>If a webadmin wishes to set a <strong>custom error page</strong> for the website,
+				it may do so using the "<strong><code>error_page</code></strong>"
+				directive in the configuration file.</p>
+				<p>For example, setting the following directive in a <strong><code>server</code></strong>
+				block in the configuration file: </p>
+
+				<pre><code>error_page 404 /path/to/error_page.html</code></pre>
+
+				<p><strong>webserv</strong> will send the file "custom_error_page.html" as the body of the response, assuming it does exist.</p>
+
+				<p>The following link (to another virtual server) will return a custom
+				<strong>error page</strong> as set by the <code>error_page</code> directive in the configuration file.</p>
+				
+
+				<hr>
+
+
+
+
+
+
+
+
+
+
+
+				<h3><strong><code>HTTP redirection</code></strong></h3>
+				<p>You can set a HTTP redirection in a location block,
+				<strong>webserv</strong> supports 302 and 307 redirection codes.</p>
+				<p>When a server responds to the client with one of those status,
+				the client is supposed to make a new request for the resource at a different URI,
+				which will be specified in the response in the "Location:" header.</p>
+				<p>Let's assume resources were initially in a location in the server file system,
+				but were moved to another location for system administration or architectural reasons.
+				All the links pointing to the initial location should be modified accordingly.
+				This could be done in the website, but not on all the other external websites pointing to the moved location.</p>
+				<p>Setting a HTTP redirection in <strong>webserv</strong> is done using the "return" directive,
+				with a redirection status code and the new location for the resources. For example "return 302 /new-uri/".</p>
+				<p>This way, the content of the website can remain unmodified,
+				a request to a location that doesn't hold the resource anymore can redirect to the new-location.</p>
+
+				<p>The following link points to localhost:8000/ancient-location/file.txt.</p>
+				<p>When you will click on it :</p>
+				<ul>
+					<li><strong>webserv</strong> will answer "302 Moved Permanently" with a "Location: /new-location/file.txt" header</li>
+					<li>browser will automatically renew the request to the new URI specified in the "Location" header</li>
+					<li><strong>webserv</strong> can then retrieve the resource at the new-location</li>
+				</ul>
+
+
+
+				<p><a href="/static/get.html">Next: POST method</a></p>
+			</div>
+			<br>
+			<div id="photoContainer" class="bloc display-row">
+				<img src="/public/media/ellacroi.jpeg" title="ellacroi "alt="user">
+				<img src="/public/media/axaidan.jpeg" title="axaidan" alt="user">
+				<img src="/public/media/jboisser.jpeg" title="jboisser" alt="user">
+			</div>
+		</section>
+	</body>
+</html>

@@ -65,7 +65,7 @@ run			:	${NAME}
 			./webserv confs/nginx.conf
 
 conf		:
-			sed "s|_PWD|$PWD|g" confs/template.conf > perso.conf
+			sed 's|_PWD|$(PWD)|g' confs/template.conf > confs/perso.conf
 
 
 sanitize	:	${OBJS}
