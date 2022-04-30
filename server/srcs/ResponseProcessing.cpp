@@ -103,10 +103,7 @@ int		Response::methodGET(void)
 			//std::cout << "=== FILE IS FOUND" << std::endl;
 			if (this->client->status_code == 0)
 				this->client->status_code = 200;
-			if (isCgi(this->path))
-				this->construct200OkCgi();
-			else
-				this->construct200Ok();
+			this->construct200Ok();
 			return (SUCCESS);
 		}
 		else 
@@ -132,10 +129,7 @@ int		Response::methodGET(void)
 				if (canRead(this->path) == true)
 				{
 					this->client->status_code = 200;
-					if (isCgi(this->path))
-						this->construct200OkCgi();
-					else
-						this->construct200Ok();
+					this->construct200Ok();
 					return (SUCCESS);
 				}
 				else
@@ -175,12 +169,6 @@ int		Response::methodPOST(void)
 //	size_t		n;
 //
 	// ADD THIS PROVISIONALLY JUST FOR TEST
-	if (this->isCgi(this->path))
-	{
-		this->construct200OkCgi();
-		return (SUCCESS);
-	}
-	// ------------------------------------
 
 	if (this->path[this->path.length() - 1] != '/')		//REQUEST A FILE
 	{

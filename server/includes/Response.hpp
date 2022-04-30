@@ -63,7 +63,7 @@ public:
 
 	//	FILE - ResponseConstruction.cpp
 	void		construct200Ok(void);
-	void		construct200OkCgi(void);
+	void		constructCgi(void);
 	void		construct200Deleted(void);
 	void		construct201Created(void);
 	void		constructRedirection(void);

@@ -154,5 +154,6 @@ bool canExecute(std::string path);
 char	*ft_strdup(const char *src);
 char	*ft_strdup(std::string src);
 void	deleteArray(char **array);
+int		getCgiStatusCode(std::string header);
 
 #endif

@@ -43,7 +43,7 @@ void            Response::construct200Ok(void)
 	this->raw_response.append(body);
 }
 
-void            Response::construct200OkCgi(void)
+void            Response::constructCgi(void)
 {
     std::string line;
 	std::string	extension;
