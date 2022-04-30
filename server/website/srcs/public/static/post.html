@@ -42,7 +42,117 @@
 
 
 				<h3><strong><code>POST method</code></strong></h3>
-				
+				<p>Here is the description of the
+				<strong><code>POST</code></strong>
+				method according to <code>RFC2616</code>:</p>
+
+				<pre><code>The <strong><code>POST</code></strong> method is used to request that the origin server accept the entity enclosed in the request as a new subordinate of the resource identified by the Request-URI in the Request-Line.</code></pre>
+
+				<p>In <strong>webserv</strong>,
+				a non-cgi <strong><code>POST</code></strong>
+				request will create the entity enclosed in the body of the request
+				as a new file on the server's file system,
+				at the location specified by the request URI.</p>
+				<p>It means a <strong><code>POST</code></strong> request will
+				replace a pre-existing file.</p>
+				<p>Those actions are performed only if writing is allowed for the path.</p>
+				<p>It is then the responsibility of the
+				<strong>website administrator</strong>
+				to edit the permissions of its file system.</p>
+				<p>Please note that, unless configured with
+				<code>client_max_body_size</code>
+				directive in the configuration file, <strong>webserv</strong>
+				has a default maximum body size set to 30Mbytes.</p>
+
+				<p>There are different protocols involved in sending a request body
+				to the server. <strong>webserv</strong> handles the following:</p>
+				<ul>
+					<li>sent in one block</li>
+					<li>sent in "chunks"</li>
+					<li>sent in "multipart/form-data"</li>
+				</ul>
+
+				<p>The protocol used for a request is enclosed
+				in the Transfer-Encoding header of the request.</p>
+
+				<hr>
+				<h3><strong><code>POST requests</code></strong></h3>
+
+				<p>We could not find a way to test the file
+				<strong><code>POST</code></strong>ing
+				in one block or in chunks using HTML forms.</p>
+				<p>This means you will need to use the Command Line Interface
+				rather than a web browser in order to try those features.</p>
+				<p>The easiest way to try them is to use curl,
+				"a tool to transfer data from or to a server".</p>
+
+				<hr>
+				<h3><strong><code>POST in one block</code></strong></h3>
+
+				<p>We will try to upload the file
+				"<code>/path/to/repo/server/test_files/schema.png</code>"
+				at URI "<code>/media/</code>".</p>
+				<ol>
+					<li><p>To check that the file is not alreay uploaded,
+						try to <code>GET</code> in Firefox:</p>
+						<pre><code><a href="/media/schema.png">/media/schema.png</a></code></pre>
+						<p>You should be returned the
+						default error page for error <code>404</code>.</p>
+					</li>
+
+					<li>
+						<p>Now open the terminal and try the following:</p>
+						<pre><code>$> curl -X POST -H "Content-Type: plain/text"-T schema.png http://localhost:8000/media/</code></pre>
+
+						<p>This command will try to upload the file
+						<code>schema.png</code> in one go.</p>
+						<p>If the request was successful,
+						the response sent to curl will contain a link
+						to the path the file was uploaded to,
+						with a "
+						<strong><code>201 Created</code></strong>" status code.</p>
+					</li>
+
+					<li>
+						<p>Now try to access the <a href="/media/schema.png">URI</a>
+						from step 1 again.</p>
+						<p>You should see the file you uploaded displayed by the browser.</p>
+					</li>
+				</ol>
+
+				<hr>
+				<h3><strong><code>POST chunked</code></strong></h3>
+
+				<p>We will now try to upload the file
+				"<code>/path/to/repo/test_files/holygraph.png</code>"
+				at URI "<code>/media/</code>".</p>
+				<p>This time we check that <strong>webserv</strong> supports a "chunked" Transfer-Encoding.</p>
+
+				<ol>
+
+					<li>
+						<p>To check that the file is not alreay uploaded, try to GET in Firefox:</p>
+
+						<pre><code><a href="/media/holygraph.png">/media/holygraph.png</a></code></pre>
+
+						<p>You should again be returned the default
+						error page for error <code>404</code>.</p>
+					</li>
+
+					<li>
+						<p>Now open the terminal and try the following:</p>
+
+						<pre><code>$> curl -X POST -H "Transfer-Encoding: chunked" -T test_files/holygraph.png http://localhost:8000/media/</code></pre>
+					</li>
+
+					<li>
+						<p>Now try to access the <a href="/media/holygraph.png">URI</a> from
+						step 1 again.</p>
+						<p>You should see the file you uploaded displayed by the browser.</p>
+					</li>
+				</ol>
+
+
 
 
 				<hr>

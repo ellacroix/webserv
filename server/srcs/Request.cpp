@@ -173,7 +173,8 @@ unsigned int	Request::parseReqLine(void)
 unsigned int	Request::parseBody(void)
 {
 	//De-activated until config manages clientMaxBodySize in VS
-	if (_body.size() > _virtual_server->getClientMaxBodySize())
+	if (_virtual_server->_client_max_body_size_is_set == true
+			&& _body.size() > _virtual_server->getClientMaxBodySize())
 		return (413);
 	
 	if (_method == "POST")
