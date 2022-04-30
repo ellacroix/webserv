@@ -42,7 +42,59 @@
 
 
 				<h3><strong><code>DELETE method</code></strong></h3>
-				
+				<p>Here is the description of the
+				<strong><code>DELETE</code></strong>
+				method according to <code>RFC2616</code>:</p>
+
+				<pre><code>The <strong><code>DELETE</code></strong> method requests that the origin server delete the resource identified by the Request-URI.</code></pre>
+
+				<p>In <strong>webserv</strong>,
+				a non-cgi <strong><code>DELETE</code></strong>
+				request will remove the resource identified by the request URI
+				from the server's file system.
+				<p>Those actions are performed only if writing is allowed for the path.</p>
+				<p>It is then the responsibility of the
+				<strong>website administrator</strong>
+				to edit the permissions of its file system.</p>
+
+				<hr>
+				<h3><strong><code>DELETE requests</code></strong></h3>
+
+				<p>We could not find a way to test the file
+				<strong><code>DELETE</code></strong>ing using HTML forms.</p>
+				<p>The we will use <strong><code>curl</code></strong>,
+				again to test the <strong><code>DELETE</code></strong> feature.</p>
+
+				<p>We will try to remove the previously uploaded file
+				"<code>/path/to/repo/server/test_files/schema.png</code>"
+				at URI "<code>/media/schema.png</code>".</p>
+				<ol>
+					<li><p>To check that the file still exists,
+						try to <code>GET</code> in Firefox:</p>
+						<pre><code><a href="/media/schema.png">/media/schema.png</a></code></pre>
+						<p>You should see the file you uploaded displayed by the browser.</p>
+					</li>
+
+					<li>
+						<p>Now open the terminal and try the following:</p>
+						<pre><code>$> curl -v -X DELETE http://localhost:8000/media/schema.png</code></pre>
+						<p>This command will try to remove the file
+						<code>schema.png</code> using the
+						<strong><code>DELETE</code></strong>.</p>
+						<p>If the request was successful,
+						the response sent to curl will contain a body
+						specifying that the removal was performed for the URI with a
+						"<strong><code>200 OK</code></strong>" status code.</p>
+					</li>
+
+					<li>
+						<p>Now try to access the <a href="/media/schema.png">URI</a>
+						from step 1 again.</p>
+						<p>You should be returned the
+						default error page for error <code>404</code>.</p>
+					</li>
+				</ol>
+			
 
 
 				<hr>

@@ -65,11 +65,11 @@
 				has a default maximum body size set to 30Mbytes.</p>
 
 				<p>There are different protocols involved in sending a request body
-				to the server. <strong>webserv</strong> handles the following:</p>
+				to the server. <strong>webserv</strong> natively handles the following:</p>
 				<ul>
 					<li>sent in one block</li>
 					<li>sent in "chunks"</li>
-					<li>sent in "multipart/form-data"</li>
+					<!--<li>sent in "multipart/form-data"</li>-->
 				</ul>
 
 				<p>The protocol used for a request is enclosed
@@ -81,10 +81,10 @@
 				<p>We could not find a way to test the file
 				<strong><code>POST</code></strong>ing
 				in one block or in chunks using HTML forms.</p>
-				<p>This means you will need to use the Command Line Interface
+				<p>This means you will need to use the <code>Command Line Interface</code>
 				rather than a web browser in order to try those features.</p>
-				<p>The easiest way to try them is to use curl,
-				"a tool to transfer data from or to a server".</p>
+				<p>The easiest way to try them is to use <strong><code>curl</code></strong>,
+				"<code>a tool to transfer data from or to a server</code>".</p>
 
 				<hr>
 				<h3><strong><code>POST in one block</code></strong></h3>
@@ -102,7 +102,7 @@
 
 					<li>
 						<p>Now open the terminal and try the following:</p>
-						<pre><code>$> curl -X POST -H "Content-Type: plain/text"-T schema.png http://localhost:8000/media/</code></pre>
+						<pre><code>$> curl -v -X POST -H "Content-Type: plain/text"-T schema.png http://localhost:8000/media/</code></pre>
 
 						<p>This command will try to upload the file
 						<code>schema.png</code> in one go.</p>
@@ -142,7 +142,7 @@
 					<li>
 						<p>Now open the terminal and try the following:</p>
 
-						<pre><code>$> curl -X POST -H "Transfer-Encoding: chunked" -T test_files/holygraph.png http://localhost:8000/media/</code></pre>
+						<pre><code>$> curl -v -X POST -H "Transfer-Encoding: chunked" -T test_files/holygraph.png http://localhost:8000/media/</code></pre>
 					</li>
 
 					<li>
@@ -151,9 +151,6 @@
 						<p>You should see the file you uploaded displayed by the browser.</p>
 					</li>
 				</ol>
-
-
-
 
 				<hr>
 
