@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>5-DELETE method</title>
+		<!-- <link rel="stylesheet" href="public/css/home.css"> -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+		<link rel="stylesheet" href="/public/css/style.css">
+
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-sm navbar-fixed-top navbar-dark bg-dark main-nav">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav">
+					<a class="nav-item nav-link active" href="/">Home</a>
+					<a class="nav-item nav-link" href="/public/html/conf.html">Configuration File</a>
+					<a class="nav-item nav-link" href="/public/html/readme.html">Readme</a>
+					<a class="nav-item nav-link" href="/public/media/subject.pdf">Subject</a>
+					<a class="nav-item nav-link" href="https://datatracker.ietf.org/doc/html/rfc2016">RFC 2616</a>
+				</div>
+			</div>
+		</nav>
+		<section>
+
+			<div id="mainContainer" class="center display-col">
+				<div class="bloc display-row">
+					<img id=schoolLogo src="/public/media/42logo.svg" alt="42logo">
+					<div class="line"></div>
+					<h1 class="title">WEBSERV</h1>
+				</div>
+				<div class="bloc description">
+					<p>5 - <strong>DELETE</strong> method </p>
+				</div>
+				<div class="bloc display-row">
+				</div>
+			</div>
+
+			<div id="presentation" style="width:60%; margin:auto; background-color: #bcbdbe; padding: 50px">
+
+
+
+
+
+				<h3><strong><code>DELETE method</code></strong></h3>
+				<p>Here is the description of the
+				<strong><code>DELETE</code></strong>
+				method according to <code>RFC2616</code>:</p>
+
+				<pre><code>The <strong><code>DELETE</code></strong> method requests that the origin server delete the resource identified by the Request-URI.</code></pre>
+
+				<p>In <strong>webserv</strong>,
+				a non-cgi <strong><code>DELETE</code></strong>
+				request will remove the resource identified by the request URI
+				from the server's file system.
+				<p>Those actions are performed only if writing is allowed for the path.</p>
+				<p>It is then the responsibility of the
+				<strong>website administrator</strong>
+				to edit the permissions of its file system.</p>
+
+				<hr>
+				<h3><strong><code>DELETE requests</code></strong></h3>
+
+				<p>We could not find a way to test the file
+				<strong><code>DELETE</code></strong>ing using HTML forms.</p>
+				<p>The we will use <strong><code>curl</code></strong>,
+				again to test the <strong><code>DELETE</code></strong> feature.</p>
+
+				<p>We will try to remove the previously uploaded file
+				"<code>/path/to/repo/server/test_files/schema.png</code>"
+				at URI "<code>/media/schema.png</code>".</p>
+				<ol>
+					<li><p>To check that the file still exists,
+						try to <code>GET</code> in Firefox:</p>
+						<pre><code><a href="/media/schema.png">/media/schema.png</a></code></pre>
+						<p>You should see the file you uploaded displayed by the browser.</p>
+					</li>
+
+					<li>
+						<p>Now open the terminal and try the following:</p>
+						<pre><code>$> curl -v -X DELETE http://localhost:8000/media/schema.png</code></pre>
+						<p>This command will try to remove the file
+						<code>schema.png</code> using the
+						<strong><code>DELETE</code></strong>.</p>
+						<p>If the request was successful,
+						the response sent to curl will contain a body
+						specifying that the removal was performed for the URI with a
+						"<strong><code>200 OK</code></strong>" status code.</p>
+					</li>
+
+					<li>
+						<p>Now try to access the <a href="/media/schema.png">URI</a>
+						from step 1 again.</p>
+						<p>You should be returned the
+						default error page for error <code>404</code>.</p>
+					</li>
+				</ol>
+			
+
+
+				<hr>
+
+				<p><a href="/static/post.html">Prv: 4 - POST method</a></p>
+				<p><a href="/static/config.html">Next: 6 - Configuration</a></p>
+			</div>
+			<br>
+			<div id="photoContainer" class="bloc display-row">
+				<img src="/public/media/ellacroi.jpeg" title="ellacroi "alt="user">
+				<img src="/public/media/axaidan.jpeg" title="axaidan" alt="user">
+				<img src="/public/media/jboisser.jpeg" title="jboisser" alt="user">
+			</div>
+		</section>
+	</body>
+</html>

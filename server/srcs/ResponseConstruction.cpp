@@ -258,7 +258,7 @@ void	Response::construct200Deleted(void)
 		body.append("<body>\r\n");
 		body.append("<center><h1> The file "
 			   + this->request->_URI
-			   + "was succesfully deleted</h1></center>\r\n");
+			   + " was succesfully deleted</h1></center>\r\n");
         body.append("</body>\r\n");
 		body.append("</html>\r\n");
 	}
