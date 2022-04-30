@@ -32,7 +32,7 @@
 				<h1 class="title">WEBSERV</h1>
 			</div>
 			<div class="bloc description">
-				<p><strong>GET</strong> method </p>
+				<p><strong>CGI</strong> method </p>
 			</div>
 			<div class="bloc display-row">
 			</div>
@@ -76,6 +76,15 @@
 
 			<hr>
 			<h3><strong><code>POST Method</code></strong></h3>
+			<form action="/public/scripts/email_post.php" method="post">
+				<div class="input-group mb-3">
+					<input name="email" type="text" class="form-control" placeholder="login">
+					<div class="input-group-append">
+						<span class="input-group-text" id="basic-addon2">@student.42.fr</span>
+					</div>
+					<input type="submit" class="btn btn-primary">
+				</div>
+			</form>
 			<p>With POST, form data appears within the message body of the HTTP request. </p>
 			<strong class="text-decoration-underline">Request send by Mozilla:</strong>
 			<pre><code>POST /scripts/email.php HTTP/1.1
