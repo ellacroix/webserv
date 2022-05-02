@@ -57,7 +57,6 @@ int	Response::processRequest()
 	{
 		if (executeCgi() == -1)
 		{
-			this->client->status_code = 505;
 			this->constructError();
 			return (SUCCESS);
 		}

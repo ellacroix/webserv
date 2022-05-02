@@ -134,13 +134,15 @@ int	 Response::executeCgi()
 	env = setCgiEnvironnement(this->request, this->path);
 
 	code = executeBinaryCgi(argv, env, fds, fd, this->request->_method);
-	if (code/256 == 50)
-		client->status_code = 500;
-
-	readResponseBuffer(this->header, this->body, fds[0]);
-
 	deleteArray(argv);
 	deleteArray(env);
+	if (code/256 == 50)
+	{
+		client->status_code = 500;
+		return (-1);
+	}
+
+	readResponseBuffer(this->header, this->body, fds[0]);
 	return (0);
 }
 

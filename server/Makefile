@@ -85,6 +85,6 @@ leaks		:	$(NAME)
 			--child-silent-after-fork=yes \
 			--leak-check=full --show-leak-kinds=all --track-origins=yes \
 			--log-file=valgrind-out.txt \
-			./webserv confs/nginx.conf
+			./webserv confs/perso.conf
 
 .PHONY		:	all re clean fclean
