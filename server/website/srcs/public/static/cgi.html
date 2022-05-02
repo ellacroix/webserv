@@ -69,14 +69,24 @@
 
 			<hr>
 			<h3><strong><code>GET Method</code></strong></h3>
+			<form action="/scripts/email_get.php" method="get">
+				<div class="input-group mb-3">
+					<input name="email" type="text" class="form-control" placeholder="login">
+					<div class="input-group-append">
+						<span class="input-group-text" id="basic-addon2">@student.42.fr</span>
+					</div>
+					<input type="submit" class="btn btn-primary">
+				</div>
+			</form>
 			<p>When the method is GET, all form data is encoded into the URL, appended to the action URL as query string
 				parameters.
 			</p>
 			<pre><code>http://localhost:8000/scripts/email.php?<b class="text-danger">email=login@student.42.fr</b></code></pre>
 
 			<hr>
+
 			<h3><strong><code>POST Method</code></strong></h3>
-			<form action="/public/scripts/email_post.php" method="post">
+			<form action="/scripts/email_post.php" method="post">
 				<div class="input-group mb-3">
 					<input name="email" type="text" class="form-control" placeholder="login">
 					<div class="input-group-append">
@@ -131,7 +141,30 @@ Content-type: text/html; charset=UTF-8
 	
 Your email address is: login@student.42.fr.
 </code></pre>
+<hr>
 
+<h3><strong><code>Calculator</code></strong></h3>
+<form action="/scripts/calculator.php" method ="post" name ="form" class="inline">
+	<div class="input-group">
+	  <input name="1" type="text" class="form-control" id="inlineFormInputName2" placeholder="Number 1">
+  
+	  <select name="operateur" class="custom-select form-control form-control-lg" style="width: 50px; text-align-last:center"required>
+				  <option value="multiplication">×</option>
+				  <option value="addition">+</option>
+				  <option value="division">÷</option>
+				  <option value="soustraction">−</option>
+				  <option value="puissance">*</option>
+	  </select>
+	  <input name="2" type="text" class="form-control" id="inlineFormInputGroupUsername2" placeholder="Number 2">
+	<button type="submit" class="btn btn-primary">Calculate</button>
+  
+  </div>
+  
+  
+  </form>
+  
+
+<hr>
 			<p><a href="/public/static/cgi.html">Next: CGI</a></p>
 		</div>
 		<br>
