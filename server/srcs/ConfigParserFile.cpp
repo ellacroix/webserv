@@ -1,7 +1,8 @@
 #include "webserv.hpp"
 #include "ConfigParser.hpp"
 
-void				ConfigParser::parse(char *arg)
+//void				ConfigParser::parse(char *arg)
+int					ConfigParser::parse(char *arg)
 {
 	int					ret;
 
@@ -10,7 +11,7 @@ void				ConfigParser::parse(char *arg)
 	{
 		std::cerr << "webserv\t- ERROR - failed to open(2) \""
 			<< arg << "\" file." << std::endl;
-		exit(1);
+		return (1);
 	}
 	this->_dir = DIR_ERROR;
 	while (std::getline(this->_ifs, this->_cur_line))
@@ -26,7 +27,7 @@ void				ConfigParser::parse(char *arg)
 				std::cerr << "webserv\t- ERROR line " << this->_lineN << " - \"" 
 					<< this->_line[0] << "\" is not a valid directive."
 					<< std::endl;
-				exit(1);
+				return (1);
 			}
 			if (this->validateContext() == false)
 			{
@@ -35,7 +36,7 @@ void				ConfigParser::parse(char *arg)
 					<< "\" directive is not valid in this context: "
 					<< ConfigParser::_contexts[this->_context]
 					<< "." << std::endl;
-				exit(1);
+				return (1);
 			}
 			ret = validateArguments();
 			if (ret == ARG_ERROR || ret == LOC_BLCK_ERROR
@@ -62,19 +63,36 @@ void				ConfigParser::parse(char *arg)
 					std::cerr << " - server block needs at least "
 						<< "1 \"location\" block and 1 \"listen\" directive."
 						/*<< "or one \"return\" directive"*/ << std::endl;
-				exit(1);
+				return (1);
 			}
 		}
 	}
-//	this->displayPortsMap();
+	if (this->_context != MAIN_CONTEXT)
+	{
+		std::cerr << "webserv - ERROR";
+		std::cerr << " - a server or location block is not properly designed."
+			<< std::endl;
+		t_locMapIt	it;
+		t_locMapIt	ite;
+
+		it = this->_curVS->getLocationMap().begin();
+		ite = this->_curVS->getLocationMap().end();
+		while (it != ite)
+		{
+			delete (it->second);
+			it++;
+		}
+		return (1);
+	}
 	this->displayports_list();
 	if (this->validate() == false)
 	{
 		std::cerr << "webserv\t- ERROR - there is no Port to be listened to."
 			<< std::endl;
-		exit(1);
+		return (1);
 	}
 	this->_ifs.close();
+	return (0);
 }
 
 void				ConfigParser::splitLineIntoTokens(void)

@@ -32,7 +32,7 @@ enum	directives
 	ROOT,
 	AUTOINDEX,
 	INDEX,
-	RETURN,	// PASS return DIRECTIVE AS LOCATION CONTEXT ONLY ?
+	RETURN,	
 	//	VALID IN LOCATION ONLY
 	LIMIT_EXCEPT,
 	UPLOAD_FLD,
@@ -118,7 +118,8 @@ class	ConfigParser {
 		void				setDefLocTrueBoolsInCurLoc(void);
 
 		//	ConfigParserFile.cpp	
-		void		parse(char *arg);
+		int			parse(char *arg);
+//		void		parse(char *arg);
 		void		splitLineIntoTokens(void);
 		int			validateDirective(void);
 		int			validateArguments(void);

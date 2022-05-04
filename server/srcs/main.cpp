@@ -26,6 +26,8 @@ static void shutdownWebserv(int sig_int) {
 
 int main(int argc, char *argv[])
 {
+	int parsing_ret;
+
 	unlink("log.log");
 
 	logger("Start with PID: " + numberToString(syscall(__NR_gettid)));
@@ -40,10 +42,12 @@ int main(int argc, char *argv[])
 	if (argc == 1)
 	{
 		char default_path[17] = "confs/nginx.conf";
-		config.parse(default_path);
+		parsing_ret = config.parse(default_path);
 	}
 	else
-		config.parse(argv[1]);
+		parsing_ret = config.parse(argv[1]);
+	if (parsing_ret != 0)
+		return (1);
 
 	
 	//EPOLL
