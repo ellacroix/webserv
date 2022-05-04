@@ -1,0 +1,1 @@
+Your email address is: <?php echo $_POST["email"]; ?>@student.42.fr.

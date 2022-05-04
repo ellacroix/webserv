@@ -1,0 +1,48 @@
+body
+{
+	height: 100vh;
+	font-family:"Futura PT", "Futura", "Helvetica", "Sans serif";
+	color:#2c2c34;
+	background:#e8e9e9!important;
+}
+
+p
+{
+	margin: 0;
+}
+
+.display-row
+{
+	display: flex;
+	flex-direction: row;
+	/* align-items: baseline; */
+	/* align-items: flex-start; */
+	/* justify-content: center; */
+}
+
+.display-col
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.container
+{
+	border: 1px solid grey;
+	padding: 10px;
+	/* border-radius: 10px; */
+	background-color: #25262a;
+}
+
+.container img {
+	width: 300px;
+}
+
+.container
+{
+	max-width: 60%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
