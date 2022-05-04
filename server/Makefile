@@ -66,6 +66,7 @@ run			:	${NAME}
 
 conf		:
 			sed 's|_PWD|$(PWD)|g' confs/template.conf > confs/perso.conf
+			chmod -rw website/srcs/public/static/forbidden.html
 
 
 sanitize	:	${OBJS}

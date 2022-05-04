@@ -106,8 +106,8 @@ void	Response::constructError()
 	if (virtual_server->getErrorPage().find(client->status_code) != virtual_server->getErrorPage().end() && error_directive == false)
 	{
 		error_directive = true;
-		this->location = this->findLocation(this->request->_URI);
 		this->path = virtual_server->getErrorPage()[client->status_code];
+		this->location = this->findLocation(this->path);
 		this->path.replace(0, this->location->getPrefix().length(),
 			this->location->getRoot());
 		printf("ERROR PAGE: %s\n", this->path.c_str());
