@@ -43,9 +43,8 @@
 				<p>In case an error occured, <strong>webserv</strong> generates a default error page
 				that will display the status code and the associated description.</p>
 
-				<p>The following links will return error status codes as response with <strong>webserv</strong>'s default error page:</p>
+				<p>The following link will return error status codes as response with <strong>webserv</strong>'s default error page:</p>
 				<ul>
-					<li><a href="/static/non-existent-file.html">link to "/static/non-existent-file.html"</a></li>
 					<li><a href="/static/forbidden.html">link to "/static/forbidden.html"</a></li>
 				</ul>
 
@@ -59,64 +58,87 @@
 
 				<p><strong>webserv</strong> will send the file "custom_error_page.html" as the body of the response, assuming it does exist.</p>
 
-				<p>The following link (to another virtual server) will return a custom
-				<strong>error page</strong> as set by the <code>error_page</code> directive in the configuration file.</p>
+				<p>The following link will return a custom
+				<strong>error page</strong> as set by the following
+				<code>error_page</code> directive in the configuration:</p>
+				<pre><code>error_page 404 /static/404.html</code></pre>
+				<ul>
+					<li><a href="/static/non-existent-file.html">link to "/static/non-existent-file.html"</a></li>
+				</ul>
 				
 
 				<hr>
-
-
-
-
-
-
-
-
-
-
 
 				<h3><strong><code>HTTP redirection</code></strong></h3>
 				<p>You can set a HTTP redirection in a location block,
-				<strong>webserv</strong> supports 302 and 307 redirection codes.</p>
+				<strong>webserv</strong> supports 301, 302 and 307 redirection codes.</p>
 				<p>When a server responds to the client with one of those status,
-				the client is supposed to make a new request for the resource at a different URI,
-				which will be specified in the response in the "Location:" header.</p>
+				the <strong>client</strong> makes a new request for at an URI
+				specified in the response in the "<code>Location</code>" header.</p>
+				<p>The HTTP redirection in <strong>webserv</strong>
+				is designed to redirect to another location in the hosted virtual server.</p>
 				<p>Let's assume resources were initially in a location in the server file system,
-				but were moved to another location for system administration or architectural reasons.
-				All the links pointing to the initial location should be modified accordingly.
-				This could be done in the website, but not on all the other external websites pointing to the moved location.</p>
-				<p>Setting a HTTP redirection in <strong>webserv</strong> is done using the "return" directive,
-				with a redirection status code and the new location for the resources. For example "return 302 /new-uri/".</p>
-				<p>This way, the content of the website can remain unmodified,
-				a request to a location that doesn't hold the resource anymore can redirect to the new-location.</p>
+				but were moved to another location for some reason.
+				All the links pointing to the initial location should be modified accordingly.</p>
+				<p>Setting a HTTP redirection in <strong>webserv</strong> is done using the
+				"<code>return</code>" directive,
+				with a redirection status code and the new location for the resources.</p>
+				<code><pre>location /ancient-location/ {<br>	return 302 /new-location/<br>}</code></pre>
+				<p>This way, the links pointing to the ancient location can remain unmodified:
+				a request to the ancient location will be redirected to the new-location.</p>
 
-				<p>The following link points to localhost:8000/ancient-location/file.txt.</p>
-				<p>When you will click on it :</p>
+				<p>When you click on the following link pointing to 
+				<code><a href="/ancient-media-fld/holygraph.png">localhost:8000/ancient-location/file.txt</a></code>:</p>
 				<ul>
-					<li><strong>webserv</strong> will answer "302 Moved Permanently" with a "Location: /new-location/file.txt" header</li>
-					<li>browser will automatically renew the request to the new URI specified in the "Location" header</li>
+					<li><strong>webserv</strong> will answer "302 Moved Permanently" with a
+						"<code>Location: /media/file.txt</code>" header</li>
+					<li>browser should automatically renew the request to the URI specified in the
+						"<code>Location</code>" header</li>
 					<li><strong>webserv</strong> can then retrieve the resource at the new-location</li>
-					<li><a href="/ancient-media-fld/holygraph.png">link</a></li>
 				</ul>
 
 
+
 				<hr>
-				<h3><strong><code>LIMIT_EXCEPT</code></strong></h3>
-				<p> try to delete/post files in resources/ containing the files pointed to by the navbar</p>
+				<h3><strong><code>HTTP method limitation</code></strong></h3>
+				<p>The tutorial pages you are reading are located in the following block in the configuration file:</p>
+				<pre><code>location /static/ {<br>	root _PWD/website/srcs/public/static/<br>	limit_except GET<br>}</code></pre>
+				<p>The <strong><code>limit_except</code></strong> allows you to setup the allowed HTTP method for the route.</p>
+				<p>This setup makes it impossible to <code>DELETE</code> or <code>POST</code> something in this location.</p>
+				<p>You can try it by executing the following in the terminal:</p>
+				<pre><code>curl -v -X DELETE http://localhost:8000/static/config.html</code></pre>
+				<p><strong>webserv</strong> should prevent the action from being performed and return a
+				"<code>405 Method Not Allowed</code>" error.</p>
+
+
 
 				
 				<hr>
-				<h3><strong><code>CLIENT_MAX_BODY_SIZE</code></strong></h3>
-				<p> try to upload a large file in media </p>
+				<h3><strong><code>Body size limitation</code></strong></h3>
+				<p>This website was configured to allow file upload up to a size of 1Mbyte.</p>
+				<p>This was done using the <strong><code>client_max_body_size</code></strong>
+				directive in the configuration file as following:</p>
+				<pre><code>client_max_body_size 1m</code></pre>
+				<p>Trying to upload any larger file should result in a
+				"<code>413 Request Entity Too Large</code>" error.</p>
+				<p>You can test this feature using the following in the terminal:</p>
+				<pre><code>curl -v -X POST -T test_files/larger-than-1MB.png http://localhost:8000/media</pre></code>
 				
 
 				<hr>
-				<h3><strong><code>UPLOAD_FLD</code></strong></h3>
-				<p> set an upload_fld for / location </p>
-
+				<h3><strong><code>Default upload folder</code></strong></h3>
+				<p>To setup a default upload folder for a route, use the
+				<strong><code>upload_fld</code></strong> directive in a <code>location</code>
+				block in the configuration file.</p>
+				<p>We have setup a default upload folder for the "<code>/</code>" route, as following:</p>
+				<pre><code>location / {<br>	root _PWD/website/srcs/<br>	upload_fld _PWD/website/srcs/media<br>}</code></pre>
+				<p>This setup means you cannot POST something directly to the root route of the website.</p>
+				<p>Trying to post something to "<code>/</code>" URI will automatically upload it to the <code>/media/</code> route.</p>
+				<p>You can try it using the following in the terminal:</p>
+				<pre><code>curl -v -X POST -T test_files/holygraph.png http://localhost:8000/</pre></code>
 				<hr>
 
-				<p><a href="/static/post.html">Prv: 5 - DELETE method</a></p>
+				<p><a href="/static/delete.html">Prv: 5 - DELETE method</a></p>
 				<p><a href="/static/cgi.html">Next: 7 - CGI</a></p>
 			</div>
 			<br>

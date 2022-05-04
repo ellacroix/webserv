@@ -198,7 +198,7 @@ bool	areValidIndexes(std::vector<std::string> & v)
 
 bool	isSupportedHttpRedirCode(std::string s)
 {
-	return (s == "301" || s == "302" || s == "304");
+	return (s == "301" || s == "302" || s == /*"304"*/ "307");
 }
 
 bool	isValidReturn(std::vector<std::string> & v)
