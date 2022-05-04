@@ -71,10 +71,10 @@ conf		:
 
 sanitize	:	${OBJS}
 			${CXX} ${SANITIZE_FLAGS} ${OBJS} -o ${NAME}
-			./webserv confs/nginx.conf
+			./webserv confs/perso.conf
 
 valgrind	:	$(NAME)
-			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/nginx.conf
+			valgrind --suppressions=valgrind_ignore.txt ./webserv confs/perso.conf
 
 ctags		:
 			ctags srcs/*.cpp

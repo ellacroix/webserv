@@ -51,8 +51,6 @@ void	readResponseBuffer(std::string & header, std::string & body, int fd)
 	char buffer[1024];
 	std::string responseBuffer;
 
-	(void)header;
-	(void)body;
 	while ((count = read(fd, buffer, sizeof(buffer))) != 0)
 	{
 		buffer[count] = '\0';
@@ -127,9 +125,11 @@ int	 Response::executeCgi()
 	}
 
 	// SET CGI PARAMS
-	argv = new char*[2];
+	argv = new char*[3];
 	argv[0] = ft_strdup(client->request->_virtual_server->getCgiPath());
-	argv[1] = NULL;
+	argv[1] = ft_strdup(this->path);
+
+	argv[2] = NULL;
 
 	env = setCgiEnvironnement(this->request, this->path);
 

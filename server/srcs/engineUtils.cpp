@@ -59,7 +59,7 @@ int		acceptIncomingConnections(Port *current_port,
 
 		//Creating a new Client instance to represent the connection
 		//and add it to this port's map.
-		logger("Client " + numberToString(connection) + " accepted connection on port " + numberToString(current_port->port_number));
+		//logger("Client " + numberToString(connection) + " accepted connection on port " + numberToString(current_port->port_number));
 		Client *newClient = new Client(connection, current_port);
 		current_port->_clients_map[connection] = newClient;
 
@@ -89,7 +89,7 @@ void	recvClientsRequest(Port *current_port, t_thread_info *thread_info,
 	//Receiving all we can from the client
 	bzero(buffer, RECV_BUFFER_SIZE);
 	ret = recv(current_client->stream_socket, buffer, RECV_BUFFER_SIZE, 0);
-	logger("Client " + numberToString(connection) + " received " + numberToString(ret) + " bytes");
+	//logger("Client " + numberToString(connection) + " received " + numberToString(ret) + " bytes");
 	pthread_mutex_lock(&current_client->client_mutex);
 	if (ret <= 0)
 	{
@@ -147,7 +147,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 
 			if (current_client->connected == false)
 			{
-				logger("Client " + numberToString(current_client->stream_socket) + " disconnected");
+				//logger("Client " + numberToString(current_client->stream_socket) + " disconnected");
 				current_port->_clients_map.erase(current_client->stream_socket);
 				pthread_mutex_unlock(&current_client->client_mutex);
 				delete current_client;
@@ -157,7 +157,7 @@ int	disconnectTimeout408(std::list<Port*> ports_list, t_thread_info *thread_info
 
 			else if (result > TIMEOUT && current_client->response_ready == false)
 			{
-				logger("Client " + numberToString(current_client->stream_socket) + " exceeded timeout");
+				//logger("Client " + numberToString(current_client->stream_socket) + " exceeded timeout");
 				current_client->status_code = 408;
 				current_client->response_ready = true;
 				current_client->createResponse();
@@ -175,7 +175,7 @@ void	cleanShutDown(pthread_t *thread_pool, t_thread_info *thread_info)
 {
 	Client	*killer_client = new Client();
 	
-	logger("\n--------------------------------END SERVER---------------------------");
+	//logger("\n--------------------------------END SERVER---------------------------");
 	for (int i = 0; i < THREADS; i++)
 	{
 		pthread_mutex_lock(&thread_info->queue_mutex);

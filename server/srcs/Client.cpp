@@ -25,7 +25,7 @@ Client::Client()
 }
 
 Client::~Client() {
-	logger("Deleting client " + numberToString(stream_socket));
+	//logger("Deleting client " + numberToString(stream_socket));
  	if (request)
 		delete request;
 	if (response)

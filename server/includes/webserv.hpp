@@ -50,7 +50,7 @@
 # define FAILURE 1
 # define RECV_BUFFER_SIZE 5000
 # define THREADS 8
-# define TIMEOUT 50
+# define TIMEOUT 600
 # define K 1000
 # define M 1000000
 # define SERVER_MAX_BODY_SIZE 30 * M

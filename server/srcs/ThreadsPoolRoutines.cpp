@@ -6,7 +6,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	//The request is ignored, we monitor the connection again to read a new request
 	if (client->request_buffer.find("\r\n") == 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " blank line");
+		//logger("Client " + numberToString(client->stream_socket) + " blank line");
 		client->request_buffer.clear();
 		monitorForReading(client, thread_info);
 		return ;
@@ -14,7 +14,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 
 	if (client->request_buffer.size() > SERVER_MAX_BODY_SIZE + SERVER_MAX_HEADERS_SIZE)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " request too big");
+		//logger("Client " + numberToString(client->stream_socket) + " request too big");
 		client->status_code = 431;
 		createAndConstructResponse(client);
 		monitorForWriting(client, thread_info);
@@ -27,14 +27,14 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	{
 		if (end > SERVER_MAX_HEADERS_SIZE)
 		{
-			logger("Client " + numberToString(client->stream_socket) + " headers too big");
+			//logger("Client " + numberToString(client->stream_socket) + " headers too big");
 			client->status_code = 431;
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
 			return ;
 		}
 		
-		logger("Client " + numberToString(client->stream_socket) + " received all headers");
+		//logger("Client " + numberToString(client->stream_socket) + " received all headers");
 		if (!client->request)
 			client->createRequest();
 
@@ -44,7 +44,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		//We check if the body size is not too big
 		if (client->request->_body.size() > SERVER_MAX_BODY_SIZE)
 		{
-			logger("Client " + numberToString(client->stream_socket) + " body too big");
+			//logger("Client " + numberToString(client->stream_socket) + " body too big");
 			client->status_code = 413;
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -54,7 +54,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 		//The request is complete, we can parse it
 		if (client->read_more == false)
 		{
-			logger("Client " + numberToString(client->stream_socket) + " request is complete, ready to parse");
+			//logger("Client " + numberToString(client->stream_socket) + " request is complete, ready to parse");
 			client->status_code = client->request->parser();
 			createAndConstructResponse(client);
 			monitorForWriting(client, thread_info);
@@ -63,7 +63,7 @@ void	threadRecvRoutine(Client *client, t_thread_info *thread_info)
 	}
 
 	//We need to read more data for the request to be complete
-	logger("Client " + numberToString(client->stream_socket) + " request not complete");
+	//logger("Client " + numberToString(client->stream_socket) + " request not complete");
 	monitorForReading(client, thread_info);
 }
 
@@ -77,19 +77,19 @@ void	threadSendRoutine(Client *client, t_thread_info *thread_info)
 			0);
 	if (ret < 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " closed the connection when writing to him\n");
+		//logger("Client " + numberToString(client->stream_socket) + " closed the connection when writing to him\n");
 		monitorForReading(client, thread_info);
 		return ;
 	}
 	else
 	{
-		logger("Client " + numberToString(client->stream_socket) + " Send routine sent " + numberToString(ret) + " bytes");
+		//logger("Client " + numberToString(client->stream_socket) + " Send routine sent " + numberToString(ret) + " bytes");
 		client->response->raw_response.erase(0, ret);
 	}
 
 	if (client->response->raw_response.size() == 0)
 	{
-		logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response " + numberToString(client->status_code));
+		//logger("Client " + numberToString(client->stream_socket) + " Send routine sent all the response " + numberToString(client->status_code));
 		if (client->request)
 			delete client->request;
 		client->request = NULL;
@@ -113,7 +113,7 @@ void	*threadLoop(void* arg)
 	t_thread_info *thread_info = (t_thread_info*)arg;
 	Client *current_client;
 
-	logger("Thread launched");
+	//logger("Thread launched");
 
 	while(true)
 	{

@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
 	unlink("log.log");
 
-	logger("Start with PID: " + numberToString(syscall(__NR_gettid)));
+	//logger("Start with PID: " + numberToString(syscall(__NR_gettid)));
 	
 	signal(SIGINT, shutdownWebserv);
     signal(SIGQUIT, shutdownWebserv);
@@ -66,17 +66,15 @@ int main(int argc, char *argv[])
 		return (FAILURE);
 	
 	int current_connections = 0;
-	logger("\n-------------------------------START SERVER--------------------------");
+	//logger("\n-------------------------------START SERVER--------------------------");
 	while (RUNNING)
 	{
 		int new_events = epoll_wait(epoll_fd, events, MAX_EVENTS, 70000);
-		logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
+		//logger("epoll_wait() activated by " + numberToString(new_events) + " file descriptors");
 		if (new_events < 0){
 			perror("epoll_wait() failed");
 			break;
 		}
-		if (new_events == 0)
-			logger("epoll_wait() timed out. Checking clients timeout.");
 		disconnectTimeout408(config.getports_list(), thread_info, &current_connections);
 
 		//LOOP TO CHECK ALL ACTIVATED FD
