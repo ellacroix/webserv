@@ -12,7 +12,6 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="/">Home</a>
-			<a class="nav-item nav-link" href="/public/html/tests.html">Tests</a>
 			<a class="nav-item nav-link active" href="/public/html/conf.html">Configuration File</a>
 			<a class="nav-item nav-link" href="/public/html/readme.html">Readme</a>
             <a class="nav-item nav-link" href="/public/media/subject.pdf">Subject</a>
@@ -25,13 +24,68 @@
 		  <h4><u>nginx.conf</u></h4>
 <pre><code>server {
 	listen	8000
-	
+
 	index index.html
-	autoindex on
 	server_name	demo-webserv.com
-				
+	cgi
+	client_max_body_size 1m
+	error_page 404 /static/404.html
+
 	location / {
-		root /mnt/nfs/homes/jboisser/Documents/webserv/website/srcs
+		limit_except GET POST
+		upload_fld /public/media
+		root _PWD/website/srcs
+	}
+
+    location /static/ {
+		limit_except GET
+        root _PWD/website/srcs/public/static/
+    }
+
+    location /media/ {
+        root _PWD/website/srcs/public/media/
+    }
+
+    location /autoindexed/ {
+        autoindex on
+        root _PWD/website/srcs/public/autoindexed/
+    }
+
+	location /resources/ {
+		limit_except GET
+        root _PWD/website/srcs/public/autoindexed/
+	}
+
+	location /scripts/ {
+        root _PWD/website/srcs/public/scripts/
+	}
+
+	location /ancient-media-fld/ {
+		return 302 /media
+	}
+}
+
+server {
+	listen 8001
+
+	index index.html
+	server_name demo2-webserv.com
+
+	location / {
+		limit_except GET
+        root _PWD/website2/
+	}
+}
+
+server {
+	listen 8000
+
+	index index.html
+	server_name la-mort-des-amants.fr
+
+	location / {
+		limit_except GET
+		root _PWD/website3/
 	}
 }</code></pre>
 	</section>
