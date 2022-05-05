@@ -266,21 +266,12 @@ int ConfigParser::validateClosingBracketArgs(void)
 
 int	ConfigParser::validateCgiArgs(void)
 {
-//	"cgi"	".ext"	"/absolute/path/to/cgi"
-	if (this->_line.size() != 3)
-		return (false);
-	if (this->_line[1].find('/') != std::string::npos
-			|| this->_line[1].find("..") != std::string::npos
-			|| this->_line[1][0] != '.')
-		return (false);
-	if (this->_line[2][0] != '/'
-			|| this->_line[2][this->_line[2].length() - 1] == '/'
-			|| this->_line[2].length() == 1)
+	if (this->_line.size() != 1)
 		return (false);
 	if (this->_curVS->_cgi_is_set == true)
 		return (ALRDY_SET_ERROR);
-	this->_curVS->setCgiExtension(this->_line[1]);
-	this->_curVS->setCgiPath(this->_line[2]);
+	this->_curVS->setCgiExtension(".php");
+	this->_curVS->setCgiPath("./bin/php-cgi7.4");
 	this->_curVS->_cgi_is_set = true;
 	return (true);
 }
